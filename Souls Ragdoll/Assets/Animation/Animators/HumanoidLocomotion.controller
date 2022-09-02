@@ -59,8 +59,8 @@ BlendTree:
     m_CycleOffset: 0
     m_DirectBlendParameter: VerticalMovement
     m_Mirror: 0
-  m_BlendParameter: VerticalMovement
-  m_BlendParameterY: StrafeMovement
+  m_BlendParameter: NormalMovementAmount
+  m_BlendParameterY: StrafeMovementAmont
   m_MinThreshold: 0
   m_MaxThreshold: 1
   m_UseAutomaticThresholds: 1
@@ -75,24 +75,24 @@ AnimatorController:
   m_Name: HumanoidLocomotion
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: VerticalMovement
+  - m_Name: NormalMovementAmount
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: StrafeMovement
+    m_Controller: {fileID: 0}
+  - m_Name: StrafeMovementAmont
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: onGround
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 1
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer

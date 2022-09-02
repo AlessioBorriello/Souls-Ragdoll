@@ -6,16 +6,51 @@ namespace AlessioBorriello
 {
     public class PlayerManager : MonoBehaviour
     {
-
-        /*
         [SerializeField] public PlayerData playerData; //Player data reference
+        [SerializeField] public GameObject AnimatedPlayer; //Player data reference
+        [SerializeField] public Rigidbody physicalHips; //Player's physical hips
+
+        private InputManager inputManager;
+        private Transform cameraTransform;
+        private AnimationManager animationManager;
+
+        private void Start()
+        {
+
+            inputManager = GetComponent<InputManager>();
+            animationManager = GetComponentInChildren<AnimationManager>();
+            animationManager.Initialize();
+
+            cameraTransform = Camera.main.transform;
+        }
+
+        private void Update()
+        {
+            //Inputs
+            inputManager.TickMovementInput();
+
+
+            //Movement and animation
+            HandleRotation(playerData.rotationSpeed); //Add if can rotate
+            HandleMovement(playerData.walkSpeedMultiplier);
+
+        }
 
         /// <summary>
-        /// Move the player with the root motion of the animator
+        /// Get the direction of the movement based on the camera
         /// </summary>
-        public void MovePlayerWithAnimation(float speedMultiplier)
+        /// <returns>The direction</returns>
+        private Vector3 GetMovementDirection()
         {
-            PhysicalHips.velocity = Vector3.ProjectOnPlane(PlayerAnimationManager.TargetAnimator.velocity * speedMultiplier, GroundNormal);
+            Vector3 movementDirection = Vector3.ProjectOnPlane(cameraTransform.forward, Vector3.up) * inputManager.movementInput.y; //Camera's current z axis * vertical movement (Up, down input)
+            movementDirection += Vector3.ProjectOnPlane(cameraTransform.right, Vector3.up) * inputManager.movementInput.x; //Camera's current z axis * horizontal movement (Right, Left input)
+            movementDirection.Normalize();
+            movementDirection.y = 0; //Remove y component from the vector (Y component of the vector from the camera should be ignored)
+            //movementDirection = Vector3.ProjectOnPlane(movementDirection, (isOnGround) ? GroundNormal : Vector3.up);
+
+            if (inputManager.movementInput.magnitude == 0) return AnimatedPlayer.transform.forward; //If not moving return the forward
+
+            return movementDirection;
         }
 
         /// <summary>
@@ -28,20 +63,27 @@ namespace AlessioBorriello
         }
 
         /// <summary>
-        /// Get the direction of the movement based on the camera
+        /// Move player with animation
         /// </summary>
-        /// <returns>The direction</returns>
-        private Vector3 GetMovementDirection()
+        public void HandleMovement(float speedMultiplier)
         {
-            Vector3 movementDirection = Vector3.ProjectOnPlane(MainCamera.transform.forward, Vector3.up) * MovementInput.y; //Camera's current z axis * vertical movement (Up, down input)
-            movementDirection += Vector3.ProjectOnPlane(MainCamera.transform.right, Vector3.up) * MovementInput.x; //Camera's current z axis * horizontal movement (Right, Left input)
-            movementDirection.Normalize();
-            movementDirection.y = 0; //Remove y component from the vector (Y component of the vector from the camera should be ignored)
-            movementDirection = Vector3.ProjectOnPlane(movementDirection, (isOnGround) ? GroundNormal : Vector3.up);
 
-            if (MovementInput.magnitude == 0) return AnimatedPlayer.transform.forward; //If not moving return the forward
+            animationManager.UpdateNormalMovementAnimatorValues(inputManager.movementInput.magnitude);
+            MovePlayerWithAnimation(speedMultiplier);
 
-            return movementDirection;
+            if(inputManager.movementInput.magnitude == 0)
+            {
+                DecreaseVelocity();
+            }
+        }
+
+        /// <summary>
+        /// Move the player with the root motion of the animator
+        /// </summary>
+        public void MovePlayerWithAnimation(float speedMultiplier)
+        {
+            Vector3 GroundNormal = Vector3.up;
+            physicalHips.velocity = Vector3.ProjectOnPlane(animationManager.animator.velocity * speedMultiplier, GroundNormal);
         }
 
         /// <summary>
@@ -50,9 +92,8 @@ namespace AlessioBorriello
         /// </summary>
         public void DecreaseVelocity()
         {
-            PhysicalHips.velocity = Vector3.Lerp(PhysicalHips.velocity, Vector3.zero, playerData.dragForce);
+            physicalHips.velocity = Vector3.Lerp(physicalHips.velocity, Vector3.zero, playerData.dragForce);
         }
-        */
 
     }
 }
