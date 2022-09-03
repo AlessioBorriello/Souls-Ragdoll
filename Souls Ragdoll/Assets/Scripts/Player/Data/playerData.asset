@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 535a02da224185e4cba919cb828fc6d7, type: 3}
   m_Name: playerData
   m_EditorClassIdentifier: 
-  walkSpeedMultiplier: 1.3
-  runSpeedMultiplier: 1.45
-  sprintSpeedMultiplier: 1.6
+  walkSpeedMultiplier: 1.7
+  runSpeedMultiplier: 1.95
+  sprintSpeedMultiplier: 2.1
   sprintThreshold: 0.5
   rotationSpeed: 10
   inAirRotationSpeed: 4
   maxSlopeAngle: 40
-  dragForce: 0.4
+  dragForce: 125.7
   groundCheckSphereRadius: 0.28
   minDistanceToFall: 0.2
   minDistanceToFallWhileRolling: 2.8

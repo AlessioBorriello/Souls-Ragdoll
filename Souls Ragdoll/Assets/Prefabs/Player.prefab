@@ -58,11 +58,11 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 573270257356316907}
-  m_Material: {fileID: 13400000, guid: ed75aea97b27da642a6dc3d162758b50, type: 2}
+  m_Material: {fileID: 13400000, guid: 6e682ad016cc0744ca2b580d5a771851, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.11091835
+  m_Radius: 0.1009184
   m_Center: {x: -0.0000000246175, y: 0.001125114, z: -0.03676834}
 --- !u!153 &3193748364022854758
 ConfigurableJoint:
@@ -1667,6 +1667,7 @@ MonoBehaviour:
   playerData: {fileID: 11400000, guid: 8fa2a1b0f04ee6c44ad4d4475bbf4d18, type: 2}
   AnimatedPlayer: {fileID: 2217555875006252269}
   physicalHips: {fileID: 3193748364022854742}
+  physicalFootMaterial: {fileID: 13400000, guid: 6e682ad016cc0744ca2b580d5a771851, type: 2}
 --- !u!114 &1231754897983099194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2268,11 +2269,11 @@ SphereCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4991602508117447578}
-  m_Material: {fileID: 13400000, guid: ed75aea97b27da642a6dc3d162758b50, type: 2}
+  m_Material: {fileID: 13400000, guid: 6e682ad016cc0744ca2b580d5a771851, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.11091835
+  m_Radius: 0.1009184
   m_Center: {x: 0.0000000246175, y: -0.0011251139, z: -0.03676834}
 --- !u!153 &3193748364022854752
 ConfigurableJoint:

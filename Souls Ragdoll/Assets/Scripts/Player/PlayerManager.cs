@@ -9,6 +9,7 @@ namespace AlessioBorriello
         [SerializeField] public PlayerData playerData; //Player data reference
         [SerializeField] public GameObject AnimatedPlayer; //Player data reference
         [SerializeField] public Rigidbody physicalHips; //Player's physical hips
+        [SerializeField] public PhysicMaterial physicalFootMaterial; //Player's physical foot material
 
         private InputManager inputManager;
         private Transform cameraTransform;
@@ -28,11 +29,12 @@ namespace AlessioBorriello
         {
             //Inputs
             inputManager.TickMovementInput();
+            inputManager.TickCameraMovementInput();
 
 
             //Movement and animation
             HandleRotation(playerData.rotationSpeed); //Add if can rotate
-            HandleMovement(playerData.walkSpeedMultiplier);
+            HandleMovement();
 
         }
 
@@ -65,16 +67,37 @@ namespace AlessioBorriello
         /// <summary>
         /// Move player with animation
         /// </summary>
-        public void HandleMovement(float speedMultiplier)
+        public void HandleMovement()
         {
 
-            animationManager.UpdateNormalMovementAnimatorValues(inputManager.movementInput.magnitude);
+            float speedMultiplier = GetMovementSpeedMultiplier();
+
+            animationManager.UpdateMovementAnimatorValues(inputManager.movementInput.magnitude, 0);
             MovePlayerWithAnimation(speedMultiplier);
 
             if(inputManager.movementInput.magnitude == 0)
             {
-                DecreaseVelocity();
+                physicalFootMaterial.frictionCombine = PhysicMaterialCombine.Maximum;
+            }else
+            {
+                physicalFootMaterial.frictionCombine = PhysicMaterialCombine.Minimum;
             }
+        }
+
+        /// <summary>
+        /// Calculate the player's speed multiplier based on how much the movement input is being pressed
+        /// </summary>
+        private float GetMovementSpeedMultiplier()
+        {
+
+            float speedMultiplier = playerData.walkSpeedMultiplier;
+            if (Mathf.Abs(inputManager.movementInput.magnitude) > .55f)
+            {
+                speedMultiplier = playerData.runSpeedMultiplier;
+            }
+
+            return speedMultiplier;
+
         }
 
         /// <summary>
@@ -84,15 +107,6 @@ namespace AlessioBorriello
         {
             Vector3 GroundNormal = Vector3.up;
             physicalHips.velocity = Vector3.ProjectOnPlane(animationManager.animator.velocity * speedMultiplier, GroundNormal);
-        }
-
-        /// <summary>
-        /// Brings the player to a stop,
-        /// the higher the drag force of the player data, the faster it stops
-        /// </summary>
-        public void DecreaseVelocity()
-        {
-            physicalHips.velocity = Vector3.Lerp(physicalHips.velocity, Vector3.zero, playerData.dragForce);
         }
 
     }

@@ -17,16 +17,14 @@ namespace AlessioBorriello {
             strafeMovementAmount = Animator.StringToHash("StrafeMovementAmount");
         }
 
-        public void UpdateNormalMovementAnimatorValues(float amount)
+        public void UpdateMovementAnimatorValues(float normal, float strafe)
         {
-            float n = GetClampedMovementAmount(amount);
+            float n = GetClampedMovementAmount(normal);
             animator.SetFloat(normalMovementAmount, n, .1f, Time.deltaTime);
-        }
 
-        public void UpdateStrafeMovementAnimatorValues(float amount)
-        {
-            float s = GetClampedMovementAmount(amount);
+            float s = GetClampedMovementAmount(strafe);
             animator.SetFloat(strafeMovementAmount, s, .1f, Time.deltaTime);
+
         }
 
         private float GetClampedMovementAmount(float amount)
