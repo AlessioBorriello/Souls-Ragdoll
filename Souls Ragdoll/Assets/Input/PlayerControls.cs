@@ -46,18 +46,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Roll"",
+                    ""name"": ""EastButton"",
                     ""type"": ""Button"",
                     ""id"": ""641ae0d4-30ea-4823-a9d3-912e4ae35e2a"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": ""Tap"",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""Sprint"",
-                    ""type"": ""Button"",
-                    ""id"": ""45739429-1aa6-47dd-9fd4-043f792211ae"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -205,7 +196,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""Roll"",
+                    ""action"": ""EastButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -216,29 +207,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
-                    ""action"": ""Roll"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""34da5b10-9bd1-4b6a-bbc0-71846cf828e8"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Sprint"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""0874c3a4-732b-4e0c-93bf-d6f8ecbb9fc7"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Sprint"",
+                    ""action"": ""EastButton"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -433,8 +402,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_PlayerGameplay = asset.FindActionMap("Player Gameplay", throwIfNotFound: true);
         m_PlayerGameplay_Movement = m_PlayerGameplay.FindAction("Movement", throwIfNotFound: true);
         m_PlayerGameplay_CameraMovement = m_PlayerGameplay.FindAction("CameraMovement", throwIfNotFound: true);
-        m_PlayerGameplay_Roll = m_PlayerGameplay.FindAction("Roll", throwIfNotFound: true);
-        m_PlayerGameplay_Sprint = m_PlayerGameplay.FindAction("Sprint", throwIfNotFound: true);
+        m_PlayerGameplay_EastButton = m_PlayerGameplay.FindAction("EastButton", throwIfNotFound: true);
         m_PlayerGameplay_LeftLightButton = m_PlayerGameplay.FindAction("LeftLightButton", throwIfNotFound: true);
         m_PlayerGameplay_LeftHeavyButton = m_PlayerGameplay.FindAction("LeftHeavyButton", throwIfNotFound: true);
         m_PlayerGameplay_RightLightButton = m_PlayerGameplay.FindAction("RightLightButton", throwIfNotFound: true);
@@ -501,8 +469,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private IPlayerGameplayActions m_PlayerGameplayActionsCallbackInterface;
     private readonly InputAction m_PlayerGameplay_Movement;
     private readonly InputAction m_PlayerGameplay_CameraMovement;
-    private readonly InputAction m_PlayerGameplay_Roll;
-    private readonly InputAction m_PlayerGameplay_Sprint;
+    private readonly InputAction m_PlayerGameplay_EastButton;
     private readonly InputAction m_PlayerGameplay_LeftLightButton;
     private readonly InputAction m_PlayerGameplay_LeftHeavyButton;
     private readonly InputAction m_PlayerGameplay_RightLightButton;
@@ -514,8 +481,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public PlayerGameplayActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_PlayerGameplay_Movement;
         public InputAction @CameraMovement => m_Wrapper.m_PlayerGameplay_CameraMovement;
-        public InputAction @Roll => m_Wrapper.m_PlayerGameplay_Roll;
-        public InputAction @Sprint => m_Wrapper.m_PlayerGameplay_Sprint;
+        public InputAction @EastButton => m_Wrapper.m_PlayerGameplay_EastButton;
         public InputAction @LeftLightButton => m_Wrapper.m_PlayerGameplay_LeftLightButton;
         public InputAction @LeftHeavyButton => m_Wrapper.m_PlayerGameplay_LeftHeavyButton;
         public InputAction @RightLightButton => m_Wrapper.m_PlayerGameplay_RightLightButton;
@@ -536,12 +502,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @CameraMovement.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnCameraMovement;
                 @CameraMovement.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnCameraMovement;
                 @CameraMovement.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnCameraMovement;
-                @Roll.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnRoll;
-                @Roll.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnRoll;
-                @Roll.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnRoll;
-                @Sprint.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSprint;
-                @Sprint.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSprint;
-                @Sprint.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSprint;
+                @EastButton.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnEastButton;
+                @EastButton.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnEastButton;
+                @EastButton.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnEastButton;
                 @LeftLightButton.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnLeftLightButton;
                 @LeftLightButton.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnLeftLightButton;
                 @LeftLightButton.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnLeftLightButton;
@@ -567,12 +530,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @CameraMovement.started += instance.OnCameraMovement;
                 @CameraMovement.performed += instance.OnCameraMovement;
                 @CameraMovement.canceled += instance.OnCameraMovement;
-                @Roll.started += instance.OnRoll;
-                @Roll.performed += instance.OnRoll;
-                @Roll.canceled += instance.OnRoll;
-                @Sprint.started += instance.OnSprint;
-                @Sprint.performed += instance.OnSprint;
-                @Sprint.canceled += instance.OnSprint;
+                @EastButton.started += instance.OnEastButton;
+                @EastButton.performed += instance.OnEastButton;
+                @EastButton.canceled += instance.OnEastButton;
                 @LeftLightButton.started += instance.OnLeftLightButton;
                 @LeftLightButton.performed += instance.OnLeftLightButton;
                 @LeftLightButton.canceled += instance.OnLeftLightButton;
@@ -614,8 +574,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnCameraMovement(InputAction.CallbackContext context);
-        void OnRoll(InputAction.CallbackContext context);
-        void OnSprint(InputAction.CallbackContext context);
+        void OnEastButton(InputAction.CallbackContext context);
         void OnLeftLightButton(InputAction.CallbackContext context);
         void OnLeftHeavyButton(InputAction.CallbackContext context);
         void OnRightLightButton(InputAction.CallbackContext context);

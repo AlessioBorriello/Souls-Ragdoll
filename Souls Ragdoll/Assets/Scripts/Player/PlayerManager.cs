@@ -15,6 +15,8 @@ namespace AlessioBorriello
         private Transform cameraTransform;
         private AnimationManager animationManager;
         public float currentSpeedMultiplier;
+        public float sprintTimer;
+        public float rollTimer;
 
         //Flags
         public bool isRolling = false;
@@ -90,7 +92,7 @@ namespace AlessioBorriello
         {
 
             currentSpeedMultiplier = GetMovementSpeedMultiplier();
-            animationManager.UpdateMovementAnimatorValues(inputManager.movementInput.magnitude, 0);
+            animationManager.UpdateMovementAnimatorValues(inputManager.movementInput.magnitude, 0, false);
 
         }
 
@@ -140,28 +142,73 @@ namespace AlessioBorriello
         /// </summary>
         public void HandleRollingAndSprinting()
         {
-            if(animationManager.disablePlayerInteraction)
-            {
-                return;
-            }
+            if (animationManager.disablePlayerInteraction) return;
 
-            if(inputManager.eastInput)
+            if(inputManager.eastInputReleased && rollTimer < playerData.sprintThreshold)
             {
-                Vector3 rollDirection = GetMovementDirection();
-                if(inputManager.movementInput.magnitude > 0)
+                //Vector3 rollDirection = GetMovementDirection();
+                if (inputManager.movementInput.magnitude > 0)
                 {
+                    sprintTimer = 0;
+                    rollTimer = 0;
                     isRolling = true;
-                    currentSpeedMultiplier = playerData.rollSpeedMultiplier;
-                    animationManager.PlayTargetAnimation("Roll", true, .2f);
                 }
                 else
                 {
-                    rollDirection = -rollDirection;
+                    sprintTimer = 0;
+                    rollTimer = 0;
                     isBackdashing = true;
-                    currentSpeedMultiplier = playerData.backdashSpeedMultiplier;
-                    animationManager.PlayTargetAnimation("Backdash", true, .2f);
                 }
             }
+            else if(inputManager.eastInput && sprintTimer > playerData.sprintThreshold)
+            {
+                isSprinting = true;
+            }
+
+            if (isRolling) Roll();
+            else if (isBackdashing) Backdash();
+            else if (isSprinting) Sprint();
+
+            if (inputManager.eastInput)
+            {
+                float delta = Time.deltaTime;
+                if (inputManager.movementInput.magnitude > 0) sprintTimer += delta;
+
+                rollTimer += delta;
+            }
+
+            if(inputManager.eastInputReleased)
+            {
+                rollTimer = 0;
+                sprintTimer = 0;
+            }
+        }
+
+        private void Roll()
+        {
+            sprintTimer = 0;
+            currentSpeedMultiplier = playerData.rollSpeedMultiplier;
+            animationManager.PlayTargetAnimation("Roll", true, .2f);
+        }
+
+        private void Backdash()
+        {
+            sprintTimer = 0;
+            currentSpeedMultiplier = playerData.backdashSpeedMultiplier;
+            animationManager.PlayTargetAnimation("Backdash", true, .2f);
+        }
+
+        private void Sprint()
+        {
+            if(inputManager.movementInput.magnitude == 0 || inputManager.eastInputReleased)
+            {
+                isSprinting = false;
+                sprintTimer = 0;
+                return;
+            }
+
+            animationManager.UpdateMovementAnimatorValues(inputManager.movementInput.magnitude, 0, true);
+            currentSpeedMultiplier = playerData.sprintSpeedMultiplier;
         }
 
         private void ResetFlags()

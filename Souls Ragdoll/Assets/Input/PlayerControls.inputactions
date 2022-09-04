@@ -24,18 +24,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Roll",
+                    "name": "EastButton",
                     "type": "Button",
                     "id": "641ae0d4-30ea-4823-a9d3-912e4ae35e2a",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Tap",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Sprint",
-                    "type": "Button",
-                    "id": "45739429-1aa6-47dd-9fd4-043f792211ae",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -183,7 +174,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "Roll",
+                    "action": "EastButton",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -194,29 +185,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Roll",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "34da5b10-9bd1-4b6a-bbc0-71846cf828e8",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Sprint",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "0874c3a4-732b-4e0c-93bf-d6f8ecbb9fc7",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Sprint",
+                    "action": "EastButton",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
