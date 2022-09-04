@@ -10,6 +10,13 @@ namespace AlessioBorriello {
         int normalMovementAmount;
         int strafeMovementAmount;
 
+        public bool disablePlayerInteraction = false;
+
+        private void Update()
+        {
+            disablePlayerInteraction = animator.GetBool("DisablePlayerInteraction");
+        }
+
         public void Initialize()
         {
             animator = GetComponentInChildren<Animator>();
@@ -40,6 +47,12 @@ namespace AlessioBorriello {
             }
 
             return clampedAmount;
+        }
+
+        public void PlayTargetAnimation(string targetAnimation, bool disablePlayerInteraction, float fadeDuration)
+        {
+            animator.SetBool("DisablePlayerInteraction", disablePlayerInteraction);
+            animator.CrossFade(targetAnimation, fadeDuration);
         }
 
     }

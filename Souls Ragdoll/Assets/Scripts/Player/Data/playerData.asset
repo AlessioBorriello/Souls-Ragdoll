@@ -31,8 +31,8 @@ MonoBehaviour:
   fallPushStrenght: 22
   hardLandThreshold: 0.8
   knockoutLandThreshold: 1.18
-  backdashSpeedMultiplier: 3
-  rollSpeedMultiplier: 2.6
+  backdashSpeedMultiplier: 3.1
+  rollSpeedMultiplier: 2.2
   KOTime: 3.3
   startingPushForce: 1.58
   timeOfBeingPushed: 0.24

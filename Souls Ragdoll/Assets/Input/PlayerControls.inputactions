@@ -33,15 +33,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Backdash",
-                    "type": "Button",
-                    "id": "997f8c62-c77e-4063-a07e-a51c805e3da4",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "Tap",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Sprint",
                     "type": "Button",
                     "id": "45739429-1aa6-47dd-9fd4-043f792211ae",
@@ -314,28 +305,6 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "RightHeavyButton",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "860529fc-f72e-481f-88a8-17c12b4463fa",
-                    "path": "<Keyboard>/space",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "Backdash",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "eae2e14b-d426-4714-8fa5-cd74458d9e4a",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Gamepad",
-                    "action": "Backdash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

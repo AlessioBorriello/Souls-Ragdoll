@@ -55,15 +55,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Backdash"",
-                    ""type"": ""Button"",
-                    ""id"": ""997f8c62-c77e-4063-a07e-a51c805e3da4"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": ""Tap"",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""Sprint"",
                     ""type"": ""Button"",
                     ""id"": ""45739429-1aa6-47dd-9fd4-043f792211ae"",
@@ -341,28 +332,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""860529fc-f72e-481f-88a8-17c12b4463fa"",
-                    ""path"": ""<Keyboard>/space"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""Backdash"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""eae2e14b-d426-4714-8fa5-cd74458d9e4a"",
-                    ""path"": ""<Gamepad>/buttonEast"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""Backdash"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""39acea42-7304-4dbf-8c03-5b87bd5861a3"",
                     ""path"": ""<Gamepad>/dpad"",
                     ""interactions"": """",
@@ -465,7 +434,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_PlayerGameplay_Movement = m_PlayerGameplay.FindAction("Movement", throwIfNotFound: true);
         m_PlayerGameplay_CameraMovement = m_PlayerGameplay.FindAction("CameraMovement", throwIfNotFound: true);
         m_PlayerGameplay_Roll = m_PlayerGameplay.FindAction("Roll", throwIfNotFound: true);
-        m_PlayerGameplay_Backdash = m_PlayerGameplay.FindAction("Backdash", throwIfNotFound: true);
         m_PlayerGameplay_Sprint = m_PlayerGameplay.FindAction("Sprint", throwIfNotFound: true);
         m_PlayerGameplay_LeftLightButton = m_PlayerGameplay.FindAction("LeftLightButton", throwIfNotFound: true);
         m_PlayerGameplay_LeftHeavyButton = m_PlayerGameplay.FindAction("LeftHeavyButton", throwIfNotFound: true);
@@ -534,7 +502,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerGameplay_Movement;
     private readonly InputAction m_PlayerGameplay_CameraMovement;
     private readonly InputAction m_PlayerGameplay_Roll;
-    private readonly InputAction m_PlayerGameplay_Backdash;
     private readonly InputAction m_PlayerGameplay_Sprint;
     private readonly InputAction m_PlayerGameplay_LeftLightButton;
     private readonly InputAction m_PlayerGameplay_LeftHeavyButton;
@@ -548,7 +515,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @Movement => m_Wrapper.m_PlayerGameplay_Movement;
         public InputAction @CameraMovement => m_Wrapper.m_PlayerGameplay_CameraMovement;
         public InputAction @Roll => m_Wrapper.m_PlayerGameplay_Roll;
-        public InputAction @Backdash => m_Wrapper.m_PlayerGameplay_Backdash;
         public InputAction @Sprint => m_Wrapper.m_PlayerGameplay_Sprint;
         public InputAction @LeftLightButton => m_Wrapper.m_PlayerGameplay_LeftLightButton;
         public InputAction @LeftHeavyButton => m_Wrapper.m_PlayerGameplay_LeftHeavyButton;
@@ -573,9 +539,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Roll.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnRoll;
                 @Roll.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnRoll;
                 @Roll.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnRoll;
-                @Backdash.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnBackdash;
-                @Backdash.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnBackdash;
-                @Backdash.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnBackdash;
                 @Sprint.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSprint;
                 @Sprint.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSprint;
                 @Sprint.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSprint;
@@ -607,9 +570,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @Roll.started += instance.OnRoll;
                 @Roll.performed += instance.OnRoll;
                 @Roll.canceled += instance.OnRoll;
-                @Backdash.started += instance.OnBackdash;
-                @Backdash.performed += instance.OnBackdash;
-                @Backdash.canceled += instance.OnBackdash;
                 @Sprint.started += instance.OnSprint;
                 @Sprint.performed += instance.OnSprint;
                 @Sprint.canceled += instance.OnSprint;
@@ -655,7 +615,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnCameraMovement(InputAction.CallbackContext context);
         void OnRoll(InputAction.CallbackContext context);
-        void OnBackdash(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnLeftLightButton(InputAction.CallbackContext context);
         void OnLeftHeavyButton(InputAction.CallbackContext context);

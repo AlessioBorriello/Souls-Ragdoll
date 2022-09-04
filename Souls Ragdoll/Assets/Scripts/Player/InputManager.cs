@@ -7,10 +7,14 @@ namespace AlessioBorriello
     public class InputManager : MonoBehaviour
     {
 
+        //Note, inputs variables ending in "In" are local and private
+        //Thos ending in "Input" are instead those readable from the outside
+
         PlayerControls inputAction;
 
         private Vector2 movementIn;
         private Vector2 cameraIn;
+        private bool eastIn;
 
         public void OnEnable()
         {
@@ -44,5 +48,12 @@ namespace AlessioBorriello
             cameraInput = cameraIn;
         }
 
+        public bool eastInput;
+        public void TickActionsInput()
+        {
+
+            eastIn = inputAction.PlayerGameplay.Roll.phase == UnityEngine.InputSystem.InputActionPhase.Started; //When the key is pressed
+            eastInput = eastIn;
+        }
     }
 }

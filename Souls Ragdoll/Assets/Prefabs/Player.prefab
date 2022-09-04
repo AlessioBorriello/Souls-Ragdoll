@@ -1652,6 +1652,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementInput: {x: 0, y: 0}
   cameraInput: {x: 0, y: 0}
+  eastInput: 0
 --- !u!114 &623422895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1668,6 +1669,10 @@ MonoBehaviour:
   AnimatedPlayer: {fileID: 2217555875006252269}
   physicalHips: {fileID: 3193748364022854742}
   physicalFootMaterial: {fileID: 13400000, guid: 6e682ad016cc0744ca2b580d5a771851, type: 2}
+  currentSpeedMultiplier: 0
+  isRolling: 0
+  isBackdashing: 0
+  isSprinting: 0
 --- !u!114 &1231754897983099194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1681,6 +1686,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
+  disablePlayerInteraction: 0
 --- !u!1 &2217555876070721501
 GameObject:
   m_ObjectHideFlags: 0

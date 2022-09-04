@@ -14,6 +14,12 @@ namespace AlessioBorriello
         private InputManager inputManager;
         private Transform cameraTransform;
         private AnimationManager animationManager;
+        public float currentSpeedMultiplier;
+
+        //Flags
+        public bool isRolling = false;
+        public bool isBackdashing = false;
+        public bool isSprinting = false;
 
         private void Start()
         {
@@ -30,11 +36,24 @@ namespace AlessioBorriello
             //Inputs
             inputManager.TickMovementInput();
             inputManager.TickCameraMovementInput();
+            inputManager.TickActionsInput();
 
 
             //Movement and animation
-            HandleRotation(playerData.rotationSpeed); //Add if can rotate
-            HandleMovement();
+            if(!animationManager.disablePlayerInteraction)
+            {
+                HandleRotation(playerData.rotationSpeed); //Add if can rotate
+                HandleMovement();
+            }
+
+            HandleRollingAndSprinting();
+
+            //Reset flags
+            ResetFlags();
+
+            //Move
+            MovePlayerWithAnimation(currentSpeedMultiplier);
+            HandleFootFriction();
 
         }
 
@@ -70,18 +89,25 @@ namespace AlessioBorriello
         public void HandleMovement()
         {
 
-            float speedMultiplier = GetMovementSpeedMultiplier();
-
+            currentSpeedMultiplier = GetMovementSpeedMultiplier();
             animationManager.UpdateMovementAnimatorValues(inputManager.movementInput.magnitude, 0);
-            MovePlayerWithAnimation(speedMultiplier);
 
-            if(inputManager.movementInput.magnitude == 0)
+        }
+
+        private void HandleFootFriction()
+        {
+
+            if (inputManager.movementInput.magnitude == 0 && physicalFootMaterial.frictionCombine == PhysicMaterialCombine.Minimum)
             {
+                //Debug.Log("Switching to max friction");
                 physicalFootMaterial.frictionCombine = PhysicMaterialCombine.Maximum;
-            }else
+            }
+            else if (inputManager.movementInput.magnitude > 0 && physicalFootMaterial.frictionCombine == PhysicMaterialCombine.Maximum)
             {
+                //Debug.Log("Switching to min friction");
                 physicalFootMaterial.frictionCombine = PhysicMaterialCombine.Minimum;
             }
+
         }
 
         /// <summary>
@@ -107,6 +133,41 @@ namespace AlessioBorriello
         {
             Vector3 GroundNormal = Vector3.up;
             physicalHips.velocity = Vector3.ProjectOnPlane(animationManager.animator.velocity * speedMultiplier, GroundNormal);
+        }
+
+        /// <summary>
+        /// Manages rolls, backdashes and sprinting based on the player's east button press duration and movement velocity
+        /// </summary>
+        public void HandleRollingAndSprinting()
+        {
+            if(animationManager.disablePlayerInteraction)
+            {
+                return;
+            }
+
+            if(inputManager.eastInput)
+            {
+                Vector3 rollDirection = GetMovementDirection();
+                if(inputManager.movementInput.magnitude > 0)
+                {
+                    isRolling = true;
+                    currentSpeedMultiplier = playerData.rollSpeedMultiplier;
+                    animationManager.PlayTargetAnimation("Roll", true, .2f);
+                }
+                else
+                {
+                    rollDirection = -rollDirection;
+                    isBackdashing = true;
+                    currentSpeedMultiplier = playerData.backdashSpeedMultiplier;
+                    animationManager.PlayTargetAnimation("Backdash", true, .2f);
+                }
+            }
+        }
+
+        private void ResetFlags()
+        {
+            isRolling = false;
+            isBackdashing = false;
         }
 
     }
