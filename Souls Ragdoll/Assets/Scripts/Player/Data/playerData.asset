@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 535a02da224185e4cba919cb828fc6d7, type: 3}
   m_Name: playerData
   m_EditorClassIdentifier: 
+  hipsJointDriveForce: 900
+  jointDriveForce: 550
   walkSpeedMultiplier: 1.7
   runSpeedMultiplier: 1.95
   sprintSpeedMultiplier: 2.1
-  sprintThreshold: 0.5
+  sprintThreshold: 0.4
   rotationSpeed: 10
   inAirRotationSpeed: 4
   maxSlopeAngle: 40

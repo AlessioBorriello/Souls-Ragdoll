@@ -35,20 +35,13 @@ namespace AlessioBorriello
             defaultCameradistance = cameraTransform.localPosition.z; //Get the distance
         }
 
-        private void LateUpdate()
+        public void HandleCamera(Vector2 input)
         {
             if (followTarget)
             {
                 FollowTarget();
                 HandleCameraCollisions();
             }
-
-            HandleCamera(inputManager.cameraInput);
-
-        }
-
-        public void HandleCamera(Vector2 input)
-        {
             RotateCamera(input);
         }
 

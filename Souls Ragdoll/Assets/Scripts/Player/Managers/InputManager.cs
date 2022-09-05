@@ -15,7 +15,7 @@ namespace AlessioBorriello
 
         private PlayerManager playerManager;
 
-        PlayerControls inputAction;
+        private PlayerControls inputAction;
 
         private Vector2 movementIn;
         private Vector2 cameraIn;
@@ -23,6 +23,7 @@ namespace AlessioBorriello
         //Actions
         private bool eastIn;
         private bool eastInReleased;
+        private bool eastInPressed;
 
         public void OnEnable()
         {
@@ -51,7 +52,6 @@ namespace AlessioBorriello
 
             }
 
-
             inputAction.Enable();
 
         }
@@ -75,15 +75,17 @@ namespace AlessioBorriello
 
         public bool eastInput;
         public bool eastInputReleased;
+        public bool eastInputPressed;
         public void TickActionsInput()
         {
+
+            eastIn = (inputAction.PlayerGameplay.EastButton.phase == InputActionPhase.Performed);
+            eastInPressed = inputAction.PlayerGameplay.EastButton.WasPerformedThisFrame();
+            eastInReleased = inputAction.PlayerGameplay.EastButton.WasReleasedThisFrame();
+
             eastInput = eastIn;
             eastInputReleased = eastInReleased;
-        }
-
-        private void LateUpdate()
-        {
-            eastInReleased = false;
+            eastInputPressed = eastInPressed;
         }
 
     }

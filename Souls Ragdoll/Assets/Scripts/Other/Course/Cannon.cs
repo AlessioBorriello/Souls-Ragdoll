@@ -10,6 +10,7 @@ public class Cannon : MonoBehaviour
     [SerializeField] private float strenght = 10f;
     [SerializeField] private float reloadTime = 3f;
     [SerializeField] private float startOffsetTime = 0f;
+    [SerializeField] private bool cannonEnabled = true;
 
     private void Awake()
     {
@@ -19,7 +20,7 @@ public class Cannon : MonoBehaviour
     IEnumerator Reload(float reloadTime)
     {
         yield return new WaitForSeconds(reloadTime); //Wait for the reload
-        Shoot();
+        if(cannonEnabled) Shoot();
         StartCoroutine(Reload(reloadTime)); //Fire again
     }
 

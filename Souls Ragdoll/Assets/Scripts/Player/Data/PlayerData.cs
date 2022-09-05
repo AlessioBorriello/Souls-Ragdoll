@@ -7,6 +7,11 @@ namespace AlessioBorriello
     [CreateAssetMenu(fileName = "newPlayerData", menuName = "Data/Player Data/Base Data")]
     public class PlayerData : ScriptableObject
     {
+
+        [Header("Ragdoll")]
+        public float hipsJointDriveForce; //The force of the spring in the hips joint
+        public float jointDriveForce; //The force of the springs in the rest of the body
+
         [Header("Movement")]
         public float walkSpeedMultiplier = 1f; //Velocity multiplier when walking
         public float runSpeedMultiplier = 1f; //Velocity multiplier when running

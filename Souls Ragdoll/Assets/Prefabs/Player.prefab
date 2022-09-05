@@ -1307,8 +1307,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animatedHips: {fileID: 2217555876070721474}
   physicalHips: {fileID: 3193748364022854742}
-  hipsJointDriveForce: 1000
-  jointDriveForce: 800
+  playerData: {fileID: 11400000, guid: 8fa2a1b0f04ee6c44ad4d4475bbf4d18, type: 2}
+  hipsJointDriveForce: 900
+  jointDriveForce: 600
 --- !u!1 &2217555875182455276
 GameObject:
   m_ObjectHideFlags: 0
@@ -1614,6 +1615,7 @@ GameObject:
   - component: {fileID: 2579650961228759777}
   - component: {fileID: 623422895}
   - component: {fileID: 1231754897983099194}
+  - component: {fileID: 1332648215203446742}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -1654,6 +1656,7 @@ MonoBehaviour:
   cameraInput: {x: 0, y: 0}
   eastInput: 0
   eastInputReleased: 0
+  eastInputPressed: 0
 --- !u!114 &623422895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1667,12 +1670,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerData: {fileID: 11400000, guid: 8fa2a1b0f04ee6c44ad4d4475bbf4d18, type: 2}
-  AnimatedPlayer: {fileID: 2217555875006252269}
+  animatedPlayer: {fileID: 2217555875006252269}
   physicalHips: {fileID: 3193748364022854742}
   physicalFootMaterial: {fileID: 13400000, guid: 6e682ad016cc0744ca2b580d5a771851, type: 2}
+  inputManager: {fileID: 0}
+  cameraTransform: {fileID: 0}
+  cameraManager: {fileID: 0}
+  animationManager: {fileID: 0}
+  playerLocomotionManager: {fileID: 0}
   currentSpeedMultiplier: 0
-  sprintTimer: 0
-  rollTimer: 0
+  disablePlayerInteraction: 0
+  canRotate: 1
   isRolling: 0
   isBackdashing: 0
   isSprinting: 0
@@ -1689,7 +1697,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
-  disablePlayerInteraction: 0
+--- !u!114 &1332648215203446742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2217555875885131135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 569e25877d34f0f49822da7760da12b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2217555876070721501
 GameObject:
   m_ObjectHideFlags: 0
