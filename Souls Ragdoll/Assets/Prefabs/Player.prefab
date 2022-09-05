@@ -1653,6 +1653,7 @@ MonoBehaviour:
   movementInput: {x: 0, y: 0}
   cameraInput: {x: 0, y: 0}
   eastInput: 0
+  eastInputReleased: 0
 --- !u!114 &623422895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1670,6 +1671,8 @@ MonoBehaviour:
   physicalHips: {fileID: 3193748364022854742}
   physicalFootMaterial: {fileID: 13400000, guid: 6e682ad016cc0744ca2b580d5a771851, type: 2}
   currentSpeedMultiplier: 0
+  sprintTimer: 0
+  rollTimer: 0
   isRolling: 0
   isBackdashing: 0
   isSprinting: 0

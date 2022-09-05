@@ -19,7 +19,7 @@ MonoBehaviour:
   rotationSpeed: 10
   inAirRotationSpeed: 4
   maxSlopeAngle: 40
-  dragForce: 125.7
+  dragForce: 0.4
   groundCheckSphereRadius: 0.28
   minDistanceToFall: 0.2
   minDistanceToFallWhileRolling: 2.8
