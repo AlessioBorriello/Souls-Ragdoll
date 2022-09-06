@@ -13,28 +13,27 @@ MonoBehaviour:
   m_Name: playerData
   m_EditorClassIdentifier: 
   hipsJointDriveForce: 900
-  jointDriveForce: 550
+  jointDriveForce: 650
   walkSpeedMultiplier: 1.7
   runSpeedMultiplier: 1.95
   sprintSpeedMultiplier: 2.1
   sprintThreshold: 0.4
   rotationSpeed: 10
   inAirRotationSpeed: 4
-  maxSlopeAngle: 40
-  dragForce: 0.4
-  groundCheckSphereRadius: 0.28
-  minDistanceToFall: 0.2
-  minDistanceToFallWhileRolling: 2.8
+  maxSlopeAngle: 35
+  movingFriction: 0
+  idleFriction: 0.5
+  minDistanceToFall: 0.8
   groundCollisionLayers:
     serializedVersion: 2
     m_Bits: 64
-  fallingSpeed: 7
-  maxFallingSpeed: 40
-  fallPushStrenght: 22
-  hardLandThreshold: 0.8
-  knockoutLandThreshold: 1.18
+  baseGravityForce: 4.35
+  fallingSpeed: 23
+  maxFallingSpeed: 50
+  timeBeforeFalling: 0.32
+  knockoutLandThreshold: 1.15
+  upwardLandingForce: 20
   backdashSpeedMultiplier: 3.1
   rollSpeedMultiplier: 2.2
   KOTime: 3.3
-  startingPushForce: 1.58
-  timeOfBeingPushed: 0.24
+  maxKOTime: 10

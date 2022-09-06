@@ -8,13 +8,18 @@ namespace AlessioBorriello
     {
 
         private PlayerManager playerManager;
+
+        //Timers
         private float sprintTimer;
         private float rollTimer;
+        private float inAirTimer;
 
         private void Start()
         {
 
             playerManager = GetComponent<PlayerManager>();
+            playerManager.physicalFootMaterial.staticFriction = playerManager.playerData.idleFriction;
+            playerManager.physicalFootMaterial.dynamicFriction = playerManager.playerData.idleFriction;
 
         }
 
@@ -34,10 +39,10 @@ namespace AlessioBorriello
         /// <summary>
         /// Rotate player towards direction
         /// </summary>
-        public void HandleRotation(float rotationSpeed)
+        public void HandleMovementRotation(float rotationSpeed)
         {
-            Vector3 movementDirection = GetMovementDirection();
-            playerManager.animatedPlayer.transform.rotation = Quaternion.Slerp(playerManager.animatedPlayer.transform.rotation, Quaternion.LookRotation(movementDirection), rotationSpeed * Time.deltaTime);
+            playerManager.movementDirection = GetMovementDirection();
+            playerManager.animatedPlayer.transform.rotation = Quaternion.Slerp(playerManager.animatedPlayer.transform.rotation, Quaternion.LookRotation(playerManager.movementDirection), rotationSpeed * Time.deltaTime);
         }
 
         /// <summary>
@@ -46,15 +51,15 @@ namespace AlessioBorriello
         private void HandleFootFriction()
         {
 
-            if (playerManager.inputManager.movementInput.magnitude == 0 && playerManager.physicalFootMaterial.frictionCombine == PhysicMaterialCombine.Minimum)
+            if (playerManager.inputManager.movementInput.magnitude == 0 && playerManager.physicalFootMaterial.staticFriction == playerManager.playerData.movingFriction)
             {
-                //Debug.Log("Switching to max friction");
-                playerManager.physicalFootMaterial.frictionCombine = PhysicMaterialCombine.Maximum;
+                playerManager.physicalFootMaterial.staticFriction = playerManager.playerData.idleFriction;
+                playerManager.physicalFootMaterial.dynamicFriction = playerManager.playerData.idleFriction;
             }
-            else if (playerManager.inputManager.movementInput.magnitude > 0 && playerManager.physicalFootMaterial.frictionCombine == PhysicMaterialCombine.Maximum)
+            else if (playerManager.inputManager.movementInput.magnitude > 0 && playerManager.physicalFootMaterial.staticFriction == playerManager.playerData.idleFriction)
             {
-                //Debug.Log("Switching to min friction");
-                playerManager.physicalFootMaterial.frictionCombine = PhysicMaterialCombine.Minimum;
+                playerManager.physicalFootMaterial.staticFriction = playerManager.playerData.movingFriction;
+                playerManager.physicalFootMaterial.dynamicFriction = playerManager.playerData.movingFriction;
             }
 
         }
@@ -94,6 +99,28 @@ namespace AlessioBorriello
                 sprintTimer = 0;
             }
 
+        }
+
+        /// <summary>
+        /// Manages falling and landing, start falling when in air for enough time and land when isOnGround is back to true
+        /// </summary>
+        public void HandleFallingAndLanding()
+        {
+            //Fall
+            if (!playerManager.isOnGround && inAirTimer > playerManager.playerData.timeBeforeFalling)
+            {
+                playerManager.canRotate = false;
+                playerManager.animationManager.PlayTargetAnimation("Fall", false, .2f);
+            }
+
+            //Land
+            if (playerManager.isOnGround && inAirTimer > 0)
+            {
+                playerManager.canRotate = true;
+                playerManager.animationManager.PlayTargetAnimation("Movement", false, .2f);
+                if(!playerManager.isKnockedOut && inAirTimer > playerManager.playerData.knockoutLandThreshold) playerManager.ragdollManager.KnockOut();
+                inAirTimer = 0;
+            }
         }
 
         /// <summary>
@@ -139,7 +166,7 @@ namespace AlessioBorriello
             movementDirection += Vector3.ProjectOnPlane(playerManager.cameraTransform.right, Vector3.up) * playerManager.inputManager.movementInput.x; //Camera's current z axis * horizontal movement (Right, Left input)
             movementDirection.Normalize();
             movementDirection.y = 0; //Remove y component from the vector (Y component of the vector from the camera should be ignored)
-                                     //movementDirection = Vector3.ProjectOnPlane(movementDirection, (isOnGround) ? GroundNormal : Vector3.up);
+            movementDirection = Vector3.ProjectOnPlane(movementDirection, (playerManager.isOnGround) ? playerManager.groundNormal : Vector3.up); //Project for sloped ground
 
             if (playerManager.inputManager.movementInput.magnitude == 0) return playerManager.animatedPlayer.transform.forward; //If not moving return the forward
 
@@ -178,6 +205,59 @@ namespace AlessioBorriello
             }
 
             return clampedAmount;
+        }
+
+        /// <summary>
+        /// Check if the player is currently touching the ground,
+        /// if so set the ground normal and the isOnGround flag
+        /// </summary>
+        public void CheckIfOnGround()
+        {
+            RaycastHit hit;
+            Vector3 pos = playerManager.groundCheckTransform.position;
+
+            //Cast a ray downwards from the player's hips position
+            if (Physics.Raycast(pos, Vector3.down, out hit, Mathf.Infinity, playerManager.playerData.groundCollisionLayers))
+            {
+
+                if (hit.distance < playerManager.playerData.minDistanceToFall && Vector3.Angle(Vector3.up, hit.normal) < playerManager.playerData.maxSlopeAngle) playerManager.isOnGround = true;
+                else (playerManager.isOnGround) = false;
+
+                playerManager.groundNormal = hit.normal;
+            }
+            else
+            {
+                playerManager.isOnGround = false;
+            }
+        }
+
+        /// <summary>
+        /// Calculate the gravity force to apply to the player
+        /// </summary>
+        public Vector3 GetGravity(bool isOnGround)
+        {
+            float delta = Time.deltaTime;
+
+            //Base gravity (only if not ko'd)
+            Vector3 gravityForce = Vector3.down * playerManager.playerData.baseGravityForce * ((playerManager.isKnockedOut)? 0 : 1);
+
+            Vector3 additionalGravityForce = Vector3.zero;
+            //Increase in air timer
+            if (!isOnGround)
+            {
+                //Apply more downwards force when not on the ground based on the in air timer
+                additionalGravityForce += Vector3.down * (playerManager.playerData.fallingSpeed * inAirTimer);
+                inAirTimer += delta;
+            }
+            else
+            {
+                additionalGravityForce = Vector3.zero;
+                inAirTimer = 0;
+            }
+
+            gravityForce += additionalGravityForce;
+
+            return gravityForce;
         }
 
     }

@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1567946971
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1567946972}
+  m_Layer: 7
+  m_Name: GroundCheckTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1567946972
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1567946971}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.46, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2217555875006252242}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &573270257356316907
 GameObject:
   m_ObjectHideFlags: 0
@@ -410,7 +441,7 @@ CapsuleCollider:
   m_Material: {fileID: 13400000, guid: ed75aea97b27da642a6dc3d162758b50, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.087589286
+  m_Radius: 0.08058929
   m_Height: 0.4974409
   m_Direction: 1
   m_Center: {x: 0.00000027176878, y: 0.08979262, z: 0.0059304168}
@@ -1270,6 +1301,7 @@ Transform:
   m_Children:
   - {fileID: 2217555874284443031}
   - {fileID: 2217555875640887435}
+  - {fileID: 1567946972}
   m_Father: {fileID: 2217555875885131132}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1307,7 +1339,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animatedHips: {fileID: 2217555876070721474}
   physicalHips: {fileID: 3193748364022854742}
-  playerData: {fileID: 11400000, guid: 8fa2a1b0f04ee6c44ad4d4475bbf4d18, type: 2}
   hipsJointDriveForce: 900
   jointDriveForce: 600
 --- !u!1 &2217555875182455276
@@ -1673,17 +1704,24 @@ MonoBehaviour:
   animatedPlayer: {fileID: 2217555875006252269}
   physicalHips: {fileID: 3193748364022854742}
   physicalFootMaterial: {fileID: 13400000, guid: 6e682ad016cc0744ca2b580d5a771851, type: 2}
+  groundCheckTransform: {fileID: 1567946972}
   inputManager: {fileID: 0}
   cameraTransform: {fileID: 0}
   cameraManager: {fileID: 0}
   animationManager: {fileID: 0}
   playerLocomotionManager: {fileID: 0}
+  ragdollManager: {fileID: 0}
   currentSpeedMultiplier: 0
+  currentGravityForce: {x: 0, y: 0, z: 0}
+  groundNormal: {x: 0, y: 0, z: 0}
+  movementDirection: {x: 0, y: 0, z: 0}
   disablePlayerInteraction: 0
   canRotate: 1
+  isOnGround: 1
   isRolling: 0
   isBackdashing: 0
   isSprinting: 0
+  isKnockedOut: 0
 --- !u!114 &1231754897983099194
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3032,7 +3070,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.108063385
+  m_Radius: 0.07
   m_Center: {x: -0.0000000023344002, y: 0.082659096, z: -0.0042094165}
 --- !u!153 &3193748364022854772
 ConfigurableJoint:
@@ -3205,7 +3243,7 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.108063385
+  m_Radius: 0.07
   m_Center: {x: 0.0000000023344, y: 0.082659096, z: -0.0042094165}
 --- !u!153 &3193748364022854762
 ConfigurableJoint:
@@ -3479,7 +3517,7 @@ CapsuleCollider:
   m_Material: {fileID: 13400000, guid: ed75aea97b27da642a6dc3d162758b50, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.087589286
+  m_Radius: 0.08058929
   m_Height: 0.4974409
   m_Direction: 1
   m_Center: {x: -0.0000002717688, y: 0.08979262, z: 0.0059304168}
@@ -3654,8 +3692,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.24005862
-  m_Center: {x: 0.0023529828, y: 0.23390476, z: -0.0014446974}
+  m_Radius: 0.21
+  m_Center: {x: 0.0023529828, y: 0.2, z: -0.0014446974}
 --- !u!153 &3193748364022854782
 ConfigurableJoint:
   m_ObjectHideFlags: 0

@@ -13,14 +13,14 @@ namespace AlessioBorriello
 
         public Transform[] AnimatedBones { get; private set; } //Set of transforms of the animated bones starting from the animated hips
         public ConfigurableJoint[] Joints { get; private set; } //Set of joints of the physical bones starting from the physical hips
-        public PlayerData playerData; //Player data reference
         private Quaternion[] initialJointRotations; //Set of starting rotations of the joints
         private Collider[] Colliders; //Set of colliders of the joints
 
+        private PlayerManager playerManager; //Player manager
         private Animator animator; //Animator of the animated character
 
-        [HideInInspector] public float hipsJointDriveForce; //The force of the spring in the hips joint
-        [HideInInspector] public float jointDriveForce; //The force of the springs in the rest of the body
+        private float knockedOutTimer = 0;
+        private float safenetKnockedOutTimer = 0; //Used to check if the player has been knocked out for too much
 
         private void Awake()
         {
@@ -30,18 +30,22 @@ namespace AlessioBorriello
 
             Joints[0].configuredInWorldSpace = true;
 
-            hipsJointDriveForce = playerData.hipsJointDriveForce;
-            jointDriveForce = playerData.jointDriveForce;
-
             SetupColliders();
         }
 
         private void Start()
         {
+            playerManager = GetComponentInParent<PlayerManager>(); //Get player manager
             animator = GetComponentInChildren<Animator>(); //Get animator
             initialJointRotations = GetJointsStartingLocalRotations(Joints); //Get initial rotations of athe joints
 
-            SetJointsDriveForces(hipsJointDriveForce, jointDriveForce); //Set up joint drive forces
+            SetJointsDriveForces(playerManager.playerData.hipsJointDriveForce, playerManager.playerData.jointDriveForce); //Set up joint drive forces
+        }
+
+        private void Update()
+        {
+            HandleWakeUp();
+
         }
 
         void FixedUpdate()
@@ -191,6 +195,86 @@ namespace AlessioBorriello
 
             //Neck
             Physics.IgnoreCollision(Colliders[(int)bodyParts.Neck], Colliders[(int)bodyParts.Head]); //Neck and Head
+        }
+
+        /// <summary>
+        /// Starts a timer every time the player's body is still,
+        /// if the player's body moves, the timer is reset,
+        /// if it reacheas 0, he wakes up
+        /// </summary>
+        public void HandleWakeUp()
+        {
+
+            if (!playerManager.isKnockedOut) return;
+
+            if (IsPlayerVelocityApproxZero()) //If the player body has stopped
+            {
+                knockedOutTimer -= Time.deltaTime; //Decreases timer
+                if (knockedOutTimer <= 0) //If timer is up
+                {
+                    WakeUp(); //Wake up
+                }
+            }
+            else //The player's body has moved
+            {
+                knockedOutTimer = playerManager.playerData.KOTime; //Reset timer
+            }
+
+            safenetKnockedOutTimer -= Time.deltaTime;
+            if(safenetKnockedOutTimer <= 0) WakeUp(); //Safety net wake up
+
+        }
+
+        /// <summary>
+        /// Wake the player up
+        /// </summary>
+        public void WakeUp()
+        {
+            //Wake up
+            playerManager.isKnockedOut = false;
+            SetJointsDriveForces(playerManager.playerData.hipsJointDriveForce, playerManager.playerData.jointDriveForce);
+            knockedOutTimer = 0;
+            safenetKnockedOutTimer = 0;
+        }
+
+        /// <summary>
+        /// Knockout the player, set the joint drive forces to 0
+        /// </summary>
+        public void KnockOut()
+        {
+            playerManager.isKnockedOut = true;
+            SetJointsDriveForces(0, 0);
+
+            knockedOutTimer = playerManager.playerData.KOTime;
+            safenetKnockedOutTimer = playerManager.playerData.maxKOTime;
+
+            //Makes the player jump
+            AddForceToPlayer(Vector3.up * playerManager.playerData.upwardLandingForce, ForceMode.VelocityChange);
+
+            //Changes friction of the feet so that they don't slide around
+            playerManager.physicalFootMaterial.staticFriction = playerManager.playerData.idleFriction;
+            playerManager.physicalFootMaterial.dynamicFriction = playerManager.playerData.idleFriction;
+        }
+
+        private bool IsPlayerVelocityApproxZero()
+        {
+            return (Mathf.Abs(playerManager.physicalHips.velocity.magnitude) < .05f);
+        }
+
+        /// <summary>
+        /// Adds a force to all of the player's rigidbodies
+        /// </summary>
+        public void AddForceToPlayer(Vector3 force, ForceMode mode)
+        {
+            Rigidbody[] bodies = physicalHips.GetComponentsInChildren<Rigidbody>();
+
+            //Hips
+            physicalHips.AddForce(force, mode);
+
+            //Rest
+            foreach(Rigidbody rb in bodies) {
+                rb.AddForce(force, mode);
+            }
         }
 
         enum bodyParts
