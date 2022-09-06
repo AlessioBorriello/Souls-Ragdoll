@@ -107,8 +107,9 @@ namespace AlessioBorriello
             currentGravityForce = playerLocomotionManager.GetGravity(isOnGround);
             //Clamp
             if (Mathf.Abs(currentGravityForce.y) > Mathf.Abs(playerData.maxFallingSpeed)) currentGravityForce = new Vector3(currentGravityForce.x, -playerData.maxFallingSpeed, currentGravityForce.z);
-            
-            physicalHips.velocity += (currentGravityForce);
+
+            //physicalHips.velocity += (currentGravityForce);
+            ragdollManager.AddForceToPlayer(currentGravityForce, ForceMode.Acceleration);
 
         }
 

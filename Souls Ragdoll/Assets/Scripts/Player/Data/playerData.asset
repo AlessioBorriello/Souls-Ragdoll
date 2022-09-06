@@ -27,11 +27,11 @@ MonoBehaviour:
   groundCollisionLayers:
     serializedVersion: 2
     m_Bits: 64
-  baseGravityForce: 4.35
-  fallingSpeed: 23
+  baseGravityForce: 8
+  fallingSpeed: 42
   maxFallingSpeed: 50
   timeBeforeFalling: 0.32
-  knockoutLandThreshold: 1.15
+  knockoutLandThreshold: 1.35
   upwardLandingForce: 20
   backdashSpeedMultiplier: 3.1
   rollSpeedMultiplier: 2.2
