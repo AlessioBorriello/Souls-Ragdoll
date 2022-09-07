@@ -42,5 +42,6 @@ namespace AlessioBorriello
         [Header("KO")]
         public float KOTime = 3.6f; //The time the player will be ko for
         public float maxKOTime = 10f; //Max time the player can be ko for
+        public float wakeUpTime = .6f; //Time it takes for the player's body to wake up
     }
 }

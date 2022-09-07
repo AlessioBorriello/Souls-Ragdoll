@@ -15,6 +15,7 @@ namespace AlessioBorriello
         public ConfigurableJoint[] Joints { get; private set; } //Set of joints of the physical bones starting from the physical hips
         private Quaternion[] initialJointRotations; //Set of starting rotations of the joints
         private Collider[] Colliders; //Set of colliders of the joints
+        private Rigidbody[] Bodies; //Set of rigidbodies of the player
 
         private PlayerManager playerManager; //Player manager
         private Animator animator; //Animator of the animated character
@@ -22,11 +23,15 @@ namespace AlessioBorriello
         private float knockedOutTimer = 0;
         private float safenetKnockedOutTimer = 0; //Used to check if the player has been knocked out for too much
 
+        private float targetHipsForce;
+        private float targetJointForce;
+
         private void Awake()
         {
             if (AnimatedBones == null) AnimatedBones = animatedHips.GetComponentsInChildren<Transform>(); //Get transforms of the animated bones starting from the hips
             if (Joints == null) Joints = physicalHips.GetComponentsInChildren<ConfigurableJoint>(); //Get joints of the physical bones starting from the hips
             if (Colliders == null) Colliders = physicalHips.GetComponentsInChildren<Collider>(); //Get all the colliders
+            if(Bodies == null) Bodies = physicalHips.GetComponentsInChildren<Rigidbody>();
 
             Joints[0].configuredInWorldSpace = true;
 
@@ -39,11 +44,15 @@ namespace AlessioBorriello
             animator = GetComponentInChildren<Animator>(); //Get animator
             initialJointRotations = GetJointsStartingLocalRotations(Joints); //Get initial rotations of athe joints
 
-            SetJointsDriveForces(playerManager.playerData.hipsJointDriveForce, playerManager.playerData.jointDriveForce); //Set up joint drive forces
+            targetHipsForce = playerManager.playerData.hipsJointDriveForce;
+            targetJointForce = playerManager.playerData.jointDriveForce;
+
+            SetJointsDriveForces(targetHipsForce, targetJointForce); //Set up joint drive forces
         }
 
         private void Update()
         {
+
             HandleWakeUp();
 
         }
@@ -55,8 +64,28 @@ namespace AlessioBorriello
                             //SyncRotation();
         }
 
+        public IEnumerator SetJointsDriveForcesOverTime(float targetHipsForce, float targetJointForce, float time)
+        {
+
+            float timeElapsed = 0;
+            float startHipsForce = physicalHips.GetComponent<ConfigurableJoint>().angularXDrive.positionSpring;
+            float startJointForce = physicalHips.transform.GetChild(0).GetComponent<ConfigurableJoint>().angularXDrive.positionSpring;
+
+            while (timeElapsed < time)
+            {
+                //currentHipsForce = Mathf.Lerp(startHipsForce, targetHipsForce, timeElapsed / time);
+                //currentJointForce = Mathf.Lerp(startJointForce, targetJointForce, timeElapsed / time);
+                SetJointsDriveForces(Mathf.Lerp(startHipsForce, targetHipsForce, timeElapsed / time), Mathf.Lerp(startJointForce, targetJointForce, timeElapsed / time));
+                timeElapsed += Time.deltaTime;
+                yield return null;
+            }
+            SetJointsDriveForces(targetHipsForce, targetJointForce);
+
+        }
+
         public void SetJointsDriveForces(float hipsForce, float jointForce)
         {
+
             //Set hips joint drive
             JointDrive jointDrive = new JointDrive(); //Create new drive
             jointDrive.maximumForce = float.PositiveInfinity; //Set the max force to infinite (It is set to 0 otherwise and the ragdoll falls)
@@ -207,7 +236,7 @@ namespace AlessioBorriello
 
             if (!playerManager.isKnockedOut) return;
 
-            if (IsPlayerVelocityApproxZero()) //If the player body has stopped
+            if (IsPlayerVelocityApproxZero(.08f)) //If the player body has stopped
             {
                 knockedOutTimer -= Time.deltaTime; //Decreases timer
                 if (knockedOutTimer <= 0) //If timer is up
@@ -232,7 +261,7 @@ namespace AlessioBorriello
         {
             //Wake up
             playerManager.isKnockedOut = false;
-            SetJointsDriveForces(playerManager.playerData.hipsJointDriveForce, playerManager.playerData.jointDriveForce);
+            StartCoroutine(SetJointsDriveForcesOverTime(playerManager.playerData.hipsJointDriveForce, playerManager.playerData.jointDriveForce, playerManager.playerData.wakeUpTime));
             knockedOutTimer = 0;
             safenetKnockedOutTimer = 0;
         }
@@ -256,9 +285,12 @@ namespace AlessioBorriello
             playerManager.physicalFootMaterial.dynamicFriction = playerManager.playerData.idleFriction;
         }
 
-        private bool IsPlayerVelocityApproxZero()
+        /// <summary>
+        /// Checks if the player's velocity is approx 0
+        /// </summary>
+        private bool IsPlayerVelocityApproxZero(float approximation)
         {
-            return (Mathf.Abs(playerManager.physicalHips.velocity.magnitude) < .05f);
+            return (Mathf.Abs(playerManager.physicalHips.velocity.magnitude) < approximation);
         }
 
         /// <summary>
@@ -266,13 +298,12 @@ namespace AlessioBorriello
         /// </summary>
         public void AddForceToPlayer(Vector3 force, ForceMode mode)
         {
-            Rigidbody[] bodies = physicalHips.GetComponentsInChildren<Rigidbody>();
 
             //Hips
             physicalHips.AddForce(force, mode);
 
             //Rest
-            foreach(Rigidbody rb in bodies) {
+            foreach(Rigidbody rb in Bodies) {
                 rb.AddForce(force, mode);
             }
         }
