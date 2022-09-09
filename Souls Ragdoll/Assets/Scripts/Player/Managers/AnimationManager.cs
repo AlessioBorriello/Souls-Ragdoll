@@ -6,6 +6,7 @@ namespace AlessioBorriello {
     public class AnimationManager : MonoBehaviour
     {
         [HideInInspector] public Animator animator;
+        [HideInInspector] public PlayerManager playerManager;
 
         int normalMovementAmount;
         int strafeMovementAmount;
@@ -13,6 +14,7 @@ namespace AlessioBorriello {
         public void Initialize()
         {
             animator = GetComponentInChildren<Animator>();
+            playerManager = GetComponent<PlayerManager>();
             normalMovementAmount = Animator.StringToHash("NormalMovementAmount");
             strafeMovementAmount = Animator.StringToHash("StrafeMovementAmount");
         }
@@ -25,9 +27,8 @@ namespace AlessioBorriello {
 
         }
 
-        public void PlayTargetAnimation(string targetAnimation, bool disablePlayerInteraction, float fadeDuration)
+        public void PlayTargetAnimation(string targetAnimation, float fadeDuration)
         {
-            animator.SetBool("DisablePlayerInteraction", disablePlayerInteraction);
             animator.CrossFade(targetAnimation, fadeDuration);
         }
 

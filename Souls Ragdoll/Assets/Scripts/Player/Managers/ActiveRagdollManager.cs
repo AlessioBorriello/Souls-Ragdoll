@@ -40,7 +40,7 @@ namespace AlessioBorriello
 
         private void Start()
         {
-            playerManager = GetComponentInParent<PlayerManager>(); //Get player manager
+            playerManager = GetComponent<PlayerManager>(); //Get player manager
             animator = GetComponentInChildren<Animator>(); //Get animator
             initialJointRotations = GetJointsStartingLocalRotations(Joints); //Get initial rotations of athe joints
 
@@ -241,7 +241,7 @@ namespace AlessioBorriello
                 knockedOutTimer -= Time.deltaTime; //Decreases timer
                 if (knockedOutTimer <= 0) //If timer is up
                 {
-                    WakeUp(); //Wake up
+                    WakeUp(playerManager.playerData.wakeUpTime); //Wake up
                 }
             }
             else //The player's body has moved
@@ -250,18 +250,18 @@ namespace AlessioBorriello
             }
 
             safenetKnockedOutTimer -= Time.deltaTime;
-            if(safenetKnockedOutTimer <= 0) WakeUp(); //Safety net wake up
+            if(safenetKnockedOutTimer <= 0) WakeUp(playerManager.playerData.wakeUpTime); //Safety net wake up
 
         }
 
         /// <summary>
         /// Wake the player up
         /// </summary>
-        public void WakeUp()
+        public void WakeUp(float time)
         {
             //Wake up
             playerManager.isKnockedOut = false;
-            StartCoroutine(SetJointsDriveForcesOverTime(playerManager.playerData.hipsJointDriveForce, playerManager.playerData.jointDriveForce, playerManager.playerData.wakeUpTime));
+            StartCoroutine(SetJointsDriveForcesOverTime(playerManager.playerData.hipsJointDriveForce, playerManager.playerData.jointDriveForce, time));
             knockedOutTimer = 0;
             safenetKnockedOutTimer = 0;
         }
@@ -276,9 +276,6 @@ namespace AlessioBorriello
 
             knockedOutTimer = playerManager.playerData.KOTime;
             safenetKnockedOutTimer = playerManager.playerData.maxKOTime;
-
-            //Makes the player jump
-            AddForceToPlayer(Vector3.up * playerManager.playerData.upwardLandingForce, ForceMode.VelocityChange);
 
             //Changes friction of the feet so that they don't slide around
             playerManager.physicalFootMaterial.staticFriction = playerManager.playerData.idleFriction;

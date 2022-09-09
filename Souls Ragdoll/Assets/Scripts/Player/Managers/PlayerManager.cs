@@ -44,6 +44,9 @@ namespace AlessioBorriello
 
             cameraTransform = Camera.main.transform;
             cameraManager = Camera.main.GetComponentInParent<CameraManager>();
+
+            //typeof(PlayerManager).GetField("isRolling").SetValue(playerManager, true)
+
         }
 
         private void FixedUpdate()
@@ -51,6 +54,7 @@ namespace AlessioBorriello
             //Move player with animation
             MovePlayerWithAnimation(currentSpeedMultiplier);
             ApplyGravity();
+
         }
 
         private void Update()
@@ -72,22 +76,11 @@ namespace AlessioBorriello
             playerLocomotionManager.CheckIfOnGround();
             playerLocomotionManager.HandleFallingAndLanding();
 
-            //Reset flags
-            ResetFlags();
-
-            disablePlayerInteraction = animationManager.animator.GetBool("DisablePlayerInteraction");
-
         }
 
         private void LateUpdate()
         {
             cameraManager.HandleCamera(inputManager.cameraInput);
-        }
-
-        private void ResetFlags()
-        {
-            isRolling = false;
-            isBackdashing = false;
         }
 
         /// <summary>

@@ -85,13 +85,11 @@ namespace AlessioBorriello
 
             if (playerManager.inputManager.eastInputReleased && rollTimer < playerManager.playerData.sprintThreshold)
             {
-                if (playerManager.inputManager.movementInput.magnitude > 0) playerManager.isRolling = true;
-                else playerManager.isBackdashing = true;
+                if (playerManager.inputManager.movementInput.magnitude > 0) Roll();
+                else Backdash();
             }
 
-            if (playerManager.isRolling) Roll();
-            else if (playerManager.isBackdashing) Backdash();
-            else if (playerManager.isSprinting) Sprint();
+            if (playerManager.isSprinting) Sprint();
 
             if (playerManager.inputManager.eastInputReleased)
             {
@@ -110,15 +108,24 @@ namespace AlessioBorriello
             if (!playerManager.isOnGround && inAirTimer > playerManager.playerData.timeBeforeFalling)
             {
                 playerManager.canRotate = false;
-                playerManager.animationManager.PlayTargetAnimation("Fall", false, .2f);
+                playerManager.animationManager.PlayTargetAnimation("Fall", .2f);
             }
 
             //Land
             if (playerManager.isOnGround && inAirTimer > 0)
             {
                 playerManager.canRotate = true;
-                playerManager.animationManager.PlayTargetAnimation("Movement", false, .2f);
-                if(!playerManager.isKnockedOut && inAirTimer > playerManager.playerData.knockoutLandThreshold) playerManager.ragdollManager.KnockOut();
+                playerManager.animationManager.PlayTargetAnimation("Movement", .2f);
+                if (!playerManager.isKnockedOut && inAirTimer > playerManager.playerData.knockoutLandThreshold)
+                {
+                    //Knock out
+                    playerManager.ragdollManager.KnockOut();
+
+                    //Makes the player bounce based on in air time (clamp at times 3)
+                    Vector3 bounce = Vector3.up * playerManager.playerData.upwardLandingForce * ((inAirTimer < 3) ? inAirTimer : 3);
+                    playerManager.ragdollManager.AddForceToPlayer(bounce, ForceMode.VelocityChange);
+                }
+
                 inAirTimer = 0;
             }
         }
@@ -129,7 +136,7 @@ namespace AlessioBorriello
         private void Roll()
         {
             playerManager.currentSpeedMultiplier = playerManager.playerData.rollSpeedMultiplier;
-            playerManager.animationManager.PlayTargetAnimation("Roll", true, .2f);
+            playerManager.animationManager.PlayTargetAnimation("Roll", .2f);
         }
 
         /// <summary>
@@ -138,7 +145,7 @@ namespace AlessioBorriello
         private void Backdash()
         {
             playerManager.currentSpeedMultiplier = playerManager.playerData.backdashSpeedMultiplier;
-            playerManager.animationManager.PlayTargetAnimation("Backdash", true, .2f);
+            playerManager.animationManager.PlayTargetAnimation("Backdash", .2f);
         }
 
         /// <summary>

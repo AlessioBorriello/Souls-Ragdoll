@@ -10,11 +10,14 @@ public class Pendulum : MonoBehaviour
     [SerializeField] float speed = 2f;
 
     private float elapsedTime;
+    private Vector3 startingEuler;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         elapsedTime = phaseStart;
+
+        startingEuler = rb.transform.eulerAngles;
     }
 
     void FixedUpdate()
@@ -26,6 +29,6 @@ public class Pendulum : MonoBehaviour
     {
         elapsedTime += Time.deltaTime;
         float angle = maxAngleDeflection * Mathf.Sin(elapsedTime * speed);
-        rb.MoveRotation(Quaternion.Euler(angle, 0, 0));
+        rb.MoveRotation(Quaternion.Euler(startingEuler.x + angle, startingEuler.y, startingEuler.z));
     }
 }

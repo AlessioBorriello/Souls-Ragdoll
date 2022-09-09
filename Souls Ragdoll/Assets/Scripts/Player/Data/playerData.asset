@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 535a02da224185e4cba919cb828fc6d7, type: 3}
   m_Name: playerData
   m_EditorClassIdentifier: 
-  hipsJointDriveForce: 900
+  hipsJointDriveForce: 950
   jointDriveForce: 650
-  walkSpeedMultiplier: 1.7
-  runSpeedMultiplier: 1.95
-  sprintSpeedMultiplier: 2.1
+  walkSpeedMultiplier: 1.6
+  runSpeedMultiplier: 1.75
+  sprintSpeedMultiplier: 2.15
   sprintThreshold: 0.4
   rotationSpeed: 10
   inAirRotationSpeed: 4
@@ -27,13 +27,14 @@ MonoBehaviour:
   groundCollisionLayers:
     serializedVersion: 2
     m_Bits: 64
-  baseGravityForce: 8
+  baseGravityForce: 8.2
   fallingSpeed: 42
-  maxFallingSpeed: 50
+  maxFallingSpeed: 100
   timeBeforeFalling: 0.32
   knockoutLandThreshold: 1.35
-  upwardLandingForce: 20
-  backdashSpeedMultiplier: 3.1
-  rollSpeedMultiplier: 2.2
-  KOTime: 3.3
-  maxKOTime: 10
+  upwardLandingForce: 10
+  backdashSpeedMultiplier: 3.3
+  rollSpeedMultiplier: 2.3
+  KOTime: 3.2
+  maxKOTime: 15
+  wakeUpTime: 0.6

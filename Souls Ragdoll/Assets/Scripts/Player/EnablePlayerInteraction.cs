@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnablePlayerInteraction : StateMachineBehaviour
+namespace AlessioBorriello
 {
-    public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    public class EnablePlayerInteraction : StateMachineBehaviour
     {
-        animator.SetBool("DisablePlayerInteraction", false);
+        public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            animator.SetBool("DisablePlayerInteraction", false);
+        }
     }
 }
