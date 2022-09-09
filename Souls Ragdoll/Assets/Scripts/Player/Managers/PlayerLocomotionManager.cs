@@ -30,6 +30,7 @@ namespace AlessioBorriello
         {
 
             playerManager.currentSpeedMultiplier = GetMovementSpeedMultiplier();
+            playerManager.currentRotationSpeedMultiplier = GetRotationSpeedMultiplier();
             float moveAmount = GetClampedMovementAmount(playerManager.inputManager.movementInput.magnitude);
             playerManager.animationManager.UpdateMovementAnimatorValues(moveAmount, 0);
             HandleFootFriction();
@@ -107,14 +108,12 @@ namespace AlessioBorriello
             //Fall
             if (!playerManager.isOnGround && inAirTimer > playerManager.playerData.timeBeforeFalling)
             {
-                playerManager.canRotate = false;
                 playerManager.animationManager.PlayTargetAnimation("Fall", .2f);
             }
 
             //Land
             if (playerManager.isOnGround && inAirTimer > 0)
             {
-                playerManager.canRotate = true;
                 playerManager.animationManager.PlayTargetAnimation("Movement", .2f);
                 if (!playerManager.isKnockedOut && inAirTimer > playerManager.playerData.knockoutLandThreshold)
                 {
@@ -124,6 +123,7 @@ namespace AlessioBorriello
                     //Makes the player bounce based on in air time (clamp at times 3)
                     Vector3 bounce = Vector3.up * playerManager.playerData.upwardLandingForce * ((inAirTimer < 3) ? inAirTimer : 3);
                     playerManager.ragdollManager.AddForceToPlayer(bounce, ForceMode.VelocityChange);
+                    playerManager.movementDirection = Vector3.zero;
                 }
 
                 inAirTimer = 0;
@@ -175,7 +175,7 @@ namespace AlessioBorriello
             movementDirection.y = 0; //Remove y component from the vector (Y component of the vector from the camera should be ignored)
             movementDirection = Vector3.ProjectOnPlane(movementDirection, (playerManager.isOnGround) ? playerManager.groundNormal : Vector3.up); //Project for sloped ground
 
-            if (playerManager.inputManager.movementInput.magnitude == 0) return playerManager.animatedPlayer.transform.forward; //If not moving return the forward
+            if (playerManager.inputManager.movementInput.magnitude == 0) return Vector3.ProjectOnPlane(playerManager.animatedPlayer.transform.forward, Vector3.up); //If not moving return the forward
 
             return movementDirection;
         }
@@ -193,6 +193,22 @@ namespace AlessioBorriello
             }
 
             return speedMultiplier;
+
+        }
+
+        /// <summary>
+        /// Calculate the player's rotation speed multiplier based on various factors
+        /// </summary>
+        private float GetRotationSpeedMultiplier()
+        {
+
+            float rotationMultiplier = playerManager.playerData.rotationSpeed;
+            if (!playerManager.isOnGround)
+            {
+                rotationMultiplier = playerManager.playerData.inAirRotationSpeed;
+            }
+
+            return rotationMultiplier;
 
         }
 

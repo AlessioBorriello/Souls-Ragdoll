@@ -20,6 +20,7 @@ namespace AlessioBorriello
         [HideInInspector] public ActiveRagdollManager ragdollManager;
 
         public float currentSpeedMultiplier;
+        public float currentRotationSpeedMultiplier;
         public Vector3 currentGravityForce;
         public Vector3 groundNormal;
         public Vector3 movementDirection;
@@ -45,8 +46,6 @@ namespace AlessioBorriello
             cameraTransform = Camera.main.transform;
             cameraManager = Camera.main.GetComponentInParent<CameraManager>();
 
-            //typeof(PlayerManager).GetField("isRolling").SetValue(playerManager, true)
-
         }
 
         private void FixedUpdate()
@@ -64,11 +63,10 @@ namespace AlessioBorriello
             inputManager.TickCameraMovementInput();
             inputManager.TickActionsInput();
 
-
-            //Movement and animation logic
-            if(!disablePlayerInteraction && !isKnockedOut)
+            //Movement, animation logic
+            if (!disablePlayerInteraction)
             {
-                if (canRotate) playerLocomotionManager.HandleMovementRotation(playerData.rotationSpeed);
+                if (canRotate) playerLocomotionManager.HandleMovementRotation(currentRotationSpeedMultiplier);
                 playerLocomotionManager.HandleMovement();
                 playerLocomotionManager.HandleRollingAndSprinting();
             }

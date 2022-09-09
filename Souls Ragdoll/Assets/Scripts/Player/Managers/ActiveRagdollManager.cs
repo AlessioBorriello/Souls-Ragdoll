@@ -261,7 +261,9 @@ namespace AlessioBorriello
         {
             //Wake up
             playerManager.isKnockedOut = false;
+            playerManager.disablePlayerInteraction = false;
             StartCoroutine(SetJointsDriveForcesOverTime(playerManager.playerData.hipsJointDriveForce, playerManager.playerData.jointDriveForce, time));
+
             knockedOutTimer = 0;
             safenetKnockedOutTimer = 0;
         }
@@ -272,6 +274,7 @@ namespace AlessioBorriello
         public void KnockOut()
         {
             playerManager.isKnockedOut = true;
+            playerManager.disablePlayerInteraction = true;
             SetJointsDriveForces(0, 0);
 
             knockedOutTimer = playerManager.playerData.KOTime;

@@ -19,10 +19,10 @@ MonoBehaviour:
   sprintSpeedMultiplier: 2.15
   sprintThreshold: 0.4
   rotationSpeed: 10
-  inAirRotationSpeed: 4
+  inAirRotationSpeed: 2
   maxSlopeAngle: 35
   movingFriction: 0
-  idleFriction: 0.5
+  idleFriction: 0.4
   minDistanceToFall: 0.8
   groundCollisionLayers:
     serializedVersion: 2
@@ -32,7 +32,7 @@ MonoBehaviour:
   maxFallingSpeed: 100
   timeBeforeFalling: 0.32
   knockoutLandThreshold: 1.35
-  upwardLandingForce: 10
+  upwardLandingForce: 18
   backdashSpeedMultiplier: 3.3
   rollSpeedMultiplier: 2.3
   KOTime: 3.2
