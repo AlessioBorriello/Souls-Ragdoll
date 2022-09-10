@@ -233,13 +233,15 @@ namespace AlessioBorriello
             Vector3 pos = playerManager.groundCheckTransform.position;
 
             //Cast a ray downwards from the player's hips position
-            if (Physics.Raycast(pos, Vector3.down, out hit, Mathf.Infinity, playerManager.playerData.groundCollisionLayers))
+            if (Physics.SphereCast(pos, .1f, Vector3.down, out hit, Mathf.Infinity, playerManager.playerData.groundCollisionLayers))
             {
 
                 if (hit.distance < playerManager.playerData.minDistanceToFall && Vector3.Angle(Vector3.up, hit.normal) < playerManager.playerData.maxSlopeAngle) playerManager.isOnGround = true;
                 else (playerManager.isOnGround) = false;
 
                 playerManager.groundNormal = hit.normal;
+
+                playerManager.groundDistance = hit.distance;
             }
             else
             {
@@ -254,24 +256,19 @@ namespace AlessioBorriello
         {
             float delta = Time.deltaTime;
 
-            //Base gravity (only if not ko'd)
-            Vector3 gravityForce = Vector3.down * playerManager.playerData.baseGravityForce * ((playerManager.isKnockedOut)? 0 : 1);
-
-            Vector3 additionalGravityForce = Vector3.zero;
+            Vector3 gravityForce = Vector3.zero;
             //Increase in air timer
             if (!isOnGround)
             {
                 //Apply more downwards force when not on the ground based on the in air timer
-                additionalGravityForce += Vector3.down * (playerManager.playerData.fallingSpeed * inAirTimer);
+                gravityForce += Vector3.down * (playerManager.playerData.fallingSpeed * inAirTimer);
                 inAirTimer += delta;
             }
             else
             {
-                additionalGravityForce = Vector3.zero;
+                gravityForce = Vector3.zero;
                 inAirTimer = 0;
             }
-
-            gravityForce += additionalGravityForce;
 
             return gravityForce;
         }

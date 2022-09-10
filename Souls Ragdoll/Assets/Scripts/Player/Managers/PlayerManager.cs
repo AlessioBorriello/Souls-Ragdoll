@@ -21,8 +21,9 @@ namespace AlessioBorriello
 
         public float currentSpeedMultiplier;
         public float currentRotationSpeedMultiplier;
-        public Vector3 currentGravityForce;
+        public Vector3 additionalGravityForce;
         public Vector3 groundNormal;
+        public float groundDistance;
         public Vector3 movementDirection;
 
         //Flags
@@ -50,9 +51,9 @@ namespace AlessioBorriello
 
         private void FixedUpdate()
         {
-            //Move player with animation
-            MovePlayerWithAnimation(currentSpeedMultiplier);
+            //Move player with animation (Order is important for some reason)
             ApplyGravity();
+            MovePlayerWithAnimation(currentSpeedMultiplier);
 
         }
 
@@ -87,7 +88,6 @@ namespace AlessioBorriello
         private void MovePlayerWithAnimation(float speedMultiplier)
         {
             if (isKnockedOut) return;
-
             physicalHips.velocity = Vector3.ProjectOnPlane(animationManager.animator.velocity * speedMultiplier, groundNormal);
 
         }
@@ -95,12 +95,12 @@ namespace AlessioBorriello
         private void ApplyGravity()
         {
 
-            currentGravityForce = playerLocomotionManager.GetGravity(isOnGround);
-            //Clamp
-            if (Mathf.Abs(currentGravityForce.y) > Mathf.Abs(playerData.maxFallingSpeed)) currentGravityForce = new Vector3(currentGravityForce.x, -playerData.maxFallingSpeed, currentGravityForce.z);
+            //Base gravity
+            ragdollManager.AddForceToPlayer(Vector3.down * playerData.baseGravityForce * ((isKnockedOut) ? 0 : 1), ForceMode.Acceleration);
 
-            //physicalHips.velocity += (currentGravityForce);
-            ragdollManager.AddForceToPlayer(currentGravityForce, ForceMode.Acceleration);
+            //Add additional gravity force if not too fast
+            additionalGravityForce = playerLocomotionManager.GetGravity(isOnGround);
+            if (Mathf.Abs(physicalHips.velocity.y) < playerData.maxFallingSpeed) ragdollManager.AddForceToPlayer(additionalGravityForce, ForceMode.Acceleration);
 
         }
 
