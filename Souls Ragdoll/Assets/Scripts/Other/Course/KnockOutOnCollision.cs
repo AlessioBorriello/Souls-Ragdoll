@@ -6,19 +6,16 @@ namespace AlessioBorriello
 {
     public class KnockOutOnCollision : MonoBehaviour
     {
+
+        public float forceToKnockOut = 40;
         private void OnCollisionEnter(Collision collision)
         {
             if (collision.collider.CompareTag("Player"))
             {
                 PlayerManager playerManager = collision.collider.GetComponentInParent<PlayerManager>(); //Get player manager
-                KnockOutResistance knockOutResistanceComponent = collision.collider.GetComponent<KnockOutResistance>(); //Get knockout resistance component of the body part
-                if (playerManager != null && knockOutResistanceComponent != null)
+                if (collision.impulse.magnitude > forceToKnockOut)
                 {
-                    float resistance = knockOutResistanceComponent.knockOutResistance; //Get resistance of that body part
-                    if (collision.impulse.magnitude > resistance)
-                    {
-                        playerManager.ragdollManager.KnockOut();
-                    }
+                    playerManager.ragdollManager.KnockOut();
                 }
             }
         }

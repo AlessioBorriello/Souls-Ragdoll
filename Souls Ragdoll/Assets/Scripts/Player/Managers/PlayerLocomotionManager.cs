@@ -115,16 +115,9 @@ namespace AlessioBorriello
             if (playerManager.isOnGround && inAirTimer > 0)
             {
                 playerManager.animationManager.PlayTargetAnimation("Movement", .2f);
-                if (!playerManager.isKnockedOut && inAirTimer > playerManager.playerData.knockoutLandThreshold)
-                {
-                    //Knock out
-                    playerManager.ragdollManager.KnockOut();
 
-                    //Makes the player bounce based on in air time (clamp at times 3)
-                    Vector3 bounce = Vector3.up * playerManager.playerData.upwardLandingForce * ((inAirTimer < 3) ? inAirTimer : 3);
-                    playerManager.ragdollManager.AddForceToPlayer(bounce, ForceMode.VelocityChange);
-                    playerManager.movementDirection = Vector3.zero;
-                }
+                //Knock out
+                if (!playerManager.isKnockedOut && inAirTimer > playerManager.playerData.knockoutLandThreshold) playerManager.ragdollManager.KnockOut();
 
                 inAirTimer = 0;
             }

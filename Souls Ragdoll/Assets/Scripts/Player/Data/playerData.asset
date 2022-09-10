@@ -22,7 +22,7 @@ MonoBehaviour:
   inAirRotationSpeed: 2
   maxSlopeAngle: 35
   movingFriction: 0
-  idleFriction: 0.4
+  idleFriction: 0.5
   minDistanceToFall: 0.8
   groundCollisionLayers:
     serializedVersion: 2
@@ -31,10 +31,19 @@ MonoBehaviour:
   fallingSpeed: 42
   maxFallingSpeed: 100
   timeBeforeFalling: 0.32
-  knockoutLandThreshold: 1.35
-  upwardLandingForce: 18
+  knockoutLandThreshold: 1.45
   backdashSpeedMultiplier: 3.3
   rollSpeedMultiplier: 2.3
   KOTime: 3.2
   maxKOTime: 15
   wakeUpTime: 0.6
+  hipResistance: 120
+  legResistance: 200
+  shinResistance: 250
+  footResistance: 350
+  torsoResistance: 120
+  armResistance: 180
+  forearmResistance: 220
+  handResistance: 300
+  neckResistance: 100
+  headResistance: 100

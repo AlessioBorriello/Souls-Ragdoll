@@ -190,40 +190,40 @@ namespace AlessioBorriello
         private void SetupColliders()
         {
             //Hips
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Hip], Colliders[(int)bodyParts.Legl]); //Hip and Leg.l
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Hip], Colliders[(int)bodyParts.Legr]); //Hip and Leg.r
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Hip], Colliders[(int)bodyParts.Torso]); //Hip and Torso
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Hip], Colliders[(int)bodyParts.Arml]); //Hip and Arm.l
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Hip], Colliders[(int)bodyParts.Armr]); //Hip and Arm.r
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Hip], Colliders[(int)bodyParts.Forearml]); //Hip and Forearm.l
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Hip], Colliders[(int)bodyParts.Forearmr]); //Hip and Forearm.r
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Legl]); //Hip and Leg.l
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Legr]); //Hip and Leg.r
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Torso]); //Hip and Torso
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Arml]); //Hip and Arm.l
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Armr]); //Hip and Arm.r
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Forearml]); //Hip and Forearm.l
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Forearmr]); //Hip and Forearm.r
 
             //Left leg
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Legl], Colliders[(int)bodyParts.Shinl]); //Leg.l and Shin.l
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Shinl], Colliders[(int)bodyParts.Footl]); //Shin.l and Foot.l
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Legl], Colliders[(int)BodyParts.Shinl]); //Leg.l and Shin.l
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Shinl], Colliders[(int)BodyParts.Footl]); //Shin.l and Foot.l
 
             //Right leg
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Legr], Colliders[(int)bodyParts.Shinr]); //Leg.r and Shin.r
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Shinr], Colliders[(int)bodyParts.Footr]); //Shin.r and Foot.r
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Legr], Colliders[(int)BodyParts.Shinr]); //Leg.r and Shin.r
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Shinr], Colliders[(int)BodyParts.Footr]); //Shin.r and Foot.r
 
             //Torso
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Torso], Colliders[(int)bodyParts.Arml]); //Torso and Arm.l
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Torso], Colliders[(int)bodyParts.Armr]); //Torso and Arm.r
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Torso], Colliders[(int)bodyParts.Neck]); //Torso and Neck
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Torso], Colliders[(int)bodyParts.Head]); //Torso and Head
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Torso], Colliders[(int)bodyParts.Forearml]); //Torso and Forearm.l
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Torso], Colliders[(int)bodyParts.Forearmr]); //Torso and Forearm.r
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Arml]); //Torso and Arm.l
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Armr]); //Torso and Arm.r
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Neck]); //Torso and Neck
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Head]); //Torso and Head
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Forearml]); //Torso and Forearm.l
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Forearmr]); //Torso and Forearm.r
 
             //Left arm
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Arml], Colliders[(int)bodyParts.Forearml]); //Arm.l and Forearm.l
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Forearml], Colliders[(int)bodyParts.Handl]); //Forearm.l and Hand.l
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Arml], Colliders[(int)BodyParts.Forearml]); //Arm.l and Forearm.l
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Forearml], Colliders[(int)BodyParts.Handl]); //Forearm.l and Hand.l
 
             //Right arm
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Armr], Colliders[(int)bodyParts.Forearmr]); //Arm.r and Forearm.r
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Forearmr], Colliders[(int)bodyParts.Handr]); //Forearm.r and Hand.r
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Armr], Colliders[(int)BodyParts.Forearmr]); //Arm.r and Forearm.r
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Forearmr], Colliders[(int)BodyParts.Handr]); //Forearm.r and Hand.r
 
             //Neck
-            Physics.IgnoreCollision(Colliders[(int)bodyParts.Neck], Colliders[(int)bodyParts.Head]); //Neck and Head
+            Physics.IgnoreCollision(Colliders[(int)BodyParts.Neck], Colliders[(int)BodyParts.Head]); //Neck and Head
         }
 
         /// <summary>
@@ -271,11 +271,13 @@ namespace AlessioBorriello
         /// <summary>
         /// Knockout the player, set the joint drive forces to 0
         /// </summary>
-        public void KnockOut()
+        public void KnockOut(float time = 0)
         {
             playerManager.isKnockedOut = true;
             playerManager.disablePlayerInteraction = true;
-            SetJointsDriveForces(0, 0);
+
+            if (time == 0) SetJointsDriveForces(0, 0);
+            else SetJointsDriveForcesOverTime(0, 0, time);
 
             knockedOutTimer = playerManager.playerData.KOTime;
             safenetKnockedOutTimer = playerManager.playerData.maxKOTime;
@@ -308,25 +310,25 @@ namespace AlessioBorriello
             }
         }
 
-        enum bodyParts
-        {
-            Hip,
-            Legl,
-            Shinl,
-            Footl,
-            Legr,
-            Shinr,
-            Footr,
-            Torso,
-            Arml,
-            Forearml,
-            Handl,
-            Armr,
-            Forearmr,
-            Handr,
-            Neck,
-            Head
-        }
+    }
 
+    public enum BodyParts
+    {
+        Hip,
+        Legl,
+        Shinl,
+        Footl,
+        Legr,
+        Shinr,
+        Footr,
+        Torso,
+        Arml,
+        Forearml,
+        Handl,
+        Armr,
+        Forearmr,
+        Handr,
+        Neck,
+        Head
     }
 }

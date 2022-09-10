@@ -203,7 +203,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 6
 --- !u!1 &832555628800258142
 GameObject:
   m_ObjectHideFlags: 0
@@ -378,7 +379,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 4
 --- !u!1 &898511514259131470
 GameObject:
   m_ObjectHideFlags: 0
@@ -553,7 +555,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 9
 --- !u!1 &901875263798415089
 GameObject:
   m_ObjectHideFlags: 0
@@ -728,7 +731,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 2
 --- !u!1 &1551125084525852751
 GameObject:
   m_ObjectHideFlags: 0
@@ -902,7 +906,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 14
 --- !u!1 &2112101235852336675
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,7 +1082,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 11
 --- !u!1 &2217555874117158559
 GameObject:
   m_ObjectHideFlags: 0
@@ -1699,6 +1705,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 0}
+  playerManager: {fileID: 0}
 --- !u!114 &1332648215203446742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1735,6 +1742,7 @@ MonoBehaviour:
   playerLocomotionManager: {fileID: 0}
   ragdollManager: {fileID: 0}
   currentSpeedMultiplier: 0
+  currentRotationSpeedMultiplier: 0
   currentGravityForce: {x: 0, y: 0, z: 0}
   groundNormal: {x: 0, y: 0, z: 0}
   movementDirection: {x: 0, y: 0, z: 0}
@@ -2112,7 +2120,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 8
 --- !u!1 &4841896455486392241
 GameObject:
   m_ObjectHideFlags: 0
@@ -2125,6 +2134,7 @@ GameObject:
   - component: {fileID: 3193748364022854742}
   - component: {fileID: 3193748364022854776}
   - component: {fileID: 4841896455486392246}
+  - component: {fileID: 63049233358653822}
   m_Layer: 7
   m_Name: Hip
   m_TagString: Player
@@ -2275,6 +2285,20 @@ ConfigurableJoint:
   m_EnablePreprocessing: 1
   m_MassScale: 1
   m_ConnectedMassScale: 1
+--- !u!114 &63049233358653822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4841896455486392241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  knockOutResistance: 100
+  bodyPart: 0
 --- !u!1 &4991602508117447578
 GameObject:
   m_ObjectHideFlags: 0
@@ -2447,7 +2471,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 3
 --- !u!1 &5618204571016939894
 GameObject:
   m_ObjectHideFlags: 0
@@ -2655,7 +2680,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 7
 --- !u!1 &5988953842230987342
 GameObject:
   m_ObjectHideFlags: 0
@@ -2830,7 +2856,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 5
 --- !u!1 &7557147028816889928
 GameObject:
   m_ObjectHideFlags: 0
@@ -3005,7 +3032,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 1
 --- !u!1 &7663901106103341490
 GameObject:
   m_ObjectHideFlags: 0
@@ -3178,7 +3206,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 10
 --- !u!1 &8762011960868275700
 GameObject:
   m_ObjectHideFlags: 0
@@ -3351,7 +3380,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 13
 --- !u!1 &8765358998932587038
 GameObject:
   m_ObjectHideFlags: 0
@@ -3627,7 +3657,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 12
 --- !u!1 &9153895873805401105
 GameObject:
   m_ObjectHideFlags: 0
@@ -3800,4 +3831,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8c99b2de77a2d246aa5326d8f9657b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  knockOutResistance: 20
+  knockOutResistance: 100
+  bodyPart: 15

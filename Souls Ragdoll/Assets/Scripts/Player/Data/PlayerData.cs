@@ -33,7 +33,6 @@ namespace AlessioBorriello
         public float maxFallingSpeed = 34f; //Max magnitude of the velocity when falling
         public float timeBeforeFalling = .2f; //Time that the player must stay in air for before he starts the falling "state"
         public float knockoutLandThreshold = 1.8f; //Time the player can fall before being ko's when landing
-        public float upwardLandingForce = 20f; //When the player gets knocked out this force is applied to the body to make it "jump"
 
         [Header("Roll and Backdash")]
         public float backdashSpeedMultiplier = 1f; //Velocity multiplier when backdashing
@@ -43,5 +42,17 @@ namespace AlessioBorriello
         public float KOTime = 3.6f; //The time the player will be ko for
         public float maxKOTime = 10f; //Max time the player can be ko for
         public float wakeUpTime = .6f; //Time it takes for the player's body to wake up
+
+        [Header("KO Resistances")]
+        public float hipResistance = 120;
+        public float legResistance = 200;
+        public float shinResistance = 250;
+        public float footResistance = 350;
+        public float torsoResistance = 120;
+        public float armResistance = 180;
+        public float forearmResistance = 220;
+        public float handResistance = 300;
+        public float neckResistance = 150;
+        public float headResistance = 80;
     }
 }
