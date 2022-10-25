@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75ded9796cd96854e8715302b4aa6811, type: 3}
-  m_Name: Short Sword
+  m_Name: Spear
   m_EditorClassIdentifier: 
-  nameString: Short Sword
+  nameString: Spear
   iconSprite: {fileID: 0}
-  descriptionText: A simple metal short sword
-  modelPrefab: {fileID: 4952564604112304397, guid: bdebf87f5321f7a49a5772d92cd098fe, type: 3}
+  descriptionText: A wooden spear
+  modelPrefab: {fileID: 7847242577517675049, guid: 088e115252c9b494fb9b151c2c7dd5f7, type: 3}

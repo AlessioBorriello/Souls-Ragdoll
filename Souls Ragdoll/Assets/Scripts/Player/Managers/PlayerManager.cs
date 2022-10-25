@@ -18,6 +18,7 @@ namespace AlessioBorriello
         [HideInInspector] public AnimationManager animationManager;
         [HideInInspector] public PlayerLocomotionManager playerLocomotionManager;
         [HideInInspector] public ActiveRagdollManager ragdollManager;
+        [HideInInspector] public PlayerInventoryManager inventoryManager;
 
         public float currentSpeedMultiplier;
         public float currentRotationSpeedMultiplier;
@@ -43,6 +44,7 @@ namespace AlessioBorriello
             animationManager.Initialize();
             playerLocomotionManager = GetComponent<PlayerLocomotionManager>();
             ragdollManager = GetComponentInChildren<ActiveRagdollManager>();
+            inventoryManager = GetComponentInChildren<PlayerInventoryManager>();
 
             cameraTransform = Camera.main.transform;
             cameraManager = Camera.main.GetComponentInParent<CameraManager>();
