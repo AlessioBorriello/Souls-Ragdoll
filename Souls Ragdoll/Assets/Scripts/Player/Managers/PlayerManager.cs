@@ -76,6 +76,7 @@ namespace AlessioBorriello
 
             playerLocomotionManager.CheckIfOnGround();
             playerLocomotionManager.HandleFallingAndLanding();
+
         }
 
         private void LateUpdate()

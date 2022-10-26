@@ -1860,8 +1860,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c417bd3b8fddc4cabd274d720bc63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentRightItem: {fileID: 0}
-  currentLeftItem: {fileID: 0}
+  numberOfSlots: 2
+  rightHandItems: []
+  leftHandItems: []
+  testWeapon: {fileID: 11400000, guid: 47d20fcc74c7319499117cec8edcc7f6, type: 2}
+  testShield: {fileID: 0}
 --- !u!1 &2217555876070721501
 GameObject:
   m_ObjectHideFlags: 0

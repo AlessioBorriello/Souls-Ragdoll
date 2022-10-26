@@ -9,11 +9,25 @@ namespace AlessioBorriello
 
         private PlayerManager playerManager;
 
-        public HandEquippableItem currentRightItem;
-        public HandEquippableItem currentLeftItem;
+        public int numberOfSlots = 2;
+        public HandEquippableItem[] rightHandItems;
+        public HandEquippableItem[] leftHandItems;
+
+        private int currentRightHandItem = 0;
+        private int currentLeftHandItem = 0;
 
         private HandItemHolder leftHolder;
         private HandItemHolder rightHolder;
+
+        public HandEquippableItem testWeapon;
+        public HandEquippableItem testShield;
+
+        private void Awake()
+        {
+            //Initialize hand slots
+            rightHandItems = new HandEquippableItem[numberOfSlots];
+            leftHandItems = new HandEquippableItem[numberOfSlots];
+        }
 
         private void Start()
         {
@@ -25,13 +39,21 @@ namespace AlessioBorriello
                 else rightHolder = itemHolder;
             }
 
+            rightHandItems[currentRightHandItem] = testWeapon;
+            leftHandItems[currentLeftHandItem] = testShield;
+
             //Load Items
-            LoadItemInSlot(currentLeftItem, true);
-            LoadItemInSlot(currentRightItem, false);
+            LoadItemInSlot(false);
+            LoadItemInSlot(true);
         }
 
-        public void LoadItemInSlot(HandEquippableItem item, bool loadOnLeft)
+        public void LoadItemInSlot(bool loadOnLeft)
         {
+
+            HandEquippableItem item = (loadOnLeft)? leftHandItems[currentLeftHandItem] : rightHandItems[currentRightHandItem];
+
+            if(item == null) return;
+
             if (loadOnLeft) leftHolder.LoadItemModel(item);
             else rightHolder.LoadItemModel(item);
         }

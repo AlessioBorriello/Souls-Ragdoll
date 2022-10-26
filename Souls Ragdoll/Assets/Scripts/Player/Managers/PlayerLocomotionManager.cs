@@ -53,12 +53,12 @@ namespace AlessioBorriello
         private Vector3 currentPos = Vector3.zero;
         private float tiltAmount = 0;
         /// <summary>
-        /// Tilts the player in the direction it's moving
+        /// Tilts the player in the direction it's moving when moving fast enough
         /// </summary>
         private void HandleTilt()
         {
             float speed = (playerManager.physicalHips.transform.position - currentPos).magnitude;
-            if (speed <= .085f || !playerManager.isOnGround)
+            if (speed <= playerManager.playerData.speedNeededToTilt || !playerManager.isOnGround)
             {
                 tiltAmount = 0;
                 return;
