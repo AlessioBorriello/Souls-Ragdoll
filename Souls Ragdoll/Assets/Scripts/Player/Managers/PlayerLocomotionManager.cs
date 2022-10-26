@@ -44,6 +44,37 @@ namespace AlessioBorriello
         {
             playerManager.movementDirection = GetMovementDirection();
             playerManager.animatedPlayer.transform.rotation = Quaternion.Slerp(playerManager.animatedPlayer.transform.rotation, Quaternion.LookRotation(playerManager.movementDirection), rotationSpeed * Time.deltaTime);
+            //
+
+            if(playerManager.playerData.tiltOnDirectionChange) HandleTilt();
+        }
+
+        private float currentDirectionAngle = 0;
+        private Vector3 currentPos = Vector3.zero;
+        private float tiltAmount = 0;
+        /// <summary>
+        /// Tilts the player in the direction it's moving
+        /// </summary>
+        private void HandleTilt()
+        {
+            float speed = (playerManager.physicalHips.transform.position - currentPos).magnitude;
+            if (speed <= .085f || !playerManager.isOnGround)
+            {
+                tiltAmount = 0;
+                return;
+            }
+
+            float angleDifference = Mathf.DeltaAngle(playerManager.physicalHips.rotation.eulerAngles.y, currentDirectionAngle);
+
+            tiltAmount = Mathf.Lerp(tiltAmount, angleDifference * speed * 10, Time.deltaTime * playerManager.playerData.tiltSpeed);
+            tiltAmount = Mathf.Clamp(tiltAmount, -playerManager.playerData.maxTiltAmount, playerManager.playerData.maxTiltAmount);
+
+            Quaternion tiltedRotation = Quaternion.AngleAxis(tiltAmount, playerManager.animatedPlayer.transform.forward) * playerManager.animatedPlayer.transform.rotation;
+            playerManager.animatedPlayer.transform.rotation = tiltedRotation;
+
+            currentDirectionAngle = playerManager.physicalHips.rotation.eulerAngles.y;
+            currentPos = playerManager.physicalHips.transform.position;
+
         }
 
         /// <summary>
@@ -167,7 +198,7 @@ namespace AlessioBorriello
             movementDirection.Normalize();
             movementDirection.y = 0; //Remove y component from the vector (Y component of the vector from the camera should be ignored)
             movementDirection = Vector3.ProjectOnPlane(movementDirection, (playerManager.isOnGround) ? playerManager.groundNormal : Vector3.up); //Project for sloped ground
-
+            
             if (playerManager.inputManager.movementInput.magnitude == 0) return Vector3.ProjectOnPlane(playerManager.animatedPlayer.transform.forward, Vector3.up); //If not moving return the forward
 
             return movementDirection;

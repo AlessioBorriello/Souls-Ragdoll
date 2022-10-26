@@ -76,12 +76,12 @@ namespace AlessioBorriello
 
             playerLocomotionManager.CheckIfOnGround();
             playerLocomotionManager.HandleFallingAndLanding();
-
         }
 
         private void LateUpdate()
         {
             cameraManager.HandleCamera(inputManager.cameraInput);
+
         }
 
         /// <summary>

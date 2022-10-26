@@ -22,6 +22,10 @@ namespace AlessioBorriello
         public float maxSlopeAngle = 30f; //Max angle of a slope before it is considered unclimbable
         public float movingFriction = 0f; //Friction if player is moving
         public float idleFriction = .35f; //Friction if player is not moving
+        public bool tiltOnDirectionChange = true; //If the player tilts when changing direction
+        public float maxTiltAmount = 3.4f; //How much the player can tilt when changing direction
+        public float tiltSpeed = 1.5f; //How fast the player tilts
+
 
         [Header("Ground check")]
         public float minDistanceToFall = .1f; //How far the player has to be from the ground to be actually falling

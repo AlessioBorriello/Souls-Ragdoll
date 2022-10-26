@@ -18,7 +18,7 @@ MonoBehaviour:
   runSpeedMultiplier: 1.75
   sprintSpeedMultiplier: 2.15
   sprintThreshold: 0.4
-  rotationSpeed: 10
+  rotationSpeed: 5
   inAirRotationSpeed: 2
   maxSlopeAngle: 35
   movingFriction: 0
