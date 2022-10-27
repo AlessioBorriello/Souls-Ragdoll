@@ -6,11 +6,11 @@ namespace AlessioBorriello
 {
     public class PlayerManager : MonoBehaviour
     {
-        [SerializeField] public PlayerData playerData; //Player data reference
-        [SerializeField] public GameObject animatedPlayer; //Player data reference
-        [SerializeField] public Rigidbody physicalHips; //Player's physical hips
-        [SerializeField] public PhysicMaterial physicalFootMaterial; //Player's physical foot material
-        [SerializeField] public Transform groundCheckTransform; //Player's ground check's transform
+        public PlayerData playerData; //Player data reference
+        public GameObject animatedPlayer; //Player data reference
+        public Rigidbody physicalHips; //Player's physical hips
+        public PhysicMaterial physicalFootMaterial; //Player's physical foot material
+        public Transform groundCheckTransform; //Player's ground check's transform
 
         [HideInInspector] public InputManager inputManager;
         [HideInInspector] public Transform cameraTransform;
@@ -20,6 +20,7 @@ namespace AlessioBorriello
         [HideInInspector] public ActiveRagdollManager ragdollManager;
         [HideInInspector] public PlayerInventoryManager inventoryManager;
         [HideInInspector] public PlayerAttackManager attackManager;
+        [HideInInspector] public PlayerStatsManager statsManager;
 
         public float currentSpeedMultiplier;
         public float currentRotationSpeedMultiplier;
@@ -49,6 +50,7 @@ namespace AlessioBorriello
             ragdollManager = GetComponentInChildren<ActiveRagdollManager>();
             inventoryManager = GetComponentInChildren<PlayerInventoryManager>();
             attackManager = GetComponent<PlayerAttackManager>();
+            statsManager = GetComponent<PlayerStatsManager>();
 
             cameraTransform = Camera.main.transform;
             cameraManager = Camera.main.GetComponentInParent<CameraManager>();
@@ -74,14 +76,15 @@ namespace AlessioBorriello
             if (!disablePlayerInteraction)
             {
                 if (canRotate) playerLocomotionManager.HandleMovementRotation(currentRotationSpeedMultiplier);
-                playerLocomotionManager.HandleMovement();
-                playerLocomotionManager.HandleRollingAndSprinting();
 
-                attackManager.HandleAttacks();
             }
 
+            playerLocomotionManager.HandleMovement();
             playerLocomotionManager.CheckIfOnGround();
             playerLocomotionManager.HandleFallingAndLanding();
+            playerLocomotionManager.HandleRollingAndSprinting();
+
+            attackManager.HandleAttacks();
 
         }
 

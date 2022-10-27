@@ -15,8 +15,11 @@ namespace AlessioBorriello
 
         public void HandleAttacks()
         {
+
+            if(playerManager.disablePlayerInteraction) return;
+
             //Right bumper
-            if(playerManager.inputManager.rbInputPressed)
+            if (playerManager.inputManager.rbInputPressed)
             {
                 HandEquippableItem item = playerManager.inventoryManager.currentEquippedRightItem;
                 if(item is WeaponItem) HandleLightAttack( (WeaponItem)item );

@@ -1731,6 +1731,7 @@ GameObject:
   - component: {fileID: 623422895}
   - component: {fileID: 1068158116}
   - component: {fileID: 905612787}
+  - component: {fileID: 8779414462503701537}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -1846,6 +1847,7 @@ MonoBehaviour:
   ragdollManager: {fileID: 0}
   inventoryManager: {fileID: 0}
   attackManager: {fileID: 0}
+  statsManager: {fileID: 0}
   currentSpeedMultiplier: 0
   currentRotationSpeedMultiplier: 0
   additionalGravityForce: {x: 0, y: 0, z: 0}
@@ -1889,6 +1891,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34dd55da317f50044bb67d74eb010e7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8779414462503701537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2217555875885131135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 763d2f14613263d418edfcd2fd0920a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerStats: {fileID: 11400000, guid: 8ea18976d0b4a4f4ebda7417ebbfdf65, type: 2}
+  uiManager: {fileID: 0}
+  maxHealth: 0
+  currentHealth: 0
+  power: 0
 --- !u!1 &2217555876070721501
 GameObject:
   m_ObjectHideFlags: 0

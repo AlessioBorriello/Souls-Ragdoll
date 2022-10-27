@@ -29,6 +29,8 @@ namespace AlessioBorriello
         public void HandleMovement()
         {
 
+            if (playerManager.disablePlayerInteraction) return;
+
             playerManager.currentSpeedMultiplier = GetMovementSpeedMultiplier();
             playerManager.currentRotationSpeedMultiplier = GetRotationSpeedMultiplier();
             float moveAmount = GetClampedMovementAmount(playerManager.inputManager.movementInput.magnitude);
@@ -44,7 +46,6 @@ namespace AlessioBorriello
         {
             playerManager.movementDirection = GetMovementDirection();
             playerManager.animatedPlayer.transform.rotation = Quaternion.Slerp(playerManager.animatedPlayer.transform.rotation, Quaternion.LookRotation(playerManager.movementDirection), rotationSpeed * Time.deltaTime);
-            //
 
             if(playerManager.playerData.tiltOnDirectionChange) HandleTilt();
         }
@@ -102,7 +103,12 @@ namespace AlessioBorriello
         public void HandleRollingAndSprinting()
         {
 
-            if (playerManager.disablePlayerInteraction) return;
+            if (playerManager.disablePlayerInteraction)
+            {
+                rollTimer = 0;
+                sprintTimer = 0;
+                return;
+            }
 
 
             if (playerManager.inputManager.eastInput)
