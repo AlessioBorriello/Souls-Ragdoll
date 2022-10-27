@@ -19,6 +19,7 @@ namespace AlessioBorriello
         [HideInInspector] public PlayerLocomotionManager playerLocomotionManager;
         [HideInInspector] public ActiveRagdollManager ragdollManager;
         [HideInInspector] public PlayerInventoryManager inventoryManager;
+        [HideInInspector] public PlayerAttackManager attackManager;
 
         public float currentSpeedMultiplier;
         public float currentRotationSpeedMultiplier;
@@ -28,12 +29,14 @@ namespace AlessioBorriello
         public Vector3 movementDirection;
 
         //Flags
+        [Header("Flags")]
         public bool disablePlayerInteraction = false;
         public bool canRotate = true;
         public bool isOnGround = true;
         public bool isRolling = false;
         public bool isBackdashing = false;
         public bool isSprinting = false;
+        public bool isAttacking = false;
         public bool isKnockedOut = false;
 
         private void Start()
@@ -45,6 +48,7 @@ namespace AlessioBorriello
             playerLocomotionManager = GetComponent<PlayerLocomotionManager>();
             ragdollManager = GetComponentInChildren<ActiveRagdollManager>();
             inventoryManager = GetComponentInChildren<PlayerInventoryManager>();
+            attackManager = GetComponent<PlayerAttackManager>();
 
             cameraTransform = Camera.main.transform;
             cameraManager = Camera.main.GetComponentInParent<CameraManager>();
@@ -72,6 +76,8 @@ namespace AlessioBorriello
                 if (canRotate) playerLocomotionManager.HandleMovementRotation(currentRotationSpeedMultiplier);
                 playerLocomotionManager.HandleMovement();
                 playerLocomotionManager.HandleRollingAndSprinting();
+
+                attackManager.HandleAttacks();
             }
 
             playerLocomotionManager.CheckIfOnGround();

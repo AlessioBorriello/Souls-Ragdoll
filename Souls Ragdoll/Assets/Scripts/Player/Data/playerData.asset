@@ -23,6 +23,10 @@ MonoBehaviour:
   maxSlopeAngle: 35
   movingFriction: 0
   idleFriction: 0.5
+  tiltOnDirectionChange: 1
+  maxTiltAmount: 3.1
+  tiltSpeed: 1.2
+  speedNeededToTilt: 0.096
   minDistanceToFall: 0.8
   groundCollisionLayers:
     serializedVersion: 2

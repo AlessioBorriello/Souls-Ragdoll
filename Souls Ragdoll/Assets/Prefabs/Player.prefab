@@ -70,14 +70,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1280187773}
-  m_LocalRotation: {x: 0.7122339, y: 0.51363057, z: 0.22595829, w: 0.421722}
-  m_LocalPosition: {x: 0.011, y: 0.116, z: 0.045}
+  m_LocalRotation: {x: 0.2764854, y: -0.8334562, z: 0.33458492, w: -0.3419935}
+  m_LocalPosition: {x: -0.044, y: 0.054, z: 0.031}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4166537470567662695}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 21.63, y: 125.68, z: 97.21}
+  m_LocalEulerAnglesHint: {x: 21.63, y: 125.68, z: 312.1}
 --- !u!114 &1280187775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1730,6 +1730,7 @@ GameObject:
   - component: {fileID: 1332648215203446742}
   - component: {fileID: 623422895}
   - component: {fileID: 1068158116}
+  - component: {fileID: 905612787}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -1771,6 +1772,15 @@ MonoBehaviour:
   eastInput: 0
   eastInputReleased: 0
   eastInputPressed: 0
+  southInput: 0
+  southInputReleased: 0
+  southInputPressed: 0
+  rbInput: 0
+  rbInputReleased: 0
+  rbInputPressed: 0
+  rtInput: 0
+  rtInputReleased: 0
+  rtInputPressed: 0
 --- !u!114 &1203124241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1835,6 +1845,7 @@ MonoBehaviour:
   playerLocomotionManager: {fileID: 0}
   ragdollManager: {fileID: 0}
   inventoryManager: {fileID: 0}
+  attackManager: {fileID: 0}
   currentSpeedMultiplier: 0
   currentRotationSpeedMultiplier: 0
   additionalGravityForce: {x: 0, y: 0, z: 0}
@@ -1847,6 +1858,7 @@ MonoBehaviour:
   isRolling: 0
   isBackdashing: 0
   isSprinting: 0
+  isAttacking: 0
   isKnockedOut: 0
 --- !u!114 &1068158116
 MonoBehaviour:
@@ -1861,10 +1873,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   numberOfSlots: 2
-  rightHandItems: []
-  leftHandItems: []
+  currentEquippedRightItem: {fileID: 0}
+  currentEquippedLeftItem: {fileID: 0}
   testWeapon: {fileID: 11400000, guid: 47d20fcc74c7319499117cec8edcc7f6, type: 2}
-  testShield: {fileID: 0}
+  testShield: {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
+--- !u!114 &905612787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2217555875885131135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34dd55da317f50044bb67d74eb010e7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2217555876070721501
 GameObject:
   m_ObjectHideFlags: 0

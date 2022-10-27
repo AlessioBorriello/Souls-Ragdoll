@@ -10,11 +10,14 @@ namespace AlessioBorriello
         private PlayerManager playerManager;
 
         public int numberOfSlots = 2;
-        public HandEquippableItem[] rightHandItems;
-        public HandEquippableItem[] leftHandItems;
+        private HandEquippableItem[] rightHandItems;
+        private HandEquippableItem[] leftHandItems;
 
-        private int currentRightHandItem = 0;
-        private int currentLeftHandItem = 0;
+        public HandEquippableItem currentEquippedRightItem;
+        public HandEquippableItem currentEquippedLeftItem;
+
+        private int currentRightHandItemIndex = 0;
+        private int currentLeftHandItemIndex = 0;
 
         private HandItemHolder leftHolder;
         private HandItemHolder rightHolder;
@@ -39,18 +42,22 @@ namespace AlessioBorriello
                 else rightHolder = itemHolder;
             }
 
-            rightHandItems[currentRightHandItem] = testWeapon;
-            leftHandItems[currentLeftHandItem] = testShield;
+            rightHandItems[0] = testWeapon;
+            leftHandItems[0] = testShield;
 
             //Load Items
             LoadItemInSlot(false);
             LoadItemInSlot(true);
+
+            //Set the equipped items as the current ones
+            currentEquippedRightItem = rightHandItems[0];
+            currentEquippedLeftItem = leftHandItems[0];
         }
 
         public void LoadItemInSlot(bool loadOnLeft)
         {
 
-            HandEquippableItem item = (loadOnLeft)? leftHandItems[currentLeftHandItem] : rightHandItems[currentRightHandItem];
+            HandEquippableItem item = (loadOnLeft)? leftHandItems[currentLeftHandItemIndex] : rightHandItems[currentRightHandItemIndex];
 
             if(item == null) return;
 

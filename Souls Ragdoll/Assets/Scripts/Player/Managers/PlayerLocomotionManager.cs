@@ -139,13 +139,21 @@ namespace AlessioBorriello
             //Fall
             if (!playerManager.isOnGround && inAirTimer > playerManager.playerData.timeBeforeFalling)
             {
-                playerManager.animationManager.PlayTargetAnimation("Fall", .2f);
+                if(playerManager.animationManager.animator.GetBool("onGround"))
+                {
+                    playerManager.animationManager.UpdateOnGroundValue(false);
+                    playerManager.animationManager.PlayTargetAnimation("Fall", .2f);
+                }
             }
 
             //Land
             if (playerManager.isOnGround && inAirTimer > 0)
             {
-                playerManager.animationManager.PlayTargetAnimation("Movement", .2f);
+                if(!playerManager.animationManager.animator.GetBool("onGround"))
+                {
+                    playerManager.animationManager.UpdateOnGroundValue(true);
+                    playerManager.animationManager.PlayTargetAnimation("Empty", .2f);
+                }
 
                 //Knock out
                 if (!playerManager.isKnockedOut && inAirTimer > playerManager.playerData.knockoutLandThreshold) playerManager.ragdollManager.KnockOut();
@@ -271,7 +279,6 @@ namespace AlessioBorriello
                 else (playerManager.isOnGround) = false;
 
                 playerManager.groundNormal = hit.normal;
-
                 playerManager.groundDistance = hit.distance;
             }
             else

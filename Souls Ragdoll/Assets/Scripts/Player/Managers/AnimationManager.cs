@@ -27,6 +27,11 @@ namespace AlessioBorriello {
 
         }
 
+        public void UpdateOnGroundValue(bool onGround)
+        {
+            playerManager.animationManager.animator.SetBool("onGround", onGround);
+        }
+
         public void PlayTargetAnimation(string targetAnimation, float fadeDuration)
         {
             animator.CrossFade(targetAnimation, fadeDuration);

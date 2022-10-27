@@ -33,6 +33,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "SouthButton",
+                    "type": "Button",
+                    "id": "cd7d344c-0c3f-448b-8dee-c006c8667ba6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "LeftLightButton",
                     "type": "Button",
                     "id": "9ba54142-917a-4979-ad0d-5337b71251f9",
@@ -342,6 +351,28 @@
                     "action": "SlotChange",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "f2304b7a-f407-4bb3-ae3f-cf70779bbbcf",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "SouthButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bf303936-aa99-415e-8ce3-029ef0082185",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "SouthButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
