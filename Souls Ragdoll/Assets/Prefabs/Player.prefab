@@ -46,6 +46,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isLeftHand: 0
   currentItemModel: {fileID: 0}
+--- !u!1 &815674339
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 815674340}
+  - component: {fileID: 815674341}
+  m_Layer: 9
+  m_Name: Hurtbox
+  m_TagString: Player
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &815674340
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815674339}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8342856374139926934}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &815674341
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815674339}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.35
+  m_Height: 1.69
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.3, z: 0}
 --- !u!1 &1280187773
 GameObject:
   m_ObjectHideFlags: 0
@@ -1907,6 +1953,8 @@ MonoBehaviour:
   uiManager: {fileID: 0}
   maxHealth: 0
   currentHealth: 0
+  maxStamina: 0
+  currentStamina: 0
   power: 0
 --- !u!1 &2217555876070721501
 GameObject:
@@ -2312,6 +2360,7 @@ Transform:
   - {fileID: 5598089554982722584}
   - {fileID: 494504749282218197}
   - {fileID: 3589557821923064493}
+  - {fileID: 815674340}
   m_Father: {fileID: 6298307275115692860}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

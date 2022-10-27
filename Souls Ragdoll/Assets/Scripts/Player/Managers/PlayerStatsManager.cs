@@ -68,9 +68,10 @@ namespace AlessioBorriello
 
         }
 
-        public void ReduceHealth(int damage)
+        public void ReduceHealth(int damage, string hurtAnimationName)
         {
             currentHealth -= damage;
+            playerManager.animationManager.PlayTargetAnimation(hurtAnimationName, .2f);
         }
 
         private int CalculateStatValue(int statLevel, int maxStatLevel, AnimationCurve diminishingCurve, int baseStatValue, int baseStatValueAddition)
