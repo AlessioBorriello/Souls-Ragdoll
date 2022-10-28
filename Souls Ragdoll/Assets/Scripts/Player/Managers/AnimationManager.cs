@@ -19,11 +19,11 @@ namespace AlessioBorriello {
             strafeMovementAmount = Animator.StringToHash("StrafeMovementAmount");
         }
 
-        public void UpdateMovementAnimatorValues(float normal, float strafe)
+        public void UpdateMovementAnimatorValues(float normal, float strafe, float time)
         {
 
-            animator.SetFloat(normalMovementAmount, normal, .1f, Time.deltaTime);
-            animator.SetFloat(strafeMovementAmount, strafe, .1f, Time.deltaTime);
+            animator.SetFloat(normalMovementAmount, normal, time, Time.deltaTime);
+            animator.SetFloat(strafeMovementAmount, strafe, time, Time.deltaTime);
 
         }
 

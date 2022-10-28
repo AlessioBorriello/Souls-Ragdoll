@@ -34,7 +34,7 @@ namespace AlessioBorriello
             playerManager.currentSpeedMultiplier = GetMovementSpeedMultiplier();
             playerManager.currentRotationSpeedMultiplier = GetRotationSpeedMultiplier();
             float moveAmount = GetClampedMovementAmount(playerManager.inputManager.movementInput.magnitude);
-            playerManager.animationManager.UpdateMovementAnimatorValues(moveAmount, 0);
+            playerManager.animationManager.UpdateMovementAnimatorValues(moveAmount, 0, .1f);
             HandleFootFriction();
 
         }
@@ -197,7 +197,7 @@ namespace AlessioBorriello
                 return;
             }
 
-            playerManager.animationManager.UpdateMovementAnimatorValues(2, 0);
+            playerManager.animationManager.UpdateMovementAnimatorValues(2, 0, .1f);
             playerManager.currentSpeedMultiplier = playerManager.playerData.sprintSpeedMultiplier;
         }
 

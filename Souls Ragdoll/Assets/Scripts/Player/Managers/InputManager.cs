@@ -138,16 +138,22 @@ namespace AlessioBorriello
 
         public void TickMovementInput()
         {
+            if (inputAction == null) return;
+
             movementInput = movementIn;
         }
 
         public void TickCameraMovementInput()
         {
+            if (inputAction == null) return;
+
             cameraInput = cameraIn;
         }
 
         public void TickActionsInput()
         {
+            if (inputAction == null) return;
+
             #region Buttons
             #region East button
             eastIn = (inputAction.PlayerGameplay.EastButton.phase == InputActionPhase.Performed);
