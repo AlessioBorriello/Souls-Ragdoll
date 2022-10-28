@@ -34,6 +34,7 @@ namespace AlessioBorriello
         public bool disablePlayerInteraction = false;
         public bool canRotate = true;
         public bool isOnGround = true;
+        public bool shouldSlide = false; //If the friction should be enabled or not
         public bool isRolling = false;
         public bool isBackdashing = false;
         public bool isSprinting = false;
@@ -81,6 +82,7 @@ namespace AlessioBorriello
             }
 
             playerLocomotionManager.HandleMovement();
+            playerLocomotionManager.HandleFootFriction();
             playerLocomotionManager.CheckIfOnGround();
             playerLocomotionManager.HandleFallingAndLanding();
             playerLocomotionManager.HandleRollingAndSprinting();

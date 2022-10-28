@@ -39,8 +39,22 @@ namespace AlessioBorriello
             playerManager.currentRotationSpeedMultiplier = GetRotationSpeedMultiplier();
             float moveAmount = GetClampedMovementAmount(playerManager.inputManager.movementInput.magnitude);
             playerManager.animationManager.UpdateMovementAnimatorValues(moveAmount, 0, .1f);
-            HandleFootFriction();
+            HandleMovementFootFriction();
 
+        }
+
+        /// <summary>
+        /// Sets the foot friction based on shouldSlide bool
+        /// </summary>
+        public void HandleFootFriction()
+        {
+            if(playerManager.shouldSlide && currentFootMaterial == physicalFootMaterialIdle)
+            {
+                SetFeetMaterial(false);
+            }else if(!playerManager.shouldSlide && currentFootMaterial == physicalFootMaterialMoving)
+            {
+                SetFeetMaterial(true);
+            }
         }
 
         /// <summary>
@@ -83,20 +97,20 @@ namespace AlessioBorriello
         }
 
         /// <summary>
-        /// Changes foot material's friction based on if the player is moving or not
+        /// Sets if the player should slide or not based on input magnitude
         /// </summary>
-        private void HandleFootFriction()
+        private void HandleMovementFootFriction()
         {
 
-            if (playerManager.inputManager.movementInput.magnitude == 0 && currentFootMaterial == physicalFootMaterialMoving)
+            if (playerManager.inputManager.movementInput.magnitude == 0)
             {
-                //Player stops
-                SetFeetMaterial(true);
+                //Increase friction
+                playerManager.shouldSlide = false;
             }
-            else if (playerManager.inputManager.movementInput.magnitude > 0 && currentFootMaterial == physicalFootMaterialIdle)
+            else if (playerManager.inputManager.movementInput.magnitude > 0)
             {
-                //Player moves
-                SetFeetMaterial(false);
+                //Remove friction
+                playerManager.shouldSlide = true;
             }
 
         }
@@ -338,16 +352,6 @@ namespace AlessioBorriello
                 feetColliders[1].material = physicalFootMaterialMoving;
                 currentFootMaterial = physicalFootMaterialMoving;
             }
-        }
-
-        /// <summary>
-        /// Sets the physical material of the feet when either moving or not moving at
-        /// the end of the current frame
-        /// </summary>
-        public IEnumerator SetFeetMaterialEndOfFrame(bool idleMat)
-        {
-            yield return new WaitForEndOfFrame();
-            playerManager.playerLocomotionManager.SetFeetMaterial(true);
         }
 
     }

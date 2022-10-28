@@ -283,7 +283,7 @@ namespace AlessioBorriello
             safenetKnockedOutTimer = playerManager.playerData.maxKOTime;
 
             //Changes friction of the feet so that they don't slide around (set it to idle friction)
-            playerManager.playerLocomotionManager.SetFeetMaterial(true);
+            playerManager.shouldSlide = false;
         }
 
         /// <summary>

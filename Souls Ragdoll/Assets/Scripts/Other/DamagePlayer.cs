@@ -27,7 +27,6 @@ namespace AlessioBorriello
                     {
                         playerManager.statsManager.ReduceHealth(damage, "Hurt", .1f);
                         playerManager.animationManager.UpdateMovementAnimatorValues(0, 0, 0); //Stop the player
-                        StartCoroutine(playerManager.playerLocomotionManager.SetFeetMaterialEndOfFrame(playerManager));
 
                         //Knockback
                         Knockback(other, playerManager);
