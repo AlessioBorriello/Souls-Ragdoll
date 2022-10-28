@@ -62,7 +62,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &815674340
 Transform:
   m_ObjectHideFlags: 0
@@ -1778,6 +1778,7 @@ GameObject:
   - component: {fileID: 1068158116}
   - component: {fileID: 905612787}
   - component: {fileID: 8779414462503701537}
+  - component: {fileID: 2069407352}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -1868,6 +1869,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 569e25877d34f0f49822da7760da12b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  physicalFootMaterialIdle: {fileID: 13400000, guid: 6e682ad016cc0744ca2b580d5a771851, type: 2}
+  physicalFootMaterialMoving: {fileID: 13400000, guid: 80d8dcd7feb7a0440aa8f15143c18eec, type: 2}
+  feetColliders:
+  - {fileID: 3193748364022855049}
+  - {fileID: 3193748364022855050}
 --- !u!114 &623422895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1883,7 +1889,6 @@ MonoBehaviour:
   playerData: {fileID: 11400000, guid: 8fa2a1b0f04ee6c44ad4d4475bbf4d18, type: 2}
   animatedPlayer: {fileID: 2217555875006252269}
   physicalHips: {fileID: 3193748364022854742}
-  physicalFootMaterial: {fileID: 13400000, guid: 6e682ad016cc0744ca2b580d5a771851, type: 2}
   groundCheckTransform: {fileID: 1567946972}
   inputManager: {fileID: 0}
   cameraTransform: {fileID: 0}
@@ -1894,6 +1899,7 @@ MonoBehaviour:
   inventoryManager: {fileID: 0}
   attackManager: {fileID: 0}
   statsManager: {fileID: 0}
+  collisionManager: {fileID: 0}
   currentSpeedMultiplier: 0
   currentRotationSpeedMultiplier: 0
   additionalGravityForce: {x: 0, y: 0, z: 0}
@@ -1956,6 +1962,19 @@ MonoBehaviour:
   maxStamina: 0
   currentStamina: 0
   power: 0
+--- !u!114 &2069407352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2217555875885131135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 269d1c702f94a1e40a64b54295247c95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inContact: 
 --- !u!1 &2217555876070721501
 GameObject:
   m_ObjectHideFlags: 0

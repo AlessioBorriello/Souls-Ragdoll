@@ -282,9 +282,8 @@ namespace AlessioBorriello
             knockedOutTimer = playerManager.playerData.KOTime;
             safenetKnockedOutTimer = playerManager.playerData.maxKOTime;
 
-            //Changes friction of the feet so that they don't slide around
-            playerManager.physicalFootMaterial.staticFriction = playerManager.playerData.idleFriction;
-            playerManager.physicalFootMaterial.dynamicFriction = playerManager.playerData.idleFriction;
+            //Changes friction of the feet so that they don't slide around (set it to idle friction)
+            playerManager.playerLocomotionManager.SetFeetMaterial(true);
         }
 
         /// <summary>
@@ -331,4 +330,5 @@ namespace AlessioBorriello
         Neck,
         Head
     }
+
 }

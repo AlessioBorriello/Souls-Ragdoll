@@ -9,7 +9,6 @@ namespace AlessioBorriello
         public PlayerData playerData; //Player data reference
         public GameObject animatedPlayer; //Player data reference
         public Rigidbody physicalHips; //Player's physical hips
-        public PhysicMaterial physicalFootMaterial; //Player's physical foot material
         public Transform groundCheckTransform; //Player's ground check's transform
 
         [HideInInspector] public InputManager inputManager;
@@ -21,6 +20,7 @@ namespace AlessioBorriello
         [HideInInspector] public PlayerInventoryManager inventoryManager;
         [HideInInspector] public PlayerAttackManager attackManager;
         [HideInInspector] public PlayerStatsManager statsManager;
+        [HideInInspector] public PlayerCollisionManager collisionManager;
 
         public float currentSpeedMultiplier;
         public float currentRotationSpeedMultiplier;
@@ -51,6 +51,7 @@ namespace AlessioBorriello
             inventoryManager = GetComponentInChildren<PlayerInventoryManager>();
             attackManager = GetComponent<PlayerAttackManager>();
             statsManager = GetComponent<PlayerStatsManager>();
+            collisionManager = GetComponent<PlayerCollisionManager>();
 
             cameraTransform = Camera.main.transform;
             cameraManager = Camera.main.GetComponentInParent<CameraManager>();

@@ -9,6 +9,11 @@ namespace AlessioBorriello
 
         private PlayerManager playerManager;
 
+        [SerializeField] private PhysicMaterial physicalFootMaterialIdle; //Player's physical foot material when idle
+        [SerializeField] private PhysicMaterial physicalFootMaterialMoving; //Player's physical foot material when moving
+        [SerializeField] private Collider[] feetColliders = new Collider[2];
+        private PhysicMaterial currentFootMaterial;
+
         //Timers
         private float sprintTimer;
         private float rollTimer;
@@ -18,8 +23,7 @@ namespace AlessioBorriello
         {
 
             playerManager = GetComponent<PlayerManager>();
-            playerManager.physicalFootMaterial.staticFriction = playerManager.playerData.idleFriction;
-            playerManager.physicalFootMaterial.dynamicFriction = playerManager.playerData.idleFriction;
+            SetFeetMaterial(false);
 
         }
 
@@ -84,15 +88,15 @@ namespace AlessioBorriello
         private void HandleFootFriction()
         {
 
-            if (playerManager.inputManager.movementInput.magnitude == 0 && playerManager.physicalFootMaterial.staticFriction == playerManager.playerData.movingFriction)
+            if (playerManager.inputManager.movementInput.magnitude == 0 && currentFootMaterial == physicalFootMaterialMoving)
             {
-                playerManager.physicalFootMaterial.staticFriction = playerManager.playerData.idleFriction;
-                playerManager.physicalFootMaterial.dynamicFriction = playerManager.playerData.idleFriction;
+                //Player stops
+                SetFeetMaterial(true);
             }
-            else if (playerManager.inputManager.movementInput.magnitude > 0 && playerManager.physicalFootMaterial.staticFriction == playerManager.playerData.idleFriction)
+            else if (playerManager.inputManager.movementInput.magnitude > 0 && currentFootMaterial == physicalFootMaterialIdle)
             {
-                playerManager.physicalFootMaterial.staticFriction = playerManager.playerData.movingFriction;
-                playerManager.physicalFootMaterial.dynamicFriction = playerManager.playerData.movingFriction;
+                //Player moves
+                SetFeetMaterial(false);
             }
 
         }
@@ -315,6 +319,35 @@ namespace AlessioBorriello
             }
 
             return gravityForce;
+        }
+
+        /// <summary>
+        /// Sets the physical material of the feet when either moving or not moving
+        /// </summary>
+        public void SetFeetMaterial(bool idleMat)
+        {
+
+            if (idleMat)
+            {
+                feetColliders[0].material = physicalFootMaterialIdle;
+                feetColliders[1].material = physicalFootMaterialIdle;
+                currentFootMaterial = physicalFootMaterialIdle;
+            }else
+            {
+                feetColliders[0].material = physicalFootMaterialMoving;
+                feetColliders[1].material = physicalFootMaterialMoving;
+                currentFootMaterial = physicalFootMaterialMoving;
+            }
+        }
+
+        /// <summary>
+        /// Sets the physical material of the feet when either moving or not moving at
+        /// the end of the current frame
+        /// </summary>
+        public IEnumerator SetFeetMaterialEndOfFrame(bool idleMat)
+        {
+            yield return new WaitForEndOfFrame();
+            playerManager.playerLocomotionManager.SetFeetMaterial(true);
         }
 
     }

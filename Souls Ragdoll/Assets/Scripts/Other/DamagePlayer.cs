@@ -16,19 +16,34 @@ namespace AlessioBorriello
         {
             if (other.CompareTag("Player"))
             {
-                int id = other.transform.root.GetInstanceID();
-                if (!alreadyHit.Contains(id)) alreadyHit.Add(id);
-                else if (alreadyHit.Contains(id) && !canHitMultipleTimes) return;
+                int otherId = other.transform.root.GetInstanceID();
+                if (!alreadyHit.Contains(otherId)) alreadyHit.Add(otherId);
+                else if (alreadyHit.Contains(otherId) && !canHitMultipleTimes) return;
 
                 PlayerManager playerManager = other.GetComponentInParent<PlayerManager>();
                 if (playerManager != null)
                 {
-                    playerManager.statsManager.ReduceHealth(damage, "Hurt", .1f);
-                    playerManager.animationManager.UpdateMovementAnimatorValues(0, 0, 0); //Stop the player
+                    if(playerManager.collisionManager.EnterCollision(this.GetInstanceID()))
+                    {
+                        playerManager.statsManager.ReduceHealth(damage, "Hurt", .1f);
+                        playerManager.animationManager.UpdateMovementAnimatorValues(0, 0, 0); //Stop the player
+                        StartCoroutine(playerManager.playerLocomotionManager.SetFeetMaterialEndOfFrame(playerManager));
 
-                    //Knockback
-                    Knockback(other, playerManager);
-                    
+                        //Knockback
+                        Knockback(other, playerManager);
+                    }
+                }
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.CompareTag("Player"))
+            {
+                PlayerManager playerManager = other.GetComponentInParent<PlayerManager>();
+                if (playerManager != null)
+                {
+                    playerManager.collisionManager.ExitCollision(this.GetInstanceID());
                 }
             }
         }
@@ -44,5 +59,6 @@ namespace AlessioBorriello
 
             playerManager.ragdollManager.AddForceToPlayer(knockbackStrength * knockbackDirection, ForceMode.VelocityChange);
         }
+    
     }
 }
