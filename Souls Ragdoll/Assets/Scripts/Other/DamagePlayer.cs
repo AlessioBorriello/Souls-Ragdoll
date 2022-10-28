@@ -9,15 +9,17 @@ namespace AlessioBorriello
     {
         public int damage = 30;
         public float knockbackStrength = 5f;
-
-        //For debug, declare in OnTriggerEnter
-        private Vector3 collisionPoint;
-        private Vector3 hipsPos;
+        public bool canHitMultipleTimes = false;
+        private List<int> alreadyHit = new List<int>();
 
         private void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag("Player"))
             {
+                int id = other.transform.root.GetInstanceID();
+                if (!alreadyHit.Contains(id)) alreadyHit.Add(id);
+                else if (alreadyHit.Contains(id) && !canHitMultipleTimes) return;
+
                 PlayerManager playerManager = other.GetComponentInParent<PlayerManager>();
                 if (playerManager != null)
                 {
@@ -25,24 +27,22 @@ namespace AlessioBorriello
                     playerManager.animationManager.UpdateMovementAnimatorValues(0, 0, 0); //Stop the player
 
                     //Knockback
-                    collisionPoint = other.ClosestPoint(transform.position);
-                    hipsPos = playerManager.physicalHips.transform.position;
-                    hipsPos.y = collisionPoint.y;
-
-                    Vector3 knockbackDirection = (hipsPos - collisionPoint).normalized;
-
-                    playerManager.ragdollManager.AddForceToPlayer(knockbackStrength * knockbackDirection, ForceMode.VelocityChange);
+                    Knockback(other, playerManager);
+                    
                 }
             }
         }
 
-        private void OnDrawGizmos()
+        private void Knockback(Collider other, PlayerManager playerManager)
         {
-            if(collisionPoint != null)
-            {
-                Gizmos.DrawSphere(collisionPoint, .05f);
-                Gizmos.DrawLine(collisionPoint, hipsPos);
-            }
+            Vector3 collisionPoint = other.ClosestPoint(transform.position);
+            Vector3 hipsPos = playerManager.physicalHips.transform.position;
+            hipsPos.y = collisionPoint.y;
+
+            Vector3 knockbackDirection = (hipsPos - collisionPoint).normalized;
+            knockbackDirection = Vector3.ProjectOnPlane(knockbackDirection, playerManager.groundNormal);
+
+            playerManager.ragdollManager.AddForceToPlayer(knockbackStrength * knockbackDirection, ForceMode.VelocityChange);
         }
     }
 }
