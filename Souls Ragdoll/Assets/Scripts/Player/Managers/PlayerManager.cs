@@ -45,7 +45,7 @@ namespace AlessioBorriello
         {
 
             inputManager = GetComponent<InputManager>();
-            animationManager = GetComponentInChildren<AnimationManager>();
+            animationManager = GetComponent<AnimationManager>();
             animationManager.Initialize();
             playerLocomotionManager = GetComponent<PlayerLocomotionManager>();
             ragdollManager = GetComponentInChildren<ActiveRagdollManager>();
@@ -78,7 +78,6 @@ namespace AlessioBorriello
             if (!disablePlayerInteraction)
             {
                 if (canRotate) playerLocomotionManager.HandleMovementRotation(currentRotationSpeedMultiplier);
-
             }
 
             playerLocomotionManager.HandleMovement();

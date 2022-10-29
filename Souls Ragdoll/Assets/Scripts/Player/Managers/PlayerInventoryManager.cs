@@ -9,28 +9,20 @@ namespace AlessioBorriello
 
         private PlayerManager playerManager;
 
-        public int numberOfSlots = 2;
-        private HandEquippableItem[] rightHandItems;
-        private HandEquippableItem[] leftHandItems;
-
-        public HandEquippableItem currentEquippedRightItem;
-        public HandEquippableItem currentEquippedLeftItem;
-
-        private int currentRightHandItemIndex = 0;
-        private int currentLeftHandItemIndex = 0;
-
+        //Item holders (slots)
         private HandItemHolder leftHolder;
         private HandItemHolder rightHolder;
 
+        //The currently equipped items and the relative colliders
+        public HandEquippableItem currentRightSlotItem;
+        private DamageCollider currentRightSlotItemCollider;
+
+        public HandEquippableItem currentLeftSlotItem;
+        private DamageCollider currentLeftSlotItemCollider;
+
+        //For testing
         public HandEquippableItem testWeapon;
         public HandEquippableItem testShield;
-
-        private void Awake()
-        {
-            //Initialize hand slots
-            rightHandItems = new HandEquippableItem[numberOfSlots];
-            leftHandItems = new HandEquippableItem[numberOfSlots];
-        }
 
         private void Start()
         {
@@ -42,28 +34,53 @@ namespace AlessioBorriello
                 else rightHolder = itemHolder;
             }
 
-            rightHandItems[0] = testWeapon;
-            leftHandItems[0] = testShield;
-
             //Load Items
-            LoadItemInSlot(false);
-            LoadItemInSlot(true);
+            LoadItemInSlot(testWeapon, false);
+            LoadItemInSlot(testShield, true);
 
-            //Set the equipped items as the current ones
-            currentEquippedRightItem = rightHandItems[0];
-            currentEquippedLeftItem = leftHandItems[0];
         }
 
-        public void LoadItemInSlot(bool loadOnLeft)
+        private void LoadItemInSlot(HandEquippableItem item, bool loadOnLeft)
         {
-
-            HandEquippableItem item = (loadOnLeft)? leftHandItems[currentLeftHandItemIndex] : rightHandItems[currentRightHandItemIndex];
-
-            if(item == null) return;
-
-            if (loadOnLeft) leftHolder.LoadItemModel(item);
-            else rightHolder.LoadItemModel(item);
+            if (loadOnLeft)
+            {
+                leftHolder.LoadItemModel(item);
+                currentLeftSlotItem = item;
+                currentLeftSlotItemCollider = GetItemCollider(leftHolder);
+            }
+            else
+            {
+                rightHolder.LoadItemModel(item);
+                currentRightSlotItem = item;
+                currentRightSlotItemCollider = GetItemCollider(rightHolder);
+            }
         }
 
+        private DamageCollider GetItemCollider(HandItemHolder holder)
+        {
+            return holder.currentItemModel.GetComponentInChildren<DamageCollider>();
+        }
+
+        #region Collider stuff
+        public void EnableRightDamageCollider()
+        {
+            currentRightSlotItemCollider.EnableDamageCollider();
+        }
+
+        public void EnableLeftDamageCollider()
+        {
+            currentLeftSlotItemCollider.EnableDamageCollider();
+        }
+
+        public void DisableRightDamageCollider()
+        {
+            currentRightSlotItemCollider.DisableDamageCollider();
+        }
+
+        public void DisableLeftDamageCollider()
+        {
+            currentLeftSlotItemCollider.DisableDamageCollider();
+        }
+        #endregion
     }
 }

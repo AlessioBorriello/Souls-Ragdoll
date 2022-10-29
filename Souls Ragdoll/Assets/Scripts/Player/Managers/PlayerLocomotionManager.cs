@@ -76,7 +76,7 @@ namespace AlessioBorriello
         /// </summary>
         private void HandleTilt()
         {
-            float speed = (playerManager.physicalHips.transform.position - currentPos).magnitude;
+            float speed = Vector3.ProjectOnPlane((playerManager.physicalHips.transform.position - currentPos), playerManager.groundNormal).magnitude;
             if (speed <= playerManager.playerData.speedNeededToTilt || !playerManager.isOnGround)
             {
                 tiltAmount = 0;
@@ -123,7 +123,7 @@ namespace AlessioBorriello
 
             if (playerManager.disablePlayerInteraction)
             {
-                rollTimer = 0;
+                //rollTimer = 0;
                 sprintTimer = 0;
                 return;
             }
@@ -352,6 +352,23 @@ namespace AlessioBorriello
                 feetColliders[1].material = physicalFootMaterialMoving;
                 currentFootMaterial = physicalFootMaterialMoving;
             }
+        }
+
+        /// <summary>
+        /// Makes the player do a 180 animation if the direction changes suddenly (Not used)
+        /// </summary>
+        private void HandleSharpTurns()
+        {
+
+            if (!playerManager.isSprinting) return;
+
+            float angle = Vector3.Angle(playerManager.movementDirection, Vector3.ProjectOnPlane(playerManager.physicalHips.velocity, Vector3.up).normalized);
+            //if (angle > playerManager.playerData.minimumSharpTurnAngle)
+            if (angle > 170)
+            {
+                //playerManager.animationManager.PlayTargetAnimation("180 Turn", .1f);
+            }
+
         }
 
     }

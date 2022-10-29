@@ -307,6 +307,15 @@ namespace AlessioBorriello
             foreach(Rigidbody rb in Bodies) {
                 rb.AddForce(force, mode);
             }
+
+        }
+
+        /// <summary>
+        /// Adds a force to a specific rigidbody
+        /// </summary>
+        public void AddForceToBodyPart(Rigidbody part, Vector3 force, ForceMode mode)
+        {
+            part.AddForce(force, mode);
         }
 
     }

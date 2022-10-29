@@ -244,6 +244,8 @@ GameObject:
   - component: {fileID: 1079815421062653862}
   - component: {fileID: 7484506585688994399}
   - component: {fileID: 6466607145231249631}
+  - component: {fileID: 2373606784054088644}
+  - component: {fileID: 6029228598589221632}
   m_Layer: 0
   m_Name: Lame
   m_TagString: Untagged
@@ -316,6 +318,38 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &2373606784054088644
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8442325737458828435}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.024925886
+  m_Height: 0.4289192
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.09, z: 0}
+--- !u!114 &6029228598589221632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8442325737458828435}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edca86660cbe5ba4aab4b159591492b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 30
+  knockbackStrength: 5
+  flinchStrenght: 25
+  startEnabled: 0
+  canHitMultipleTimes: 1
+  hitFrequencyDelay: 0.3
 --- !u!1 &8513785602460388389
 GameObject:
   m_ObjectHideFlags: 0

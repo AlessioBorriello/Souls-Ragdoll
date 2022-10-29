@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AlessioBorriello {
     public class AnimationManager : MonoBehaviour
     {
-        [HideInInspector] public Animator animator;
+        public Animator animator;
         [HideInInspector] public PlayerManager playerManager;
 
         int normalMovementAmount;
@@ -13,7 +13,6 @@ namespace AlessioBorriello {
 
         public void Initialize()
         {
-            animator = GetComponentInChildren<Animator>();
             playerManager = GetComponent<PlayerManager>();
             normalMovementAmount = Animator.StringToHash("NormalMovementAmount");
             strafeMovementAmount = Animator.StringToHash("StrafeMovementAmount");

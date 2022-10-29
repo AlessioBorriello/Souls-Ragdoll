@@ -21,13 +21,13 @@ namespace AlessioBorriello
             //Right bumper
             if (playerManager.inputManager.rbInputPressed)
             {
-                HandEquippableItem item = playerManager.inventoryManager.currentEquippedRightItem;
+                HandEquippableItem item = playerManager.inventoryManager.currentRightSlotItem;
                 if(item is WeaponItem) HandleLightAttack( (WeaponItem)item );
             }
             //Right trigger
             if (playerManager.inputManager.rtInputPressed)
             {
-                HandEquippableItem item = playerManager.inventoryManager.currentEquippedRightItem;
+                HandEquippableItem item = playerManager.inventoryManager.currentRightSlotItem;
                 if (item is WeaponItem) HandleHeavyAttack((WeaponItem)item);
             }
         }

@@ -26,6 +26,7 @@ namespace AlessioBorriello
         public float maxTiltAmount = 3.4f; //How much the player can tilt when changing direction
         public float tiltSpeed = 1.5f; //How fast the player tilts
         public float speedNeededToTilt = .096f; //How fast the player must be moving before it starts to tilt
+        //public float minimumSharpTurnAngle = 130f; //Angle needed to do a sharp turn animation (180 turn)
 
 
         [Header("Ground check")]

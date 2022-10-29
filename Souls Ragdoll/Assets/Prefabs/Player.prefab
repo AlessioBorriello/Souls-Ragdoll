@@ -1855,7 +1855,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aaae387126823b4caadf3bd011f9af9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 0}
+  animator: {fileID: 2217555875006252243}
   playerManager: {fileID: 0}
 --- !u!114 &1332648215203446742
 MonoBehaviour:
@@ -1909,6 +1909,7 @@ MonoBehaviour:
   disablePlayerInteraction: 0
   canRotate: 1
   isOnGround: 1
+  shouldSlide: 0
   isRolling: 0
   isBackdashing: 0
   isSprinting: 0
