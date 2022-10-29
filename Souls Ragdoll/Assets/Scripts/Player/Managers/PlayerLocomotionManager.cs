@@ -33,12 +33,12 @@ namespace AlessioBorriello
         public void HandleMovement()
         {
 
+            float moveAmount = GetClampedMovementAmount(playerManager.inputManager.movementInput.magnitude);
+            playerManager.animationManager.UpdateMovementAnimatorValues(moveAmount, 0, .1f);
+
             if (playerManager.disablePlayerInteraction) return;
 
             playerManager.currentSpeedMultiplier = GetMovementSpeedMultiplier();
-            playerManager.currentRotationSpeedMultiplier = GetRotationSpeedMultiplier();
-            float moveAmount = GetClampedMovementAmount(playerManager.inputManager.movementInput.magnitude);
-            playerManager.animationManager.UpdateMovementAnimatorValues(moveAmount, 0, .1f);
             HandleMovementFootFriction();
 
         }
@@ -60,10 +60,15 @@ namespace AlessioBorriello
         /// <summary>
         /// Rotate player towards direction
         /// </summary>
-        public void HandleMovementRotation(float rotationSpeed)
+        public void HandleMovementRotation()
         {
+            if (!playerManager.canRotate) return;
+
+            playerManager.currentRotationSpeedMultiplier = GetRotationSpeedMultiplier();
             playerManager.movementDirection = GetMovementDirection();
-            playerManager.animatedPlayer.transform.rotation = Quaternion.Slerp(playerManager.animatedPlayer.transform.rotation, Quaternion.LookRotation(playerManager.movementDirection), rotationSpeed * Time.deltaTime);
+
+            Quaternion newRotation = Quaternion.LookRotation(playerManager.movementDirection);
+            playerManager.animatedPlayer.transform.rotation = Quaternion.Slerp(playerManager.animatedPlayer.transform.rotation, newRotation, playerManager.currentRotationSpeedMultiplier * Time.deltaTime);
 
             if(playerManager.playerData.tiltOnDirectionChange) HandleTilt();
         }
@@ -102,16 +107,8 @@ namespace AlessioBorriello
         private void HandleMovementFootFriction()
         {
 
-            if (playerManager.inputManager.movementInput.magnitude == 0)
-            {
-                //Increase friction
-                playerManager.shouldSlide = false;
-            }
-            else if (playerManager.inputManager.movementInput.magnitude > 0)
-            {
-                //Remove friction
-                playerManager.shouldSlide = true;
-            }
+            if (playerManager.inputManager.movementInput.magnitude == 0) playerManager.shouldSlide = false;
+            else if (playerManager.inputManager.movementInput.magnitude > 0) playerManager.shouldSlide = true;
 
         }
 
@@ -125,6 +122,7 @@ namespace AlessioBorriello
             {
                 //rollTimer = 0;
                 sprintTimer = 0;
+                playerManager.isSprinting = false;
                 return;
             }
 
@@ -258,13 +256,11 @@ namespace AlessioBorriello
         private float GetRotationSpeedMultiplier()
         {
 
-            float rotationMultiplier = playerManager.playerData.rotationSpeed;
-            if (!playerManager.isOnGround)
-            {
-                rotationMultiplier = playerManager.playerData.inAirRotationSpeed;
-            }
+            if (!playerManager.isOnGround) return playerManager.playerData.inAirRotationSpeed;
 
-            return rotationMultiplier;
+            if (playerManager.isAttacking) return playerManager.playerData.attackingRotationSpeed;
+
+            return playerManager.playerData.rotationSpeed;
 
         }
 

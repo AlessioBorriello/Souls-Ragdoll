@@ -134,6 +134,24 @@ MonoBehaviour:
   onExit: 1
   onExitBoolName: disablePlayerInteraction
   onExitBoolValue: 0
+--- !u!114 &-5831140982880818650
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c7f43c687f656f448dc20d76daaebe8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEnter: 1
+  onEnterBoolName: canRotate
+  onEnterBoolValue: 0
+  onExit: 1
+  onExitBoolName: canRotate
+  onExitBoolValue: 1
 --- !u!1101 &-5189706261914973497
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -265,7 +283,7 @@ AnimatorStateMachine:
   m_ExitPosition: {x: 800, y: 120, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 487515586947583383}
---- !u!114 &-3334707589675939752
+--- !u!114 &-3388489317168269402
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -278,11 +296,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   onEnter: 1
-  onEnterBoolName: isSprinting
+  onEnterBoolName: canRotate
   onEnterBoolValue: 0
-  onExit: 0
-  onExitBoolName: 
-  onExitBoolValue: 0
+  onExit: 1
+  onExitBoolName: canRotate
+  onExitBoolValue: 1
 --- !u!1102 &-3204563908540794446
 AnimatorState:
   serializedVersion: 6
@@ -298,7 +316,6 @@ AnimatorState:
   m_StateMachineBehaviours:
   - {fileID: 5253909437877555287}
   - {fileID: -8807554704197999059}
-  - {fileID: 1096533181422832902}
   - {fileID: 1727715015562161848}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 1
@@ -370,6 +387,7 @@ AnimatorState:
   - {fileID: -6298541346383777579}
   - {fileID: 6691151765254034869}
   - {fileID: 515669813694678566}
+  - {fileID: -5831140982880818650}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -502,24 +520,6 @@ AnimatorStateMachine:
   m_ExitPosition: {x: 800, y: 120, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 7504720744197339423}
---- !u!114 &1096533181422832902
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4c7f43c687f656f448dc20d76daaebe8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onEnter: 1
-  onEnterBoolName: isSprinting
-  onEnterBoolValue: 0
-  onExit: 0
-  onExitBoolName: 
-  onExitBoolValue: 0
 --- !u!114 &1727715015562161848
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -571,6 +571,7 @@ AnimatorState:
   m_StateMachineBehaviours:
   - {fileID: -7449110104727364601}
   - {fileID: 3003859925873121728}
+  - {fileID: -3388489317168269402}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 1
   m_WriteDefaultValues: 1
@@ -618,7 +619,6 @@ AnimatorState:
   m_StateMachineBehaviours:
   - {fileID: -8933757111159939537}
   - {fileID: 8983081662153011076}
-  - {fileID: -3334707589675939752}
   - {fileID: -9175606165134737680}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 1
@@ -710,6 +710,24 @@ MonoBehaviour:
   onExit: 1
   onExitBoolName: isBackdashing
   onExitBoolValue: 0
+--- !u!114 &6803747437812841083
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c7f43c687f656f448dc20d76daaebe8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEnter: 1
+  onEnterBoolName: canRotate
+  onEnterBoolValue: 0
+  onExit: 1
+  onExitBoolName: canRotate
+  onExitBoolValue: 1
 --- !u!1102 &7504720744197339423
 AnimatorState:
   serializedVersion: 6
@@ -774,6 +792,7 @@ AnimatorState:
   - {fileID: 1775494660717871824}
   - {fileID: 6378463329719744165}
   - {fileID: -1393694765690385536}
+  - {fileID: 6803747437812841083}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1

@@ -20,6 +20,7 @@ MonoBehaviour:
   sprintThreshold: 0.4
   rotationSpeed: 5
   inAirRotationSpeed: 2
+  attackingRotationSpeed: 1
   maxSlopeAngle: 35
   movingFriction: 0
   idleFriction: 0.5
@@ -36,8 +37,8 @@ MonoBehaviour:
   maxFallingSpeed: 40
   timeBeforeFalling: 0.32
   knockoutLandThreshold: 1.45
-  backdashSpeedMultiplier: 3.3
-  rollSpeedMultiplier: 2.3
+  backdashSpeedMultiplier: 3.1
+  rollSpeedMultiplier: 2.4
   KOTime: 3.2
   maxKOTime: 15
   wakeUpTime: 0.6

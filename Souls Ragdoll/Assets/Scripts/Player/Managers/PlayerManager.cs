@@ -75,11 +75,7 @@ namespace AlessioBorriello
             inputManager.TickActionsInput();
 
             //Movement, animation logic
-            if (!disablePlayerInteraction)
-            {
-                if (canRotate) playerLocomotionManager.HandleMovementRotation(currentRotationSpeedMultiplier);
-            }
-
+            playerLocomotionManager.HandleMovementRotation();
             playerLocomotionManager.HandleMovement();
             playerLocomotionManager.HandleFootFriction();
             playerLocomotionManager.CheckIfOnGround();

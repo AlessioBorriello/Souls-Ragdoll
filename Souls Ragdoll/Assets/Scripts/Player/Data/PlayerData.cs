@@ -19,6 +19,7 @@ namespace AlessioBorriello
         public float sprintThreshold = .2f; //The roll button has to be pressed for this amount of time to sprint
         public float rotationSpeed = 10f; //Rotation speed
         public float inAirRotationSpeed = 4f; //Rotation speed while in air
+        public float attackingRotationSpeed = 3f; //Rotation speed while attacking
         public float maxSlopeAngle = 30f; //Max angle of a slope before it is considered unclimbable
         public float movingFriction = 0f; //Friction if player is moving
         public float idleFriction = .35f; //Friction if player is not moving
