@@ -31,6 +31,7 @@ namespace AlessioBorriello
 
         //Flags
         [Header("Flags")]
+        public bool isClient = true;
         public bool disablePlayerInteraction = false;
         public bool canRotate = true;
         public bool isOnGround = true;

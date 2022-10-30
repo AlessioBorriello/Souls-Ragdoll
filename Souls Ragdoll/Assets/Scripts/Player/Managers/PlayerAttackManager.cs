@@ -7,6 +7,7 @@ namespace AlessioBorriello
     public class PlayerAttackManager : MonoBehaviour
     {
         private PlayerManager playerManager;
+        public bool attackingWithLeft = false;
 
         private void Start()
         {
@@ -18,28 +19,38 @@ namespace AlessioBorriello
 
             if(playerManager.disablePlayerInteraction) return;
 
+            //if (playerManager.inputManager.rbInputPressed || !playerManager.isClient) //To make dummy attack
             //Right bumper
-            if (playerManager.inputManager.rbInputPressed)
-            {
-                HandEquippableItem item = playerManager.inventoryManager.currentRightSlotItem;
-                if(item is WeaponItem) HandleLightAttack( (WeaponItem)item );
-            }
+            if (playerManager.inputManager.rbInputPressed) TryAttack(false, false);
             //Right trigger
-            if (playerManager.inputManager.rtInputPressed)
-            {
-                HandEquippableItem item = playerManager.inventoryManager.currentRightSlotItem;
-                if (item is WeaponItem) HandleHeavyAttack((WeaponItem)item);
-            }
+            if (playerManager.inputManager.rtInputPressed) TryAttack(false, true);
+
+            //Left bumper
+            if (playerManager.inputManager.lbInputPressed) TryAttack(true, false);
+            //Left trigger
+            if (playerManager.inputManager.ltInputPressed) TryAttack(true, true);
         }
 
-        private void HandleLightAttack(WeaponItem weapon)
+        private void TryAttack(bool isLeft, bool isHeavy)
         {
-            playerManager.animationManager.PlayTargetAnimation(weapon.OneHandLightAttackOne, .2f);
+            //Get right or left item
+            HandEquippableItem item = (isLeft)? playerManager.inventoryManager.currentLeftSlotItem : playerManager.inventoryManager.currentRightSlotItem;
+            if (item is not WeaponItem) return;
+
+            //Set bools
+            attackingWithLeft = isLeft;
+            playerManager.animationManager.animator.SetBool("attackingWithLeft", isLeft);
+
+            //Get animation to play
+            string attackAnimation = GetAttackAnimationString((WeaponItem)item, isHeavy);
+            //Play animation
+            playerManager.animationManager.PlayTargetAnimation(attackAnimation, .2f);
         }
 
-        private void HandleHeavyAttack(WeaponItem weapon)
+        private string GetAttackAnimationString(WeaponItem weapon, bool isHeavy)
         {
-            playerManager.animationManager.PlayTargetAnimation(weapon.OneHandHeavyAttackOne, .2f);
+            if (!isHeavy) return weapon.OneHandLightAttackOne;
+            else return weapon.OneHandHeavyAttackOne;
         }
 
     }

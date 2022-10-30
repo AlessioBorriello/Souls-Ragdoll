@@ -15,7 +15,7 @@ namespace AlessioBorriello
             playerManager = GetComponent<PlayerManager>();
         }
 
-        public void EnterCollision(DamageCollider damageCollider, Collider playerCollider, int damage, float knockbackStrength, float flinchStrenght)
+        public void EnterCollision(DamageColliderControl damageCollider, Collider playerCollider, int damage, float knockbackStrength, float flinchStrenght)
         {
             if (CheckIfHit(damageCollider.GetInstanceID()))
             {
@@ -55,7 +55,7 @@ namespace AlessioBorriello
 
         Vector3 collisionPoint;
         Vector3 hipsPos;
-        private void Knockback(Collider playerCollider, DamageCollider damageCollider, float knockbackStrength, float flinchStrenght)
+        private void Knockback(Collider playerCollider, DamageColliderControl damageCollider, float knockbackStrength, float flinchStrenght)
         {
             collisionPoint = playerCollider.ClosestPoint(damageCollider.transform.position);
             hipsPos = playerManager.physicalHips.transform.position;

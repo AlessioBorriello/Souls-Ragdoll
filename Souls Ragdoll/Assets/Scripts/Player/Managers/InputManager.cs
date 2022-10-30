@@ -68,7 +68,34 @@ namespace AlessioBorriello
         public bool rtInputReleased;
         public bool rtInputPressed;
         #endregion
+
+        #region LB
+        private bool lbIn;
+        private bool lbInReleased;
+        private bool lbInPressed;
+
+        [Header("Bumpers - left")]
+        public bool lbInput;
+        public bool lbInputReleased;
+        public bool lbInputPressed;
         #endregion
+
+        #region LT
+        private bool ltIn;
+        private bool ltInReleased;
+        private bool ltInPressed;
+
+        [Header("Triggers - left")]
+        public bool ltInput;
+        public bool ltInputReleased;
+        public bool ltInputPressed;
+        #endregion
+        #endregion
+
+        private void Start()
+        {
+            if (!playerManager.isClient) this.enabled = false;
+        }
 
         public void OnEnable()
         {
@@ -84,46 +111,6 @@ namespace AlessioBorriello
 
                 //Camera movement
                 inputAction.PlayerGameplay.CameraMovement.performed += inputAction => cameraIn = inputAction.ReadValue<Vector2>();
-
-                #region Buttons
-                #region East button
-                inputAction.PlayerGameplay.EastButton.started += inputAction => eastIn = true;
-                inputAction.PlayerGameplay.EastButton.canceled += inputAction =>
-                {
-                    eastIn = false;
-                    eastInReleased = true;
-                };
-                #endregion
-
-                #region South button
-                inputAction.PlayerGameplay.SouthButton.started += inputAction => southIn = true;
-                inputAction.PlayerGameplay.SouthButton.canceled += inputAction =>
-                {
-                    southIn = false;
-                    southInReleased = true;
-                };
-                #endregion
-                #endregion
-
-                #region Triggers - Bumpers
-                #region RB
-                inputAction.PlayerGameplay.EastButton.started += inputAction => rbIn = true;
-                inputAction.PlayerGameplay.EastButton.canceled += inputAction =>
-                {
-                    rbIn = false;
-                    rbInReleased = true;
-                };
-                #endregion
-                
-                #region RT
-                inputAction.PlayerGameplay.EastButton.started += inputAction => rtIn = true;
-                inputAction.PlayerGameplay.EastButton.canceled += inputAction =>
-                {
-                    rtIn = false;
-                    rtInReleased = true;
-                };
-                #endregion
-                #endregion
 
             }
 
@@ -195,6 +182,26 @@ namespace AlessioBorriello
             rtInput = rtIn;
             rtInputReleased = rtInReleased;
             rtInputPressed = rtInPressed;
+            #endregion
+
+            #region LB
+            lbIn = (inputAction.PlayerGameplay.LeftLightButton.phase == InputActionPhase.Performed);
+            lbInPressed = inputAction.PlayerGameplay.LeftLightButton.WasPerformedThisFrame();
+            lbInReleased = inputAction.PlayerGameplay.LeftLightButton.WasReleasedThisFrame();
+
+            lbInput = lbIn;
+            lbInputReleased = lbInReleased;
+            lbInputPressed = lbInPressed;
+            #endregion
+
+            #region LT
+            ltIn = (inputAction.PlayerGameplay.LeftHeavyButton.phase == InputActionPhase.Performed);
+            ltInPressed = inputAction.PlayerGameplay.LeftHeavyButton.WasPerformedThisFrame();
+            ltInReleased = inputAction.PlayerGameplay.LeftHeavyButton.WasReleasedThisFrame();
+
+            ltInput = ltIn;
+            ltInputReleased = ltInReleased;
+            ltInputPressed = ltInPressed;
             #endregion
             #endregion
         }

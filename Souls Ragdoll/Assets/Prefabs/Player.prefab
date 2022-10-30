@@ -1423,6 +1423,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2217555875006252242}
   - component: {fileID: 2217555875006252243}
+  - component: {fileID: 641120087}
   m_Layer: 7
   m_Name: AnimatedPlayer
   m_TagString: Player
@@ -1468,6 +1469,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &641120087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2217555875006252269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4677e926da3930843b9736916ec410a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2217555875182455276
 GameObject:
   m_ObjectHideFlags: 0
@@ -1927,9 +1940,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c417bd3b8fddc4cabd274d720bc63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numberOfSlots: 2
-  currentEquippedRightItem: {fileID: 0}
-  currentEquippedLeftItem: {fileID: 0}
+  currentRightSlotItem: {fileID: 0}
+  currentLeftSlotItem: {fileID: 0}
   testWeapon: {fileID: 11400000, guid: 47d20fcc74c7319499117cec8edcc7f6, type: 2}
   testShield: {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
 --- !u!114 &905612787
@@ -1975,7 +1987,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 269d1c702f94a1e40a64b54295247c95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inContact: 
 --- !u!1 &2217555876070721501
 GameObject:
   m_ObjectHideFlags: 0

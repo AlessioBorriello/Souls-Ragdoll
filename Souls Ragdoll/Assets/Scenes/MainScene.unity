@@ -1168,23 +1168,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 613879535}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &641120084 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2217555875006252269, guid: 85505ef8473b3244eaba38913ac50fe4, type: 3}
-  m_PrefabInstance: {fileID: 7526962379060038384}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &641120087
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 641120084}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4677e926da3930843b9736916ec410a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &641901902 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 544183059444659572, guid: a4e05a37c0488d44187e6f921eb5e319, type: 3}
@@ -4147,6 +4130,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 623422895, guid: 85505ef8473b3244eaba38913ac50fe4, type: 3}
+      propertyPath: isClient
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1894061935806246743, guid: 85505ef8473b3244eaba38913ac50fe4, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -4205,7 +4192,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2579650961228759777, guid: 85505ef8473b3244eaba38913ac50fe4, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8779414462503701537, guid: 85505ef8473b3244eaba38913ac50fe4, type: 3}
       propertyPath: uiManager
@@ -4322,14 +4309,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1894061935806246743, guid: 85505ef8473b3244eaba38913ac50fe4, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2217555875640887432, guid: 85505ef8473b3244eaba38913ac50fe4, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2217555875885131132, guid: 85505ef8473b3244eaba38913ac50fe4, type: 3}
       propertyPath: m_RootOrder
       value: 3

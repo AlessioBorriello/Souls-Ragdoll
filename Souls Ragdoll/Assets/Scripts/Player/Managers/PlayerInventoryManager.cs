@@ -14,11 +14,11 @@ namespace AlessioBorriello
         private HandItemHolder rightHolder;
 
         //The currently equipped items and the relative colliders
-        public HandEquippableItem currentRightSlotItem;
-        private DamageCollider currentRightSlotItemCollider;
+        [HideInInspector] public HandEquippableItem currentRightSlotItem;
+        [HideInInspector] public Collider currentRightSlotItemCollider;
 
-        public HandEquippableItem currentLeftSlotItem;
-        private DamageCollider currentLeftSlotItemCollider;
+        [HideInInspector] public HandEquippableItem currentLeftSlotItem;
+        [HideInInspector] public Collider currentLeftSlotItemCollider;
 
         //For testing
         public HandEquippableItem testWeapon;
@@ -36,7 +36,7 @@ namespace AlessioBorriello
 
             //Load Items
             LoadItemInSlot(testWeapon, false);
-            LoadItemInSlot(testShield, true);
+            LoadItemInSlot(testWeapon, true);
 
         }
 
@@ -56,31 +56,10 @@ namespace AlessioBorriello
             }
         }
 
-        private DamageCollider GetItemCollider(HandItemHolder holder)
+        private Collider GetItemCollider(HandItemHolder holder)
         {
-            return holder.currentItemModel.GetComponentInChildren<DamageCollider>();
+            return holder.currentItemModel.GetComponentInChildren<Collider>();
         }
 
-        #region Collider stuff
-        public void EnableRightDamageCollider()
-        {
-            currentRightSlotItemCollider.EnableDamageCollider();
-        }
-
-        public void EnableLeftDamageCollider()
-        {
-            currentLeftSlotItemCollider.EnableDamageCollider();
-        }
-
-        public void DisableRightDamageCollider()
-        {
-            currentRightSlotItemCollider.DisableDamageCollider();
-        }
-
-        public void DisableLeftDamageCollider()
-        {
-            currentLeftSlotItemCollider.DisableDamageCollider();
-        }
-        #endregion
     }
 }

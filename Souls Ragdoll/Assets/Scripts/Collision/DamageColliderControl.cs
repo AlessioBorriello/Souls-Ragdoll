@@ -4,9 +4,9 @@ using UnityEngine;
 
 namespace AlessioBorriello
 {
-    public class DamageCollider : MonoBehaviour
+    public class DamageColliderControl : MonoBehaviour
     {
-        private Collider damageCollider;
+        private Collider hitbox;
         private List<int> alreadyHit = new List<int>();
 
         [SerializeField] private int damage = 30;
@@ -19,20 +19,10 @@ namespace AlessioBorriello
 
         private void Awake()
         {
-            damageCollider = GetComponent<Collider>();
-            damageCollider.gameObject.SetActive(true);
-            damageCollider.isTrigger = true;
-            damageCollider.enabled = startEnabled;
-        }
-
-        public void EnableDamageCollider()
-        {
-            damageCollider.enabled = true;
-        }
-
-        public void DisableDamageCollider()
-        {
-            damageCollider.enabled = false;
+            hitbox = GetComponent<Collider>();
+            hitbox.gameObject.SetActive(true);
+            hitbox.isTrigger = true;
+            hitbox.enabled = startEnabled;
         }
 
         private void OnTriggerEnter(Collider other)
