@@ -8,12 +8,12 @@ namespace AlessioBorriello
     public class PlayerAttackManager : MonoBehaviour
     {
         private PlayerManager playerManager;
-        public bool attackingWithLeft = false;
+        [HideInInspector] public bool attackingWithLeft = false;
         private AttackType attackType;
 
-        public int nextComboAttackIndex = 0;
-        public bool canCombo = false;
-        public bool chainedAttack = false;
+        [HideInInspector] public int nextComboAttackIndex = 0;
+        [HideInInspector] public bool canCombo = false;
+        [HideInInspector] public bool chainedAttack = false;
 
         private void Start()
         {
@@ -29,10 +29,11 @@ namespace AlessioBorriello
         public void HandleAttacks()
         {
 
+            //If player is already attacking and can not combo into next attack, return
             if(playerManager.disablePlayerInteraction && !canCombo) return;
 
             //Right bumper
-            if (playerManager.inputManager.rbInput) TryAttack(false, false);
+            if (playerManager.inputManager.rbInputPressed) TryAttack(false, false);
             //Right trigger
             if (playerManager.inputManager.rtInputPressed) TryAttack(false, true);
 
@@ -48,37 +49,35 @@ namespace AlessioBorriello
             HandEquippableItem item = (isLeft)? playerManager.inventoryManager.currentLeftSlotItem : playerManager.inventoryManager.currentRightSlotItem;
             if (item is not WeaponItem) return;
 
-            //Get this attack's proprieties
-            bool currentAttackingWithLeft = isLeft;
-            AttackType currentAttackType = GetAttackType(isHeavy);
+            //Get this new attack's proprieties
+            bool newAttackingWithLeft = isLeft;
+            AttackType newAttackType = GetAttackType(isHeavy);
 
             //Check for combos
-            if(nextComboAttackIndex > 0)
-            {
-                //Cases where the combo is not done
-                if(!canCombo || currentAttackingWithLeft != attackingWithLeft || currentAttackType != attackType)
-                {
-                    //Combo did not happen
-                    chainedAttack = false;
-                    return;
-                }else
-                {
-                    Debug.Log("Combo");
-                    chainedAttack = true;
-                }
-            }
+            if(nextComboAttackIndex > 0 && canCombo) chainedAttack = CheckForCombo(newAttackingWithLeft, newAttackType);
+
+            //If an attack was NOT chained and it is not the first attack
+            if (!chainedAttack && nextComboAttackIndex != 0) return;
 
             //Update proprieties
-            attackingWithLeft = currentAttackingWithLeft;
-            attackType = currentAttackType;
+            attackingWithLeft = newAttackingWithLeft;
+            attackType = newAttackType;
 
             //Get animation to play
             string attackAnimation = GetAttackAnimationString((WeaponItem)item, isHeavy);
             //Play animation
             playerManager.animationManager.PlayTargetAnimation(attackAnimation, .2f);
+            if (chainedAttack) Debug.Log("Combo: " + attackAnimation);
 
             //Disable combo until it is opened again in the animation events
             canCombo = false;
+        }
+
+        private bool CheckForCombo(bool isLeft, AttackType attackType)
+        {
+            //Cases where the combo is not done
+            if (isLeft != attackingWithLeft || this.attackType != attackType) return false;
+            else return true;
         }
 
         private AttackType GetAttackType(bool isHeavy)
@@ -89,20 +88,15 @@ namespace AlessioBorriello
         private string GetAttackAnimationString(WeaponItem weapon, bool isHeavy)
         {
             string animation;
-            if (!isHeavy)
-            {
-                int comboIndex = nextComboAttackIndex % weapon.OneHandedLightAttackCombo.Length;
-                animation = weapon.OneHandedLightAttackCombo[comboIndex];
-                nextComboAttackIndex++;
-                if (animation == "")
-                {
-                    animation = GetAttackAnimationString(weapon, isHeavy);
-                }
-            }
-            else
-            {
-                animation = weapon.OneHandedHeavyAttackCombo[nextComboAttackIndex++];
-            }
+
+            string[] animationArray;
+            if (!isHeavy) animationArray = weapon.OneHandedLightAttackCombo;
+            else animationArray = weapon.OneHandedHeavyAttackCombo;
+
+            animation = animationArray[nextComboAttackIndex++];
+            nextComboAttackIndex %= animationArray.Length;
+
+            if (animation == "") animation = GetAttackAnimationString(weapon, isHeavy);
 
             return animation;
         }
