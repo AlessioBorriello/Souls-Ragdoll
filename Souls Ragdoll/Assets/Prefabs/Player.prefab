@@ -1842,6 +1842,12 @@ MonoBehaviour:
   rtInput: 0
   rtInputReleased: 0
   rtInputPressed: 0
+  lbInput: 0
+  lbInputReleased: 0
+  lbInputPressed: 0
+  ltInput: 0
+  ltInputReleased: 0
+  ltInputPressed: 0
 --- !u!114 &1203124241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1919,6 +1925,7 @@ MonoBehaviour:
   groundNormal: {x: 0, y: 0, z: 0}
   groundDistance: 0
   movementDirection: {x: 0, y: 0, z: 0}
+  isClient: 1
   disablePlayerInteraction: 0
   canRotate: 1
   isOnGround: 1
@@ -1941,7 +1948,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentRightSlotItem: {fileID: 0}
+  currentRightSlotItemCollider: {fileID: 0}
   currentLeftSlotItem: {fileID: 0}
+  currentLeftSlotItemCollider: {fileID: 0}
   testWeapon: {fileID: 11400000, guid: 47d20fcc74c7319499117cec8edcc7f6, type: 2}
   testShield: {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
 --- !u!114 &905612787
@@ -1956,6 +1965,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34dd55da317f50044bb67d74eb010e7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackingWithLeft: 0
+  nextComboAttackIndex: 0
+  canCombo: 0
 --- !u!114 &8779414462503701537
 MonoBehaviour:
   m_ObjectHideFlags: 0

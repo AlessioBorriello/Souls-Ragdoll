@@ -17,4 +17,5 @@ MonoBehaviour:
   descriptionText: A wooden spear
   modelPrefab: {fileID: 7847242577517675049, guid: 088e115252c9b494fb9b151c2c7dd5f7, type: 3}
   OneHandLightAttackOne: OneHandLightAttackOne
+  OneHandLightAttackTwo: OneHandLightAttackTwo
   OneHandHeavyAttackOne: OneHandHeavyAttackOne

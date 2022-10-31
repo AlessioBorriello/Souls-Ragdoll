@@ -16,6 +16,18 @@ namespace AlessioBorriello
             inventoryManager = GetComponentInParent<PlayerInventoryManager>();
         }
 
+        #region Combos
+        public void OpenComboChance()
+        {
+            playerManager.attackManager.canCombo = true;
+        }
+
+        public void CloseComboChance()
+        {
+            playerManager.attackManager.canCombo = false;
+        }
+        #endregion
+
         #region Collider stuff
         public void EnableDamageCollider()
         {
