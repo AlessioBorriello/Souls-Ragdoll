@@ -8,8 +8,8 @@ namespace AlessioBorriello
     {
 
         public bool isLeftHand;
-
         public GameObject currentItemModel;
+        public Transform leftHandOverride;
 
         public void UnloadItemModel()
         {
@@ -36,10 +36,12 @@ namespace AlessioBorriello
             if(model != null)
             {
                 model.transform.parent = transform;
+                if(leftHandOverride != null) model.transform.parent = leftHandOverride;
             }
 
             model.transform.localPosition = Vector3.zero;
             model.transform.localRotation = Quaternion.identity;
+            model.transform.localScale = Vector3.one;
 
             currentItemModel = model;
 

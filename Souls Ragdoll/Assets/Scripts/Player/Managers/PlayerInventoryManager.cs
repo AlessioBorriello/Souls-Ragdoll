@@ -21,8 +21,10 @@ namespace AlessioBorriello
         [HideInInspector] public Collider currentLeftSlotItemCollider;
 
         //For testing
-        public HandEquippableItem testWeapon;
-        public HandEquippableItem testShield;
+        public HandEquippableItem shortSword;
+        public HandEquippableItem spear;
+        public HandEquippableItem battleAxe;
+        public HandEquippableItem shield;
 
         private void Start()
         {
@@ -35,8 +37,8 @@ namespace AlessioBorriello
             }
 
             //Load Items
-            LoadItemInSlot(testWeapon, false);
-            LoadItemInSlot(testWeapon, true);
+            LoadItemInSlot(shortSword, false);
+            LoadItemInSlot(battleAxe, true);
 
         }
 

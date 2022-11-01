@@ -64,7 +64,8 @@ namespace AlessioBorriello
             attackType = newAttackType;
 
             //Get animation to play
-            string attackAnimation = GetAttackAnimationString((WeaponItem)item, isHeavy);
+            string attackAnimation = GetAttackAnimationString((WeaponItem)item, attackType);
+
             //Play animation
             playerManager.animationManager.PlayTargetAnimation(attackAnimation, .2f);
             if (chainedAttack) Debug.Log("Combo: " + attackAnimation);
@@ -85,20 +86,39 @@ namespace AlessioBorriello
             return (isHeavy) ? AttackType.heavy : AttackType.light;
         }
 
-        private string GetAttackAnimationString(WeaponItem weapon, bool isHeavy)
+        private string GetAttackAnimationString(WeaponItem weapon, AttackType attackType)
         {
             string animation;
 
             string[] animationArray;
-            if (!isHeavy) animationArray = weapon.OneHandedLightAttackCombo;
-            else animationArray = weapon.OneHandedHeavyAttackCombo;
+
+            switch(this.attackType)
+            {
+                case AttackType.light: animationArray = weapon.OneHandedLightAttackCombo; break;
+                case AttackType.heavy: animationArray = weapon.OneHandedHeavyAttackCombo; break;
+                default: animationArray = weapon.OneHandedLightAttackCombo; break;
+            }
+
+            if (IsArrayEmpty(animationArray)) return "";
 
             animation = animationArray[nextComboAttackIndex++];
             nextComboAttackIndex %= animationArray.Length;
 
-            if (animation == "") animation = GetAttackAnimationString(weapon, isHeavy);
+            if (animation == "") animation = GetAttackAnimationString(weapon, attackType);
 
             return animation;
+        }
+
+        private bool IsArrayEmpty(string[] array)
+        {
+            if(array == null || array.Length == 0) return true;
+
+            foreach(string s in array)
+            {
+                if (s != "") return false;
+            }
+
+            return true;
         }
 
         private enum AttackType

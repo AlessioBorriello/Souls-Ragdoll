@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onEnter: 1
   onEnterBoolName: shouldSlide
-  onEnterBoolValue: 1
+  onEnterBoolValue: 0
   onExit: 0
   onExitBoolName: 
   onExitBoolValue: 0
@@ -166,7 +166,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onEnter: 1
   onEnterBoolName: shouldSlide
-  onEnterBoolValue: 1
+  onEnterBoolValue: 0
   onExit: 0
   onExitBoolName: 
   onExitBoolValue: 0

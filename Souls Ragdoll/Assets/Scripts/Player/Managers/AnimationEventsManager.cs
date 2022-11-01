@@ -31,14 +31,30 @@ namespace AlessioBorriello
         #region Collider stuff
         public void EnableDamageCollider()
         {
-            if(!playerManager.attackManager.attackingWithLeft) inventoryManager.currentRightSlotItemCollider.enabled = true;
-            else inventoryManager.currentLeftSlotItemCollider.enabled = true;
+            if (!playerManager.attackManager.attackingWithLeft)
+            {
+                Collider collider = inventoryManager.currentRightSlotItemCollider;
+                if(collider != null) collider.enabled = true;
+            }
+            else
+            {
+                Collider collider = inventoryManager.currentLeftSlotItemCollider;
+                if (collider != null) collider.enabled = true;
+            }
         }
 
         public void DisableDamageCollider()
         {
-            if (!playerManager.attackManager.attackingWithLeft) inventoryManager.currentRightSlotItemCollider.enabled = false;
-            else inventoryManager.currentLeftSlotItemCollider.enabled = false;
+            if (!playerManager.attackManager.attackingWithLeft)
+            {
+                Collider collider = inventoryManager.currentRightSlotItemCollider;
+                if (collider != null) collider.enabled = false;
+            }
+            else
+            {
+                Collider collider = inventoryManager.currentLeftSlotItemCollider;
+                if (collider != null) collider.enabled = false;
+            }
         }
         #endregion
     }
