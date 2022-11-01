@@ -8,5 +8,8 @@ namespace AlessioBorriello
     public class HandEquippableItem : EquippableItem
     {
         public GameObject modelPrefab;
+
+        [Header("One handed Idle")]
+        public string OneHandedIdle;
     }
 }

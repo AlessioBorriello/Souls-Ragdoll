@@ -44,18 +44,27 @@ namespace AlessioBorriello
 
         private void LoadItemInSlot(HandEquippableItem item, bool loadOnLeft)
         {
+
             if (loadOnLeft)
             {
+                //Set item on left
                 leftHolder.LoadItemModel(item);
                 currentLeftSlotItem = item;
                 currentLeftSlotItemCollider = GetItemCollider(leftHolder);
             }
             else
             {
+                //Set item on right
                 rightHolder.LoadItemModel(item);
                 currentRightSlotItem = item;
                 currentRightSlotItemCollider = GetItemCollider(rightHolder);
             }
+
+            //Set idle animation
+            int layer = playerManager.animationManager.animator.GetLayerIndex((loadOnLeft)? "Left Arm" : "Right Arm");
+            if (item != null) playerManager.animationManager.animator.CrossFade(item.OneHandedIdle, .1f, layer);
+            else playerManager.animationManager.animator.CrossFade("Empty", .1f, layer);
+
         }
 
         private Collider GetItemCollider(HandItemHolder holder)

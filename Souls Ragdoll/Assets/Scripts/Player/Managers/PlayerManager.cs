@@ -42,7 +42,7 @@ namespace AlessioBorriello
         public bool isAttacking = false;
         public bool isKnockedOut = false;
 
-        private void Start()
+        private void Awake()
         {
 
             inputManager = GetComponent<InputManager>();
