@@ -345,7 +345,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 30
-  knockbackStrength: 5
+  knockbackStrength: 2
   flinchStrenght: 25
   startEnabled: 0
   canHitMultipleTimes: 1

@@ -20,27 +20,27 @@ namespace AlessioBorriello
             playerManager = GetComponent<PlayerManager>();
         }
 
-        private void Update()
-        {
-            //Keep the attackingWithLeft bool in sync with the animator
-            playerManager.animationManager.animator.SetBool("attackingWithLeft", attackingWithLeft);
-        }
-
         public void HandleAttacks()
         {
 
+            HandleRollingAndDashingAttacks();
+
             //If player is already attacking and can not combo into next attack, return
-            if(playerManager.disablePlayerInteraction && !canCombo) return;
+            if (playerManager.disablePlayerInteraction && !canCombo) return;
 
-            //Right bumper
-            if (playerManager.inputManager.rbInputPressed) TryAttack(false, false);
-            //Right trigger
-            if (playerManager.inputManager.rtInputPressed) TryAttack(false, true);
+            //Store presses
+            bool rb = playerManager.inputManager.rbInputPressed;
+            bool rt = playerManager.inputManager.rtInputPressed;
+            bool lb = playerManager.inputManager.lbInputPressed;
+            bool lt = playerManager.inputManager.ltInputPressed;
 
-            //Left bumper
-            if (playerManager.inputManager.lbInputPressed) TryAttack(true, false);
-            //Left trigger
-            if (playerManager.inputManager.ltInputPressed) TryAttack(true, true);
+            //Define if the attack is left handed and if its heavy
+            bool isLeft = (lb || lt);
+            bool isHeavy = (lt || rt);
+
+            //Try to attack if any one of the buttons is pressed
+            if(rb || rt || lb || lt) TryAttack(isLeft, isHeavy);
+
         }
 
         private void TryAttack(bool isLeft, bool isHeavy)
@@ -62,6 +62,7 @@ namespace AlessioBorriello
             //Update proprieties
             attackingWithLeft = newAttackingWithLeft;
             attackType = newAttackType;
+            playerManager.animationManager.animator.SetBool("attackingWithLeft", attackingWithLeft);
 
             //Get animation to play
             string attackAnimation = GetAttackAnimationString((WeaponItem)item, attackType);
@@ -76,14 +77,38 @@ namespace AlessioBorriello
 
         private bool CheckForCombo(bool isLeft, AttackType attackType)
         {
-            //Cases where the combo is not done
+            //Cases where the combo is not performed
             if (isLeft != attackingWithLeft || this.attackType != attackType) return false;
             else return true;
         }
 
         private AttackType GetAttackType(bool isHeavy)
         {
+            if (playerManager.isSprinting && !isHeavy) return AttackType.running;
+            if(rollingAttackTimer > 0 && !isHeavy) return AttackType.rolling;
+            if(backdashingAttackTimer > 0 && !isHeavy) return AttackType.running;
+
             return (isHeavy) ? AttackType.heavy : AttackType.light;
+        }
+
+        private bool previousIsRolling = false; //If the player was rolling the previous frame
+        private bool previousIsBackdashing = false; //If the player was backdashing the previous frame
+        private float rollingAttackTimer = 0; //The window to perform a rolling attack
+        private float backdashingAttackTimer = 0; //The window to perform a backdashing attack
+        private void HandleRollingAndDashingAttacks()
+        {
+            //Just finished rolling
+            if(!playerManager.isRolling && previousIsRolling) rollingAttackTimer = playerManager.playerData.rollingAttackWindow;
+
+            //Just finished backdashing
+            if (!playerManager.isBackdashing && previousIsBackdashing) backdashingAttackTimer = playerManager.playerData.backdashingAttackWindow;
+
+            if (rollingAttackTimer > 0) rollingAttackTimer -= Time.deltaTime;
+            if (backdashingAttackTimer > 0) backdashingAttackTimer -= Time.deltaTime;
+
+            //Update values
+            previousIsRolling = playerManager.isRolling;
+            previousIsBackdashing = playerManager.isBackdashing;
         }
 
         private string GetAttackAnimationString(WeaponItem weapon, AttackType attackType)
@@ -96,6 +121,8 @@ namespace AlessioBorriello
             {
                 case AttackType.light: animationArray = weapon.OneHandedLightAttackCombo; break;
                 case AttackType.heavy: animationArray = weapon.OneHandedHeavyAttackCombo; break;
+                case AttackType.running: return weapon.OneHandedRunningAttack;
+                case AttackType.rolling: return weapon.OneHandedRollingAttack;
                 default: animationArray = weapon.OneHandedLightAttackCombo; break;
             }
 

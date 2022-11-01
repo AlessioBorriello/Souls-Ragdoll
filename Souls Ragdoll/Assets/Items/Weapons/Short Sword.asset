@@ -22,5 +22,7 @@ MonoBehaviour:
   - 
   OneHandedHeavyAttackCombo:
   - OneHandHeavyAttackOne
+  - OneHandHeavyAttackTwo
   - 
-  - 
+  OneHandedRunningAttack: OneHandRunningAttack
+  OneHandedRollingAttack: OneHandRollingAttack
