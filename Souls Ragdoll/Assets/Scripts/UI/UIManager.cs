@@ -55,6 +55,7 @@ namespace AlessioBorriello
         {
             slotImage.enabled = (sprite != null) ? true : false;
             slotImage.sprite = sprite;
+            slotImage.preserveAspect = true;
         }
 
     }
