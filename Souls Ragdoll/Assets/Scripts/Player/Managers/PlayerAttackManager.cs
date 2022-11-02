@@ -23,7 +23,7 @@ namespace AlessioBorriello
         public void HandleAttacks()
         {
 
-            HandleRollingAndDashingAttacks();
+            HandleRollAndBackdashAttackTimers();
 
             //If player is already attacking and can not combo into next attack, return
             if (playerManager.disablePlayerInteraction && !canCombo) return;
@@ -91,11 +91,13 @@ namespace AlessioBorriello
             return (isHeavy) ? AttackType.heavy : AttackType.light;
         }
 
+        #region Rolling and Backdashing attack timers handling
         private bool previousIsRolling = false; //If the player was rolling the previous frame
         private bool previousIsBackdashing = false; //If the player was backdashing the previous frame
         private float rollingAttackTimer = 0; //The window to perform a rolling attack
         private float backdashingAttackTimer = 0; //The window to perform a backdashing attack
-        private void HandleRollingAndDashingAttacks()
+        #endregion
+        private void HandleRollAndBackdashAttackTimers()
         {
             //Just finished rolling
             if(!playerManager.isRolling && previousIsRolling) rollingAttackTimer = playerManager.playerData.rollingAttackWindow;

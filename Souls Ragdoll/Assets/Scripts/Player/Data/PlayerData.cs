@@ -48,6 +48,7 @@ namespace AlessioBorriello
         [Header("Roll and Backdash")]
         public float backdashSpeedMultiplier = 1f; //Velocity multiplier when backdashing
         public float rollSpeedMultiplier = 1f; //Velocity multiplier when backdashing
+        public float rollJumpForce = 5.2f; //Force added upwards when player rolls
 
         [Header("KO")]
         public float KOTime = 3.6f; //The time the player will be ko for

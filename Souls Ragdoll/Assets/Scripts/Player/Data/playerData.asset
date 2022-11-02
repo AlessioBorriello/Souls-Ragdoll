@@ -12,22 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 535a02da224185e4cba919cb828fc6d7, type: 3}
   m_Name: playerData
   m_EditorClassIdentifier: 
-  hipsJointDriveForce: 950
-  jointDriveForce: 650
+  hipsJointDriveForce: 1250
+  jointDriveForce: 850
   walkSpeedMultiplier: 1.6
   runSpeedMultiplier: 1.75
   sprintSpeedMultiplier: 2.15
   sprintThreshold: 0.4
   rotationSpeed: 5
   inAirRotationSpeed: 2
-  attackingRotationSpeed: 1
   maxSlopeAngle: 35
   movingFriction: 0
   idleFriction: 0.5
   tiltOnDirectionChange: 1
-  maxTiltAmount: 3.1
-  tiltSpeed: 1.2
+  maxTiltAmount: 3.05
+  tiltSpeed: 1.15
   speedNeededToTilt: 0.096
+  attackingRotationSpeed: 1
+  rollingAttackWindow: 0.35
+  backdashingAttackWindow: 0.35
   minDistanceToFall: 0.8
   groundCollisionLayers:
     serializedVersion: 2
@@ -39,6 +41,7 @@ MonoBehaviour:
   knockoutLandThreshold: 1.45
   backdashSpeedMultiplier: 3.1
   rollSpeedMultiplier: 2.4
+  rollJumpForce: 5.22
   KOTime: 3.2
   maxKOTime: 15
   wakeUpTime: 0.6

@@ -16,6 +16,11 @@ namespace AlessioBorriello
             inventoryManager = GetComponentInParent<PlayerInventoryManager>();
         }
 
+        public void AddJumpForceOnRoll()
+        {
+            playerManager.ragdollManager.AddForceToPlayer(playerManager.groundNormal * playerManager.playerData.rollJumpForce, ForceMode.Impulse);
+        }
+
         #region Combos
         public void OpenComboChance()
         {

@@ -33,7 +33,13 @@ namespace AlessioBorriello
             if (Colliders == null) Colliders = physicalHips.GetComponentsInChildren<Collider>(); //Get all the colliders
             if(Bodies == null) Bodies = physicalHips.GetComponentsInChildren<Rigidbody>();
 
-            Joints[0].configuredInWorldSpace = true;
+            Joints[(int)BodyParts.Hip].configuredInWorldSpace = true; //Set hips in world space
+
+            //Debug.Log("Bones: " + AnimatedBones.Length + " - Joints: " + Joints.Length);
+            for(int i = 0; i < AnimatedBones.Length; i++)
+            {
+                //Debug.Log(Joints[i].name + " copies " + AnimatedBones[i].name);
+            }
 
             SetupColliders();
         }
@@ -61,7 +67,6 @@ namespace AlessioBorriello
         {
             UpdateJointTargets(Joints, AnimatedBones, initialJointRotations); //Update te joints target rotation to match the relative animated bone rotation
             SyncPosition(); //Sync the position of the 2 hips
-                            //SyncRotation();
         }
 
         public IEnumerator SetJointsDriveForcesOverTime(float targetHipsForce, float targetJointForce, float time)
@@ -73,8 +78,6 @@ namespace AlessioBorriello
 
             while (timeElapsed < time)
             {
-                //currentHipsForce = Mathf.Lerp(startHipsForce, targetHipsForce, timeElapsed / time);
-                //currentJointForce = Mathf.Lerp(startJointForce, targetJointForce, timeElapsed / time);
                 SetJointsDriveForces(Mathf.Lerp(startHipsForce, targetHipsForce, timeElapsed / time), Mathf.Lerp(startJointForce, targetJointForce, timeElapsed / time));
                 timeElapsed += Time.deltaTime;
                 yield return null;
