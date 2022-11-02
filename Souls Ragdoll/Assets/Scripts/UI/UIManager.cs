@@ -18,6 +18,10 @@ namespace AlessioBorriello
         [SerializeField] private Slider staminaBarSlider;
         [SerializeField] private float staminaBarLerpSpeed = 4.0f;
 
+        [Header("Quickslots")]
+        [SerializeField] private Image rightItemIcon;
+        [SerializeField] private Image leftItemIcon;
+
         private void Update()
         {
             HandleHealthBar();
@@ -32,6 +36,25 @@ namespace AlessioBorriello
         private void HandleStaminaBar()
         {
             staminaBarSlider.value = Mathf.Lerp(staminaBarSlider.value, (float)statsManager.currentStamina / statsManager.maxStamina, staminaBarLerpSpeed * Time.deltaTime);
+        }
+
+        public void UpdateQuickSlotsUI(PlayerInventoryManager inventoryManager)
+        {
+            //Right slot
+            HandEquippableItem rightItem = inventoryManager.currentRightHandItem;
+            Sprite rightSprite = (rightItem != null)? rightItem.iconSprite : null;
+            SetIcon(rightSprite, ref rightItemIcon);
+
+            //Left slot
+            HandEquippableItem leftItem = inventoryManager.currentLeftHandItem;
+            Sprite leftSprite = (leftItem != null) ? leftItem.iconSprite : null;
+            SetIcon(leftSprite, ref leftItemIcon);
+        }
+
+        private void SetIcon(Sprite sprite, ref Image slotImage)
+        {
+            slotImage.enabled = (sprite != null) ? true : false;
+            slotImage.sprite = sprite;
         }
 
     }

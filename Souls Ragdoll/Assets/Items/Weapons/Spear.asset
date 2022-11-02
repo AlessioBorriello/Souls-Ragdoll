@@ -13,9 +13,18 @@ MonoBehaviour:
   m_Name: Spear
   m_EditorClassIdentifier: 
   nameString: Spear
-  iconSprite: {fileID: 0}
+  iconSprite: {fileID: 21300000, guid: 1db3e1e34e826a6468a9899735e00409, type: 3}
   descriptionText: A wooden spear
   modelPrefab: {fileID: 7847242577517675049, guid: 088e115252c9b494fb9b151c2c7dd5f7, type: 3}
-  OneHandLightAttackOne: OneHandLightAttackOne
-  OneHandLightAttackTwo: OneHandLightAttackTwo
-  OneHandHeavyAttackOne: OneHandHeavyAttackOne
+  OneHandedIdle: 
+  movementSpeedMultiplier: 2.5
+  OneHandedLightAttackCombo:
+  - 
+  - 
+  - 
+  OneHandedHeavyAttackCombo:
+  - 
+  - 
+  - 
+  OneHandedRunningAttack: 
+  OneHandedRollingAttack: 

@@ -19,11 +19,11 @@ namespace AlessioBorriello
         public HandEquippableItem[] itemsInLeftSlots = new HandEquippableItem[3];
 
         //The currently equipped items and the relative colliders
-        [HideInInspector] public HandEquippableItem currentRightHandItem;
+        public HandEquippableItem currentRightHandItem;
         [HideInInspector] public Collider currentRightSlotItemCollider;
         private int currentRightItemSlotIndex = 0;
 
-        [HideInInspector] public HandEquippableItem currentLeftHandItem;
+        public HandEquippableItem currentLeftHandItem;
         [HideInInspector] public Collider currentLeftSlotItemCollider;
         private int currentLeftItemSlotIndex = 0;
 
@@ -44,6 +44,8 @@ namespace AlessioBorriello
             //Load Items
             LoadItemInHand(currentRightHandItem, false);
             LoadItemInHand(currentLeftHandItem, true);
+
+            playerManager.uiManager.UpdateQuickSlotsUI(this);
 
         }
 
@@ -90,23 +92,25 @@ namespace AlessioBorriello
             //Left and right hands
             int horizontalInput = (int)playerManager.inputManager.dPadInput.x;
 
-            if(horizontalInput > 0) //Right slot
-            {
-                currentRightItemSlotIndex = (currentRightItemSlotIndex + 1) % itemsInRightSlots.Length;
-                currentRightHandItem = itemsInRightSlots[currentRightItemSlotIndex];
-                LoadItemInHand(currentRightHandItem, false);
-            }
-            else if(horizontalInput < 0) //Left slot
-            {
-                currentLeftItemSlotIndex = (currentLeftItemSlotIndex + 1) % itemsInLeftSlots.Length;
-                currentLeftHandItem = itemsInLeftSlots[currentLeftItemSlotIndex];
-                LoadItemInHand(currentLeftHandItem, true);
-            }
+            if(horizontalInput > 0) ChangeHandItemSlot(ref currentRightItemSlotIndex, itemsInRightSlots, ref currentRightHandItem, false); //Right slot
+            else if(horizontalInput < 0) ChangeHandItemSlot(ref currentLeftItemSlotIndex, itemsInLeftSlots, ref currentLeftHandItem, true); //Left slot
 
             //Spells
 
 
             //Items
+
+
+            //Update icons
+            if(playerManager.inputManager.dPadInput.magnitude > 0) playerManager.uiManager.UpdateQuickSlotsUI(this);
         }
+
+        private void ChangeHandItemSlot(ref int index, HandEquippableItem[] slots, ref HandEquippableItem currentHandItem, bool onLeft)
+        {
+            index = (index + 1) % slots.Length;
+            currentHandItem = slots[index];
+            LoadItemInHand(currentHandItem, onLeft);
+        }
+
     }
 }

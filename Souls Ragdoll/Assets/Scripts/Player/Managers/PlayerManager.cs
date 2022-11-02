@@ -21,15 +21,15 @@ namespace AlessioBorriello
         [HideInInspector] public PlayerAttackManager attackManager;
         [HideInInspector] public PlayerStatsManager statsManager;
         [HideInInspector] public PlayerCollisionManager collisionManager;
+        [HideInInspector] public UIManager uiManager; //UI manager
 
-        public float currentSpeedMultiplier;
-        public float currentRotationSpeedMultiplier;
-        public Vector3 additionalGravityForce;
-        public Vector3 groundNormal;
-        public float groundDistance;
-        public Vector3 movementDirection;
+        [HideInInspector] public float currentSpeedMultiplier;
+        [HideInInspector] public float currentRotationSpeedMultiplier;
+        [HideInInspector] public Vector3 groundNormal;
+        [HideInInspector] public float groundDistance;
+        [HideInInspector] public Vector3 movementDirection;
 
-        //Flags
+        #region Flags
         [Header("Flags")]
         public bool isClient = true;
         public bool disablePlayerInteraction = false;
@@ -41,6 +41,7 @@ namespace AlessioBorriello
         public bool isSprinting = false;
         public bool isAttacking = false;
         public bool isKnockedOut = false;
+        #endregion
 
         private void Awake()
         {
@@ -54,6 +55,8 @@ namespace AlessioBorriello
             attackManager = GetComponent<PlayerAttackManager>();
             statsManager = GetComponent<PlayerStatsManager>();
             collisionManager = GetComponent<PlayerCollisionManager>();
+
+            uiManager = FindObjectOfType<UIManager>();
 
             cameraTransform = Camera.main.transform;
             cameraManager = Camera.main.GetComponentInParent<CameraManager>();
@@ -109,6 +112,7 @@ namespace AlessioBorriello
 
         }
 
+        private Vector3 additionalGravityForce;
         private void ApplyGravity()
         {
 

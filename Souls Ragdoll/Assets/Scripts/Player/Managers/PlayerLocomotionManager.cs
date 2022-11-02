@@ -81,6 +81,8 @@ namespace AlessioBorriello
         /// </summary>
         private void HandleTilt()
         {
+            if (playerManager.disablePlayerInteraction) return;
+
             float speed = Vector3.ProjectOnPlane((playerManager.physicalHips.transform.position - currentPos), playerManager.groundNormal).magnitude;
             if (speed <= playerManager.playerData.speedNeededToTilt || !playerManager.isOnGround)
             {

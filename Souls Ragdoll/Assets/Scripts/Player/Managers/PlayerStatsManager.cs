@@ -9,7 +9,6 @@ namespace AlessioBorriello
 
         private PlayerManager playerManager;
         [SerializeField] private PlayerStats playerStats;
-        [SerializeField] public UIManager uiManager;
 
         #region Vigor
         private int vigorLevel;
