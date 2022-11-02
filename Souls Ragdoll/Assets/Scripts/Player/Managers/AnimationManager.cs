@@ -8,27 +8,38 @@ namespace AlessioBorriello {
         public Animator animator;
         [HideInInspector] public PlayerManager playerManager;
 
-        int normalMovementAmount;
-        int strafeMovementAmount;
+        int normalMovementAmountHash;
+        int strafeMovementAmountHash;
+        int onGroundHash;
+        int attackingWithLeftHash;
 
         public void Initialize()
         {
             playerManager = GetComponent<PlayerManager>();
-            normalMovementAmount = Animator.StringToHash("NormalMovementAmount");
-            strafeMovementAmount = Animator.StringToHash("StrafeMovementAmount");
+            normalMovementAmountHash = Animator.StringToHash("NormalMovementAmount");
+            strafeMovementAmountHash = Animator.StringToHash("StrafeMovementAmount");
+            onGroundHash = Animator.StringToHash("onGround");
+            attackingWithLeftHash = Animator.StringToHash("attackingWithLeft");
+
+            animator.applyRootMotion = true;
         }
 
         public void UpdateMovementAnimatorValues(float normal, float strafe, float time)
         {
 
-            animator.SetFloat(normalMovementAmount, normal, time, Time.deltaTime);
-            animator.SetFloat(strafeMovementAmount, strafe, time, Time.deltaTime);
+            animator.SetFloat(normalMovementAmountHash, normal, time, Time.deltaTime);
+            animator.SetFloat(strafeMovementAmountHash, strafe, time, Time.deltaTime);
 
         }
 
         public void UpdateOnGroundValue(bool onGround)
         {
-            playerManager.animationManager.animator.SetBool("onGround", onGround);
+            playerManager.animationManager.animator.SetBool(onGroundHash, onGround);
+        }
+
+        public void UpdateAttackingWithLeftValue(bool attackingWithLeft)
+        {
+            playerManager.animationManager.animator.SetBool(attackingWithLeftHash, attackingWithLeft);
         }
 
         public void PlayTargetAnimation(string targetAnimation, float fadeDuration)

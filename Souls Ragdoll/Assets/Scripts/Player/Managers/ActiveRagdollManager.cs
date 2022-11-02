@@ -198,8 +198,6 @@ namespace AlessioBorriello
             Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Torso]); //Hip and Torso
             Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Arml]); //Hip and Arm.l
             Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Armr]); //Hip and Arm.r
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Forearml]); //Hip and Forearm.l
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Forearmr]); //Hip and Forearm.r
 
             //Left leg
             Physics.IgnoreCollision(Colliders[(int)BodyParts.Legl], Colliders[(int)BodyParts.Shinl]); //Leg.l and Shin.l
@@ -214,8 +212,6 @@ namespace AlessioBorriello
             Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Armr]); //Torso and Arm.r
             Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Neck]); //Torso and Neck
             Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Head]); //Torso and Head
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Forearml]); //Torso and Forearm.l
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Forearmr]); //Torso and Forearm.r
 
             //Left arm
             Physics.IgnoreCollision(Colliders[(int)BodyParts.Arml], Colliders[(int)BodyParts.Forearml]); //Arm.l and Forearm.l

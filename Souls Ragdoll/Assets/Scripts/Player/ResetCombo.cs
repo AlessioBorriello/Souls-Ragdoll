@@ -9,11 +9,19 @@ namespace AlessioBorriello
 
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            PlayerAttackManager playerAttackManager = animator.transform.root.GetComponent<PlayerAttackManager>();
+            PlayerManager playerManager = animator.transform.root.GetComponent<PlayerManager>();
 
-            if (!playerAttackManager.chainedAttack) playerAttackManager.nextComboAttackIndex = 0; //Reset combo if player has not chained an attack
-            playerAttackManager.chainedAttack = false; //Set chaining to false so the player has to press again
-            playerAttackManager.canCombo = false;
+            if (!playerManager.attackManager.chainedAttack) playerManager.attackManager.nextComboAttackIndex = 0; //Reset combo if player has not chained an attack
+            else
+            {
+                //Continue attacking
+                playerManager.isAttacking = true;
+                playerManager.disablePlayerInteraction = true;
+            }
+
+            //Reset
+            playerManager.attackManager.chainedAttack = false; //Set chaining to false so the player has to press again
+            playerManager.attackManager.canCombo = false;
         }
 
     }

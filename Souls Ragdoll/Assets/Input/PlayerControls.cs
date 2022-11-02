@@ -100,13 +100,40 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""SlotChange"",
-                    ""type"": ""Value"",
+                    ""name"": ""DPad-Up"",
+                    ""type"": ""Button"",
                     ""id"": ""edaa4c18-ba27-4fb7-9318-f9275b02f9d4"",
-                    ""expectedControlType"": ""Dpad"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": true
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DPad-Down"",
+                    ""type"": ""Button"",
+                    ""id"": ""be6f722f-b0ac-4694-b4a7-5322cd8544d4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DPad-Left"",
+                    ""type"": ""Button"",
+                    ""id"": ""c5c79979-2108-417e-aabe-79df5976228d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DPad-Right"",
+                    ""type"": ""Button"",
+                    ""id"": ""e0ce5b39-72f5-4c3b-ac57-5d5e88f4e046"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -310,72 +337,6 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""39acea42-7304-4dbf-8c03-5b87bd5861a3"",
-                    ""path"": ""<Gamepad>/dpad"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Gamepad"",
-                    ""action"": ""SlotChange"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""ArrowKeys"",
-                    ""id"": ""4cf7781e-ef8d-4bb2-abf7-aba8c93cdc08"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""SlotChange"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""020aa915-0910-463a-a752-776e899c9b36"",
-                    ""path"": ""<Keyboard>/upArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""SlotChange"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""d163389e-4084-45fe-b0cc-374188b58c53"",
-                    ""path"": ""<Keyboard>/downArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""SlotChange"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""775a67af-bb08-4aa6-b4b4-5153e7a9df3d"",
-                    ""path"": ""<Keyboard>/leftArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""SlotChange"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""dceae542-e4ed-47dc-b70d-4ebe8202d38e"",
-                    ""path"": ""<Keyboard>/rightArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""SlotChange"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
                     ""id"": ""f2304b7a-f407-4bb3-ae3f-cf70779bbbcf"",
                     ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
@@ -393,6 +354,94 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
                     ""action"": ""SouthButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""87092cf6-eea8-4a17-91a6-8868cad25543"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""DPad-Up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""473edd4b-efa0-4258-9ea1-9cbd5a5b0f41"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DPad-Up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""62c88e84-b920-4b6e-9b51-9db4b073646c"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""DPad-Down"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""77b12d54-b3d4-4e59-90bc-37af28d271c1"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DPad-Down"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fa67dd95-79ba-4423-831d-d9de82847965"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""DPad-Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dfa8cad1-3e5a-4664-b7ee-8da18169537b"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DPad-Left"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1bc4cfce-c3d7-43bb-8971-6448c3995a78"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""DPad-Right"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""401369c4-708b-4f9f-9a7e-8a4ca34000dc"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DPad-Right"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -439,7 +488,10 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_PlayerGameplay_LeftHeavyButton = m_PlayerGameplay.FindAction("LeftHeavyButton", throwIfNotFound: true);
         m_PlayerGameplay_RightLightButton = m_PlayerGameplay.FindAction("RightLightButton", throwIfNotFound: true);
         m_PlayerGameplay_RightHeavyButton = m_PlayerGameplay.FindAction("RightHeavyButton", throwIfNotFound: true);
-        m_PlayerGameplay_SlotChange = m_PlayerGameplay.FindAction("SlotChange", throwIfNotFound: true);
+        m_PlayerGameplay_DPadUp = m_PlayerGameplay.FindAction("DPad-Up", throwIfNotFound: true);
+        m_PlayerGameplay_DPadDown = m_PlayerGameplay.FindAction("DPad-Down", throwIfNotFound: true);
+        m_PlayerGameplay_DPadLeft = m_PlayerGameplay.FindAction("DPad-Left", throwIfNotFound: true);
+        m_PlayerGameplay_DPadRight = m_PlayerGameplay.FindAction("DPad-Right", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -507,7 +559,10 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerGameplay_LeftHeavyButton;
     private readonly InputAction m_PlayerGameplay_RightLightButton;
     private readonly InputAction m_PlayerGameplay_RightHeavyButton;
-    private readonly InputAction m_PlayerGameplay_SlotChange;
+    private readonly InputAction m_PlayerGameplay_DPadUp;
+    private readonly InputAction m_PlayerGameplay_DPadDown;
+    private readonly InputAction m_PlayerGameplay_DPadLeft;
+    private readonly InputAction m_PlayerGameplay_DPadRight;
     public struct PlayerGameplayActions
     {
         private @PlayerControls m_Wrapper;
@@ -520,7 +575,10 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @LeftHeavyButton => m_Wrapper.m_PlayerGameplay_LeftHeavyButton;
         public InputAction @RightLightButton => m_Wrapper.m_PlayerGameplay_RightLightButton;
         public InputAction @RightHeavyButton => m_Wrapper.m_PlayerGameplay_RightHeavyButton;
-        public InputAction @SlotChange => m_Wrapper.m_PlayerGameplay_SlotChange;
+        public InputAction @DPadUp => m_Wrapper.m_PlayerGameplay_DPadUp;
+        public InputAction @DPadDown => m_Wrapper.m_PlayerGameplay_DPadDown;
+        public InputAction @DPadLeft => m_Wrapper.m_PlayerGameplay_DPadLeft;
+        public InputAction @DPadRight => m_Wrapper.m_PlayerGameplay_DPadRight;
         public InputActionMap Get() { return m_Wrapper.m_PlayerGameplay; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -554,9 +612,18 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @RightHeavyButton.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnRightHeavyButton;
                 @RightHeavyButton.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnRightHeavyButton;
                 @RightHeavyButton.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnRightHeavyButton;
-                @SlotChange.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSlotChange;
-                @SlotChange.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSlotChange;
-                @SlotChange.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSlotChange;
+                @DPadUp.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnDPadUp;
+                @DPadUp.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnDPadUp;
+                @DPadUp.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnDPadUp;
+                @DPadDown.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnDPadDown;
+                @DPadDown.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnDPadDown;
+                @DPadDown.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnDPadDown;
+                @DPadLeft.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnDPadLeft;
+                @DPadLeft.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnDPadLeft;
+                @DPadLeft.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnDPadLeft;
+                @DPadRight.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnDPadRight;
+                @DPadRight.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnDPadRight;
+                @DPadRight.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnDPadRight;
             }
             m_Wrapper.m_PlayerGameplayActionsCallbackInterface = instance;
             if (instance != null)
@@ -585,9 +652,18 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @RightHeavyButton.started += instance.OnRightHeavyButton;
                 @RightHeavyButton.performed += instance.OnRightHeavyButton;
                 @RightHeavyButton.canceled += instance.OnRightHeavyButton;
-                @SlotChange.started += instance.OnSlotChange;
-                @SlotChange.performed += instance.OnSlotChange;
-                @SlotChange.canceled += instance.OnSlotChange;
+                @DPadUp.started += instance.OnDPadUp;
+                @DPadUp.performed += instance.OnDPadUp;
+                @DPadUp.canceled += instance.OnDPadUp;
+                @DPadDown.started += instance.OnDPadDown;
+                @DPadDown.performed += instance.OnDPadDown;
+                @DPadDown.canceled += instance.OnDPadDown;
+                @DPadLeft.started += instance.OnDPadLeft;
+                @DPadLeft.performed += instance.OnDPadLeft;
+                @DPadLeft.canceled += instance.OnDPadLeft;
+                @DPadRight.started += instance.OnDPadRight;
+                @DPadRight.performed += instance.OnDPadRight;
+                @DPadRight.canceled += instance.OnDPadRight;
             }
         }
     }
@@ -620,6 +696,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnLeftHeavyButton(InputAction.CallbackContext context);
         void OnRightLightButton(InputAction.CallbackContext context);
         void OnRightHeavyButton(InputAction.CallbackContext context);
-        void OnSlotChange(InputAction.CallbackContext context);
+        void OnDPadUp(InputAction.CallbackContext context);
+        void OnDPadDown(InputAction.CallbackContext context);
+        void OnDPadLeft(InputAction.CallbackContext context);
+        void OnDPadRight(InputAction.CallbackContext context);
     }
 }

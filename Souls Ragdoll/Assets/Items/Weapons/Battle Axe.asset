@@ -16,7 +16,8 @@ MonoBehaviour:
   iconSprite: {fileID: 0}
   descriptionText: A wooden handle battle axe
   modelPrefab: {fileID: 1847906651662086122, guid: afd3f98f489c59f4f972b4fcb27d0562, type: 3}
-  OneHandedIdle: OneHandWeaponIdle
+  OneHandedIdle: OneHandItemIdle
+  movementSpeedMultiplier: 3.5
   OneHandedLightAttackCombo:
   - OneHandLightAttackOne
   - OneHandLightAttackTwo

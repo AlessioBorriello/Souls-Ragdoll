@@ -7,6 +7,8 @@ namespace AlessioBorriello
     [CreateAssetMenu(fileName = "newWeaponItem", menuName = "Item/Hand Item/Weapon Item")]
     public class WeaponItem : HandEquippableItem
     {
+        [Header("Movement speed multiplier")]
+        public float movementSpeedMultiplier = 2.5f; //How fast the player moves forward when attacking
 
         //Light combo
         public string[] OneHandedLightAttackCombo = new string[3];

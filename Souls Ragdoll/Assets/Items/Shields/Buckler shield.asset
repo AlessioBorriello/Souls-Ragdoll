@@ -16,3 +16,4 @@ MonoBehaviour:
   iconSprite: {fileID: 0}
   descriptionText: A wooden shield
   modelPrefab: {fileID: 7623076702814213189, guid: f827f104dd58aa049b6b8b27224c138b, type: 3}
+  OneHandedIdle: 

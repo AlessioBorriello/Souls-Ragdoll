@@ -73,6 +73,7 @@ namespace AlessioBorriello
             //Inputs
             inputManager.TickMovementInput();
             inputManager.TickCameraMovementInput();
+            inputManager.TickDPadInput();
             inputManager.TickActionsInput();
 
             //Movement, animation logic
@@ -83,7 +84,11 @@ namespace AlessioBorriello
             playerLocomotionManager.HandleFallingAndLanding();
             playerLocomotionManager.HandleRollingAndSprinting();
 
+            //Attacks
             attackManager.HandleAttacks();
+
+            //QuickSlots
+            inventoryManager.HandleQuickSlots();
 
         }
 
@@ -99,6 +104,7 @@ namespace AlessioBorriello
         private void MovePlayerWithAnimation(float speedMultiplier)
         {
             if (isKnockedOut) return;
+            //Debug.Log(animationManager.animator.velocity * speedMultiplier);
             physicalHips.velocity = Vector3.ProjectOnPlane(animationManager.animator.velocity * speedMultiplier, groundNormal);
 
         }

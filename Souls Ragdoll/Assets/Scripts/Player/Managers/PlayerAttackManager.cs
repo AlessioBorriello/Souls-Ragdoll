@@ -46,7 +46,7 @@ namespace AlessioBorriello
         private void TryAttack(bool isLeft, bool isHeavy)
         {
             //Get right or left item
-            HandEquippableItem item = (isLeft)? playerManager.inventoryManager.currentLeftSlotItem : playerManager.inventoryManager.currentRightSlotItem;
+            HandEquippableItem item = (isLeft)? playerManager.inventoryManager.currentLeftHandItem : playerManager.inventoryManager.currentRightHandItem;
             if (item is not WeaponItem) return;
 
             //Get this new attack's proprieties
@@ -62,17 +62,33 @@ namespace AlessioBorriello
             //Update proprieties
             attackingWithLeft = newAttackingWithLeft;
             attackType = newAttackType;
-            playerManager.animationManager.animator.SetBool("attackingWithLeft", attackingWithLeft);
+            playerManager.animationManager.UpdateAttackingWithLeftValue(attackingWithLeft);
 
-            //Get animation to play
+            //Get animation to play and movement speed multiplier
             string attackAnimation = GetAttackAnimationString((WeaponItem)item, attackType);
+            float attackMovementSpeedMultiplier = GetAttackMovementSpeedMultiplier((WeaponItem)item);
 
-            //Play animation
-            playerManager.animationManager.PlayTargetAnimation(attackAnimation, .2f);
-            if (chainedAttack) Debug.Log("Combo: " + attackAnimation);
+            //Attack
+            Attack(attackAnimation, attackMovementSpeedMultiplier);
 
             //Disable combo until it is opened again in the animation events
             canCombo = false;
+        }
+
+        private void Attack(string attackAnimation, float attackMovementSpeedMultiplier)
+        {
+            //Play animation
+            playerManager.animationManager.PlayTargetAnimation(attackAnimation, .2f);
+
+            //Set speed multiplier
+            playerManager.currentSpeedMultiplier = attackMovementSpeedMultiplier;
+            //if (chainedAttack) Debug.Log("Combo: " + attackAnimation);
+        }
+
+        private float GetAttackMovementSpeedMultiplier(WeaponItem weapon)
+        {
+            float multiplier = weapon.movementSpeedMultiplier;
+            return multiplier;
         }
 
         private bool CheckForCombo(bool isLeft, AttackType attackType)

@@ -1864,6 +1864,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementInput: {x: 0, y: 0}
   cameraInput: {x: 0, y: 0}
+  dPadInput: {x: 0, y: 0}
   eastInput: 0
   eastInputReleased: 0
   eastInputPressed: 0
@@ -1981,14 +1982,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c417bd3b8fddc4cabd274d720bc63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentRightSlotItem: {fileID: 0}
+  itemsInRightSlots:
+  - {fileID: 11400000, guid: 47d20fcc74c7319499117cec8edcc7f6, type: 2}
+  - {fileID: 11400000, guid: 61a7f954cfdd09d4987d33b3aa9384f7, type: 2}
+  - {fileID: 0}
+  itemsInLeftSlots:
+  - {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
+  - {fileID: 11400000, guid: 61a7f954cfdd09d4987d33b3aa9384f7, type: 2}
+  - {fileID: 0}
+  currentRightHandItem: {fileID: 0}
   currentRightSlotItemCollider: {fileID: 0}
-  currentLeftSlotItem: {fileID: 0}
+  currentLeftHandItem: {fileID: 0}
   currentLeftSlotItemCollider: {fileID: 0}
-  shortSword: {fileID: 11400000, guid: 47d20fcc74c7319499117cec8edcc7f6, type: 2}
-  spear: {fileID: 11400000, guid: 074ad381194f7df41860452f90306758, type: 2}
-  battleAxe: {fileID: 11400000, guid: 61a7f954cfdd09d4987d33b3aa9384f7, type: 2}
-  shield: {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
 --- !u!114 &905612787
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4045,18 +4050,18 @@ ConfigurableJoint:
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 30
+    limit: 37.424244
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
     spring: 0
     damper: 0
   m_AngularYLimit:
-    limit: 30
+    limit: 46.00476
     bounciness: 0
     contactDistance: 0
   m_AngularZLimit:
-    limit: 15
+    limit: 28.656494
     bounciness: 0
     contactDistance: 0
   m_TargetPosition: {x: 0, y: 0, z: 0}

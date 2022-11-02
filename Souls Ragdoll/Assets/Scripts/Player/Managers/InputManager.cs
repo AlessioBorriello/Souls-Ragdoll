@@ -16,11 +16,15 @@ namespace AlessioBorriello
         private PlayerControls inputAction;
 
         //Analogs
-        private Vector2 movementIn;
-        private Vector2 cameraIn;
         [Header("Analogs")]
         public Vector2 movementInput;
         public Vector2 cameraInput;
+        private Vector2 movementIn;
+        private Vector2 cameraIn;
+
+        [Header("D-Pad")]
+        public Vector2 dPadInput;
+        private Vector2 dPadIn;
 
         #region Buttons
         #region East button
@@ -106,6 +110,7 @@ namespace AlessioBorriello
             {
 
                 inputAction = new PlayerControls();
+
                 //Movement
                 inputAction.PlayerGameplay.Movement.performed += inputAction => movementIn = inputAction.ReadValue<Vector2>();
 
@@ -135,6 +140,20 @@ namespace AlessioBorriello
             if (inputAction == null) return;
 
             cameraInput = cameraIn;
+        }
+
+        public void TickDPadInput()
+        {
+            if (inputAction == null) return;
+
+            int up = (inputAction.PlayerGameplay.DPadUp.WasPerformedThisFrame())? 1 : 0;
+            int down = (inputAction.PlayerGameplay.DPadDown.WasPerformedThisFrame())? 1 : 0;
+            int left = (inputAction.PlayerGameplay.DPadLeft.WasPerformedThisFrame())? 1 : 0;
+            int right = (inputAction.PlayerGameplay.DPadRight.WasPerformedThisFrame())? 1 : 0;
+
+            dPadIn = new Vector2(right - left, up - down);
+
+            dPadInput = dPadIn;
         }
 
         public void TickActionsInput()
