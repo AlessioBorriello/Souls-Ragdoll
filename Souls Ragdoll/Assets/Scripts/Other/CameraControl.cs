@@ -9,13 +9,15 @@ using static UnityEngine.GraphicsBuffer;
 
 namespace AlessioBorriello
 {
-    public class CameraManager : MonoBehaviour
+    public class CameraControl : MonoBehaviour
     {
         [SerializeField] public PlayerManager playerManager;
 
-        [Header("Camera options")]
+        [Header("Camera transforms")]
         [SerializeField] private Transform cameraFollowTarget; //Transform of the target
         [SerializeField] Transform cameraPitchTransform; //Transform of the pitch camera (Used to look up and down)
+
+        [Header("Camera options")]
         [SerializeField] private float cameraHeight = 1.8f;
         [SerializeField] private float defaultCameraDistance = 6f; //Camera distance when not obstructed
         [SerializeField] private float cameraFollowSpeed = .3f; //How fast the camera will reach the target
@@ -25,14 +27,16 @@ namespace AlessioBorriello
         [SerializeField] private LayerMask collisionLayers; //What the camera will collide with
         [SerializeField] private bool followTarget = true; //If the camera should follow the player
 
-        private Transform lockedTarget;
+        private Transform lockedTarget; //The target locked on to
 
         private float cameraPitchAngle; //Up and down angle
+        private float cameraPitchAngleTarget;
         private float cameraPivotAngle; //Left and right angle
+        private float cameraPivotAngleTarget;
 
         private Transform cameraTransform; //Transform of the actual camera
 
-        //Pitch limits
+        //Angle limits
         private float minPitchAngle = -45;
         private float maxPitchAngle = 52;
 
@@ -43,10 +47,22 @@ namespace AlessioBorriello
             cameraTransform = Camera.main.transform;
         }
 
+        private void Update()
+        {
+            if (!playerManager.isClient) return;
+            HandleLockOnControls(playerManager.inputManager.cameraInput, playerManager.inputManager.rightStickInputPressed);
+        }
+
+        private void LateUpdate()
+        {
+            if (!playerManager.isClient) return;
+            HandleCameraMovement(playerManager.inputManager.cameraInput);
+        }
+
         /// <summary>
         /// Handle camera movement and rotation
         /// </summary>
-        public void HandleCameraMovement()
+        public void HandleCameraMovement(Vector2 cameraInput)
         {
             //Move camera to it's height
             cameraPitchTransform.localPosition = new Vector3(0, Mathf.Lerp(cameraPitchTransform.localPosition.y, cameraHeight, .2f), 0);
@@ -61,16 +77,16 @@ namespace AlessioBorriello
             }
 
             //Rotate camera based on inputs
-            RotateCamera(playerManager.inputManager.cameraInput);
+            RotateCamera(cameraInput);
         }
 
         /// <summary>
         /// Check for camera lock on controls, like locking on, changing target and losing target
         /// </summary>
-        public void HandleLockOnControls()
+        public void HandleLockOnControls(Vector2 cameraInput, bool stickPressed)
         {
             //Find target
-            if (playerManager.canLockOn && playerManager.inputManager.rightStickInputPressed)
+            if (playerManager.canLockOn && stickPressed)
             {
                 LockOnPressed();
             }
@@ -79,7 +95,7 @@ namespace AlessioBorriello
             if(lockedTarget != null && playerManager.isLockedOn) //If there is a target already
             {
                 HandleLosingLockOnTarget(); //Check if the target is lost
-                HandleChangingTarget(); //Check if the player changes target
+                HandleChangingTarget(cameraInput); //Check if the player changes target
             }
         }
 
@@ -103,16 +119,16 @@ namespace AlessioBorriello
         /// <summary>
         /// Tries to change target when the camera input is flicked in a certain direction
         /// </summary>
-        private void HandleChangingTarget()
+        private void HandleChangingTarget(Vector2 cameraInput)
         {
             //If the camera input is > .9f and the player has not already changed a character with that input
-            if (playerManager.inputManager.cameraInput.magnitude > .9f && canChangeTarget)
+            if (cameraInput.magnitude > .9f && canChangeTarget)
             {
                 //Cannot change again until the input gets reset to 0
                 canChangeTarget = false;
 
                 //Define the direction the player wants to change
-                bool changeLeft = (playerManager.inputManager.cameraInput.x > 0) ? false : true;
+                bool changeLeft = (cameraInput.x > 0) ? false : true;
 
                 //Get new target
                 Transform newTarget = GetLockOnTarget(changeLeft);
@@ -123,7 +139,7 @@ namespace AlessioBorriello
             }
 
             //If changed already and the input is reset to neutral
-            if(playerManager.inputManager.cameraInput.magnitude == 0 && !canChangeTarget)
+            if(cameraInput.magnitude == 0 && !canChangeTarget)
             {
                 //Allow another change
                 canChangeTarget = true;
@@ -144,7 +160,16 @@ namespace AlessioBorriello
 
                 //If target is found
                 if (lockedTarget != null) playerManager.isLockedOn = true;
-                //Otherwise just point camera forward
+                else //Otherwise just point camera forward
+                {
+                    Vector3 playerForward = Vector3.ProjectOnPlane(playerManager.physicalHips.transform.forward, Vector3.up);
+                    Vector3 cameraForward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
+
+                    float angle = Vector3.Angle(cameraForward, playerForward);
+                    angle = (Vector3.Cross(cameraForward, playerForward).y < 0) ? angle : -angle;
+                    cameraPivotAngle -= angle;
+
+                }
             }
             else //If a target was already locked on to
             {
@@ -343,10 +368,10 @@ namespace AlessioBorriello
 
             //Get angles
             float horizontalAngle = GetHorizontalLockOnAngle();
-            float verticalDifference = GetVerticalLockOnAngle();
+            float verticalAngle = GetVerticalLockOnAngle();
 
             //Change the pitch and pivot angles based on the camera movement input
-            cameraPitchAngle -= (verticalDifference * cameraPitchSpeed * Time.deltaTime); //Vertical angle
+            cameraPitchAngle -= (verticalAngle * cameraPitchSpeed * Time.deltaTime); //Vertical angle
             cameraPivotAngle -= (horizontalAngle * cameraPivotSpeed * Time.deltaTime); //Horizontal angle
 
             //Clamp pitch angle

@@ -15,7 +15,6 @@ namespace AlessioBorriello
 
         [HideInInspector] public InputManager inputManager;
         [HideInInspector] public Transform cameraTransform;
-        [HideInInspector] public CameraManager cameraManager;
         [HideInInspector] public AnimationManager animationManager;
         [HideInInspector] public PlayerLocomotionManager playerLocomotionManager;
         [HideInInspector] public ActiveRagdollManager ragdollManager;
@@ -68,7 +67,6 @@ namespace AlessioBorriello
             uiManager = FindObjectOfType<UIManager>();
 
             cameraTransform = Camera.main.transform;
-            cameraManager = Camera.main.GetComponentInParent<CameraManager>();
 
         }
 
@@ -108,17 +106,8 @@ namespace AlessioBorriello
             //Attacks
             attackManager.HandleAttacks();
 
-            //Lock on controls
-            cameraManager.HandleLockOnControls();
-
             //QuickSlots
             inventoryManager.HandleQuickSlots();
-
-        }
-
-        private void LateUpdate()
-        {
-            cameraManager.HandleCameraMovement();
 
         }
 

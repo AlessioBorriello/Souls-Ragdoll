@@ -3331,8 +3331,8 @@ MonoBehaviour:
   cameraHeight: 1.8
   defaultCameraDistance: 6
   cameraFollowSpeed: 0.1
-  cameraPitchSpeed: 50
-  cameraPivotSpeed: 65
+  cameraPitchSpeed: 120
+  cameraPivotSpeed: 150
   cameraCollisionOffset: 0.2
   collisionLayers:
     serializedVersion: 2
