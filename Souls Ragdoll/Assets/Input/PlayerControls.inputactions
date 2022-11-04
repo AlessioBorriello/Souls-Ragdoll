@@ -24,6 +24,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "LockOn",
+                    "type": "Button",
+                    "id": "dda6150b-be18-4e9b-9071-d785bd86bb8b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "EastButton",
                     "type": "Button",
                     "id": "641ae0d4-30ea-4823-a9d3-912e4ae35e2a",
@@ -420,6 +429,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "DPad-Right",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3a8d9af3-147f-48f5-99a0-69aa10a79cf7",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "LockOn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "16c473c3-f105-4005-a4d5-cc54c5e35dd3",
+                    "path": "<Gamepad>/rightStickPress",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "LockOn",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

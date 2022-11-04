@@ -26,6 +26,17 @@ namespace AlessioBorriello
         public Vector2 dPadInput;
         private Vector2 dPadIn;
 
+        #region Sticks
+        private bool rightStickIn;
+        private bool rightStickInReleased;
+        private bool rightStickInPressed;
+
+        [Header("Right stick")]
+        public bool rightStickInput;
+        public bool rightStickInputReleased;
+        public bool rightStickInputPressed;
+        #endregion
+
         #region Buttons
         #region East button
         private bool eastIn;
@@ -159,6 +170,16 @@ namespace AlessioBorriello
         public void TickActionsInput()
         {
             if (inputAction == null) return;
+
+            #region Sticks
+            rightStickIn = (inputAction.PlayerGameplay.LockOn.phase == InputActionPhase.Performed);
+            rightStickInPressed = inputAction.PlayerGameplay.LockOn.WasPerformedThisFrame();
+            rightStickInReleased = inputAction.PlayerGameplay.LockOn.WasReleasedThisFrame();
+
+            rightStickInput = rightStickIn;
+            rightStickInputReleased = rightStickInReleased;
+            rightStickInputPressed = rightStickInPressed;
+            #endregion
 
             #region Buttons
             #region East button

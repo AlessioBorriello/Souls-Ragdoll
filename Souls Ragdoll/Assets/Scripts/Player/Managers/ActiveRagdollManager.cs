@@ -317,6 +317,11 @@ namespace AlessioBorriello
             part.AddForce(force, mode);
         }
 
+        public Rigidbody GetBodyPart(BodyPart part)
+        {
+            return Bodies[(int)part];
+        }
+
     }
 
     public enum BodyParts

@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Windows;
 
 namespace AlessioBorriello
 {
-    public class PlayerManager : MonoBehaviour
+    public class PlayerManager : CharacterManager
     {
         public PlayerData playerData; //Player data reference
         public GameObject animatedPlayer; //Player data reference
-        public Rigidbody physicalHips; //Player's physical hips
         public Transform groundCheckTransform; //Player's ground check's transform
+
+        [HideInInspector] public Rigidbody physicalHips; //Player's physical hips
 
         [HideInInspector] public InputManager inputManager;
         [HideInInspector] public Transform cameraTransform;
@@ -21,7 +23,7 @@ namespace AlessioBorriello
         [HideInInspector] public PlayerAttackManager attackManager;
         [HideInInspector] public PlayerStatsManager statsManager;
         [HideInInspector] public PlayerCollisionManager collisionManager;
-        [HideInInspector] public UIManager uiManager; //UI manager
+        [HideInInspector] public UIManager uiManager;
 
         [HideInInspector] public float currentSpeedMultiplier;
         [HideInInspector] public float currentRotationSpeedMultiplier;
@@ -32,15 +34,22 @@ namespace AlessioBorriello
         #region Flags
         [Header("Flags")]
         public bool isClient = true;
+
         public bool disablePlayerInteraction = false;
         public bool canRotate = true;
         public bool isOnGround = true;
         public bool shouldSlide = false; //If the friction should be enabled or not
+
         public bool isRolling = false;
         public bool isBackdashing = false;
         public bool isSprinting = false;
+
         public bool isAttacking = false;
+
         public bool isKnockedOut = false;
+
+        public bool canLockOn = true;
+        public bool isLockedOn = false;
         #endregion
 
         private void Awake()
@@ -63,6 +72,11 @@ namespace AlessioBorriello
 
         }
 
+        private void Start()
+        {
+            physicalHips = ragdollManager.GetBodyPart((int)BodyParts.Hip);
+        }
+
         private void FixedUpdate()
         {
             //Move player with animation (Order is important for some reason)
@@ -74,10 +88,14 @@ namespace AlessioBorriello
         private void Update()
         {
             //Inputs
-            inputManager.TickMovementInput();
-            inputManager.TickCameraMovementInput();
-            inputManager.TickDPadInput();
-            inputManager.TickActionsInput();
+            if(isClient)
+            {
+                inputManager.TickMovementInput();
+                inputManager.TickCameraMovementInput();
+                inputManager.TickDPadInput();
+                inputManager.TickActionsInput();
+            }
+            
 
             //Movement, animation logic
             playerLocomotionManager.HandleMovementRotation();
@@ -90,6 +108,9 @@ namespace AlessioBorriello
             //Attacks
             attackManager.HandleAttacks();
 
+            //Lock on controls
+            cameraManager.HandleLockOnControls();
+
             //QuickSlots
             inventoryManager.HandleQuickSlots();
 
@@ -97,7 +118,7 @@ namespace AlessioBorriello
 
         private void LateUpdate()
         {
-            cameraManager.HandleCamera(inputManager.cameraInput);
+            cameraManager.HandleCameraMovement();
 
         }
 

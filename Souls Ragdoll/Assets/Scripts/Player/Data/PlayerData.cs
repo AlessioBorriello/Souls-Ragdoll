@@ -12,6 +12,13 @@ namespace AlessioBorriello
         public float hipsJointDriveForce; //The force of the spring in the hips joint
         public float jointDriveForce; //The force of the springs in the rest of the body
 
+        [Header("Lock on")]
+        public float maxLockOnDistance = 20; //How far away the player can lock on
+        public float maxLockOnAngle = 130; //How large the angle between the camera forward and the target can be to lock on
+        public LayerMask targetMask; //What to look for when locking on
+        public LayerMask obstructionMask; //What stops the lock on
+        public float maxLoseTargetDistance = 25; //How far away the player can be from the target before losing the lock on
+
         [Header("Movement")]
         public float walkSpeedMultiplier = 1f; //Velocity multiplier when walking
         public float runSpeedMultiplier = 1f; //Velocity multiplier when running
