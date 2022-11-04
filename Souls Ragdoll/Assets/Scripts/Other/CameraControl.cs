@@ -30,9 +30,7 @@ namespace AlessioBorriello
         private Transform lockedTarget; //The target locked on to
 
         private float cameraPitchAngle; //Up and down angle
-        private float cameraPitchAngleTarget;
         private float cameraPivotAngle; //Left and right angle
-        private float cameraPivotAngleTarget;
 
         private Transform cameraTransform; //Transform of the actual camera
 
@@ -162,12 +160,7 @@ namespace AlessioBorriello
                 if (lockedTarget != null) playerManager.isLockedOn = true;
                 else //Otherwise just point camera forward
                 {
-                    Vector3 playerForward = Vector3.ProjectOnPlane(playerManager.physicalHips.transform.forward, Vector3.up);
-                    Vector3 cameraForward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
-
-                    float angle = Vector3.Angle(cameraForward, playerForward);
-                    angle = (Vector3.Cross(cameraForward, playerForward).y < 0) ? angle : -angle;
-                    cameraPivotAngle -= angle;
+                    CenterCamera();
 
                 }
             }
@@ -177,6 +170,24 @@ namespace AlessioBorriello
                 lockedTarget = null;
                 playerManager.isLockedOn = false;
             }
+        }
+
+        /// <summary>
+        /// Centers camera to the player's facing direction
+        /// </summary>
+        private void CenterCamera()
+        {
+            //Get player and camera forward
+            Vector3 playerForward = Vector3.ProjectOnPlane(playerManager.physicalHips.transform.forward, Vector3.up);
+            Vector3 cameraForward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
+
+            //Get angle between camera and player
+            float angle = Vector3.Angle(cameraForward, playerForward);
+            //Check if the camera should move right or left
+            angle = (Vector3.Cross(cameraForward, playerForward).y < 0) ? angle : -angle;
+
+            //Move camera pivot
+            cameraPivotAngle -= angle;
         }
 
         /// <summary>
@@ -354,6 +365,9 @@ namespace AlessioBorriello
             if (!playerManager.isLockedOn) SetCameraAngles(input); //Get camera angles if not locked on
             else SetCameraAnglesLockOn(); //Get camera angles if locked on
 
+            //Clamp pitch angle
+            cameraPitchAngle = Mathf.Clamp(cameraPitchAngle, minPitchAngle, maxPitchAngle);
+
             RotateCameraPitch(); //Rotate the camera on the vertical axis
             RotateCameraPivot(); //Rotate the camera on the horizontal axis
 
@@ -373,9 +387,6 @@ namespace AlessioBorriello
             //Change the pitch and pivot angles based on the camera movement input
             cameraPitchAngle -= (verticalAngle * cameraPitchSpeed * Time.deltaTime); //Vertical angle
             cameraPivotAngle -= (horizontalAngle * cameraPivotSpeed * Time.deltaTime); //Horizontal angle
-
-            //Clamp pitch angle
-            cameraPitchAngle = Mathf.Clamp(cameraPitchAngle, minPitchAngle, maxPitchAngle);
 
         }
 
@@ -422,9 +433,6 @@ namespace AlessioBorriello
             //Change the pitch and pivot angles based on the camera movement input
             cameraPitchAngle -= (input.y * cameraPitchSpeed * Time.deltaTime); //Vertical angle
             cameraPivotAngle += (input.x * cameraPivotSpeed * Time.deltaTime); //Horizontal angle
-
-            //Clamp pitch angle
-            cameraPitchAngle = Mathf.Clamp(cameraPitchAngle, minPitchAngle, maxPitchAngle);
         }
 
         /// <summary>
@@ -433,8 +441,8 @@ namespace AlessioBorriello
         private void RotateCameraPitch()
         {
             //Get rotation based on the camera pitch angle
-            Quaternion rotation = Quaternion.Euler(new Vector3(cameraPitchAngle, 0f, 0f));
-            cameraPitchTransform.transform.localRotation = rotation; //Rotate the camera nested inside
+            Quaternion targetRotation = Quaternion.Euler(new Vector3(cameraPitchAngle, 0f, 0f));
+            cameraPitchTransform.transform.localRotation = Quaternion.Slerp(cameraPitchTransform.transform.localRotation, targetRotation, .2f); //Rotate the camera nested inside
         }
 
         /// <summary>
@@ -443,8 +451,8 @@ namespace AlessioBorriello
         private void RotateCameraPivot()
         {
             //Get rotation based on the camera pivot angle
-            Quaternion rotation = Quaternion.Euler(new Vector3(0f, cameraPivotAngle, 0f));
-            transform.rotation = rotation; //Rotate
+            Quaternion targetRotation = Quaternion.Euler(new Vector3(0f, cameraPivotAngle, 0f));
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, .2f); //Rotate
         }
 
         /// <summary>
