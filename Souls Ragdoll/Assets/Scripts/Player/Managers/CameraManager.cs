@@ -43,19 +43,30 @@ namespace AlessioBorriello
             cameraTransform = Camera.main.transform;
         }
 
+        /// <summary>
+        /// Handle camera movement and rotation
+        /// </summary>
         public void HandleCameraMovement()
         {
+            //Move camera to it's height
             cameraPitchTransform.localPosition = new Vector3(0, Mathf.Lerp(cameraPitchTransform.localPosition.y, cameraHeight, .2f), 0);
 
             if (followTarget)
             {
-                FollowTarget();
+                //Follow the camera target
+                FollowCameraTarget();
+
+                //Handle collision with environment
                 HandleCameraCollisions();
             }
 
+            //Rotate camera based on inputs
             RotateCamera(playerManager.inputManager.cameraInput);
         }
 
+        /// <summary>
+        /// Check for camera lock on controls, like locking on, changing target and losing target
+        /// </summary>
         public void HandleLockOnControls()
         {
             //Find target
@@ -64,14 +75,17 @@ namespace AlessioBorriello
                 LockOnPressed();
             }
 
-            //Lose target
-            if(lockedTarget != null && playerManager.isLockedOn)
+            //Lose and change target
+            if(lockedTarget != null && playerManager.isLockedOn) //If there is a target already
             {
-                HandleLosingLockOnTarget();
-                HandleChangingTarget();
+                HandleLosingLockOnTarget(); //Check if the target is lost
+                HandleChangingTarget(); //Check if the player changes target
             }
         }
 
+        /// <summary>
+        /// Defines conditions where the lock on on a target is lost
+        /// </summary>
         private void HandleLosingLockOnTarget()
         {
             float distanceFromTarget = Vector3.Distance(playerManager.physicalHips.position, lockedTarget.position);
@@ -86,44 +100,72 @@ namespace AlessioBorriello
         }
 
         private bool canChangeTarget = true;
+        /// <summary>
+        /// Tries to change target when the camera input is flicked in a certain direction
+        /// </summary>
         private void HandleChangingTarget()
         {
+            //If the camera input is > .9f and the player has not already changed a character with that input
             if (playerManager.inputManager.cameraInput.magnitude > .9f && canChangeTarget)
             {
+                //Cannot change again until the input gets reset to 0
                 canChangeTarget = false;
+
+                //Define the direction the player wants to change
                 bool changeLeft = (playerManager.inputManager.cameraInput.x > 0) ? false : true;
 
+                //Get new target
                 Transform newTarget = GetLockOnTarget(changeLeft);
+
+                //If it was found, set it as the locked target
                 if(newTarget != null && newTarget != lockedTarget) lockedTarget = newTarget;
 
             }
 
+            //If changed already and the input is reset to neutral
             if(playerManager.inputManager.cameraInput.magnitude == 0 && !canChangeTarget)
             {
+                //Allow another change
                 canChangeTarget = true;
             }
 
         }
 
+        /// <summary>
+        /// Tries to lock on a target if the target is null or sets it as null if it was not
+        /// </summary>
         private void LockOnPressed()
         {
+            //If not locked on
             if (lockedTarget == null)
             {
+                //Try to get a target
                 lockedTarget = GetLockOnTarget();
+
+                //If target is found
                 if (lockedTarget != null) playerManager.isLockedOn = true;
+                //Otherwise just point camera forward
             }
-            else
+            else //If a target was already locked on to
             {
+                //Remove lock on reference
                 lockedTarget = null;
                 playerManager.isLockedOn = false;
             }
         }
 
+        /// <summary>
+        /// Tries to get a target to lock on to
+        /// </summary>
+        /// <param name="changingLeft">Only if trying to switch target, defines in which direction the player wants the new target</param>
+        /// <returns>The target (if found)</returns>
         private Transform GetLockOnTarget(bool changingLeft = false)
         {
 
+            //Check for colliders in a radius
             Collider[] collidersInsideRadius = Physics.OverlapSphere(playerManager.physicalHips.position, playerManager.playerData.maxLockOnDistance, playerManager.playerData.targetMask);
 
+            //No colliders found
             if (collidersInsideRadius.Length == 0) return null;
 
             List<Transform> possibleTargets = new List<Transform>();
@@ -131,112 +173,179 @@ namespace AlessioBorriello
 
             foreach (Collider c in collidersInsideRadius)
             {
-                int id = c.transform.root.GetInstanceID();
                 //If already managed or if it's the caller's own colliders we are checking
-                if (foundIds.Contains(id) || c.transform.root == playerManager.transform.root) continue;
+                if (foundIds.Contains(c.transform.root.GetInstanceID()) || c.transform.root == playerManager.transform.root) continue;
+                foundIds.Add(c.transform.root.GetInstanceID());
 
-                foundIds.Add(id);
-
-                CharacterManager possibleTarget = c.transform.root.GetComponent<CharacterManager>();
-                if (possibleTarget == null) continue;
-
-                Transform target = possibleTarget.lockOnTargetTransform;
+                //Get target from that collider, if it does not exist, it cannot be locked on to
+                Transform newPossibleTarget = GetTargetTransformFromCollider(c);
+                if (newPossibleTarget == null) continue;
 
                 //If already locked on, we are changing target
                 if (lockedTarget != null)
                 {
-                    //If it's the same target as the one already locked
-                    if (target == lockedTarget) continue;
-
-                    //If it's on the opposite direction of the one we wanted to change to
-                    Vector3 directionToLockedTarget = (lockedTarget.position - transform.position).normalized;
-                    Vector3 directionToPotentialTarget = (target.position - transform.position).normalized;
-
-                    bool isOnLeft = (Vector3.Cross(directionToPotentialTarget, directionToLockedTarget).y < 0) ? false : true;
-
-                    if (isOnLeft != changingLeft) continue;
+                    //Check if we can change target to this new possible target
+                    if (!CanChangeLockToTarget(newPossibleTarget, changingLeft)) continue;
                 }
 
                 //Add only those who are in front and are not obstructed
-                if (IsLockable(target, playerManager.physicalHips.transform)) possibleTargets.Add(target);
+                if (IsLockable(newPossibleTarget, playerManager.physicalHips.transform)) possibleTargets.Add(newPossibleTarget);
 
             }
 
-            return GetNearestTarget(playerManager.physicalHips.transform.position, possibleTargets);
+            //Get the best target based on distance and angle difference from the camera
+            return GetBestTarget(playerManager.physicalHips.transform.position, possibleTargets);
 
         }
 
-        private Transform GetNearestTarget(Vector3 hipsPosition, List<Transform> targets)
+        /// <summary>
+        /// Gets the target transform from a given collider (if found)
+        /// </summary>
+        /// <param name="coll">The collider to get the target transform from</param>
+        /// <returns>The target transform (if found)</returns>
+        private Transform GetTargetTransformFromCollider(Collider coll)
         {
+            //Try to get the character manager from the collider
+            CharacterManager possibleTarget = coll.transform.root.GetComponent<CharacterManager>();
+            //If not found
+            if (possibleTarget == null) return null;
+
+            //Get target transform otherwise
+            return possibleTarget.lockOnTargetTransform;
+        }
+
+        /// <summary>
+        /// Tries to get the best possible target given the camera angle and distance
+        /// </summary>
+        /// <param name="hipsPosition">Position of the player</param>
+        /// <param name="targets">List of the possible targets</param>
+        /// <returns>The best target</returns>
+        private Transform GetBestTarget(Vector3 hipsPosition, List<Transform> targets)
+        {
+            //If there are no targets
             if (targets.Count == 0) return null;
 
-            Transform nearestTarget = targets[0];
+            //Default best target to the first one
+            Transform bestTarget = targets[0];
 
-            Vector3 direction = (nearestTarget.position - transform.position).normalized;
+            //If this target is the only one, simply return it
+            if (targets.Count == 1) return bestTarget;
+
+            //Get direction to the current best target
+            Vector3 direction = (bestTarget.position - transform.position).normalized;
+            //Set the minimum angle to the angle between the camera forward and the direction of the target
             float minAngle = Vector3.Angle(transform.forward, direction);
 
-            float minDistance = Vector3.Distance(hipsPosition, nearestTarget.position);
+            //Set the minimum distance to the distance between the player's position and the target position
+            float minDistance = Vector3.Distance(hipsPosition, bestTarget.position);
 
-            foreach (Transform target in targets)
+            foreach (Transform possibleNewBestTarget in targets)
             {
-                if (target == nearestTarget) continue;
+                //If the target is already the best
+                if (possibleNewBestTarget == bestTarget) continue;
 
-                direction = (target.position - transform.position).normalized;
+                //Get direction and angle for the new possible best target
+                direction = (possibleNewBestTarget.position - transform.position).normalized;
                 float angle = Vector3.Angle(transform.forward, direction);
 
-                float distance = Vector3.Distance(hipsPosition, target.position);
+                //Get distance from the new possible best target and how much closer it is (IF it is) in %
+                float distance = Vector3.Distance(hipsPosition, possibleNewBestTarget.position);
                 float percentageDistance = (minDistance - distance) / minDistance;
 
-                //If a target is significantly closer (35% closer) or if it's more in line with the camera (in the center)
+                //If the new possible target is significantly closer (35% closer) or if it's more in line with the camera (in the center)
                 if (percentageDistance > .35f || angle < minAngle)
                 {
-                    //Update target
-                    nearestTarget = target;
+                    //Set as new best target and update minimums
+                    bestTarget = possibleNewBestTarget;
                     minAngle = angle;
                     minDistance = distance;
                 }
             }
 
-            return nearestTarget;
+            return bestTarget;
         }
 
+        /// <summary>
+        /// Checks if the given target can be locked on to
+        /// </summary>
+        /// <param name="targetTransform">Transform of the target to check</param>
+        /// <param name="hipsTransform">Player's hips transform</param>
+        /// <returns>If the target can be locked on to</returns>
         private bool IsLockable(Transform targetTransform, Transform hipsTransform)
         {
-            //Find unfit targets
+            //Get direction to the target
             Vector3 direction = (targetTransform.position - transform.position).normalized;
 
+            //Check if the angle between the forward of the camera and the direction to the targets is small enough (if it's in front of the camera)
             bool isInFront = (Vector3.Angle(transform.forward, direction) < playerManager.playerData.maxLockOnAngle / 2);
             if (!isInFront) return false;
 
+            //Check if the target is not obstructed
             bool isObstructed = (Physics.Raycast(hipsTransform.position, direction, Vector3.Distance(hipsTransform.position, targetTransform.position), playerManager.playerData.obstructionMask));
             if (isObstructed) return false;
 
+            //If all the checks are passed
             return true;
         }
 
-        private void FollowTarget()
+        /// <summary>
+        /// Checks if the target trying to switch to is on the left or right and if that is equal
+        /// to the direction the player wants to switch to then the target can be switched to and return true
+        /// </summary>
+        /// <param name="targetTransform">Transform of the target</param>
+        /// <param name="changingLeft">What direction the player wants to switch to</param>
+        /// <returns>If the target is in the direction the player wants to switch target to</returns>
+        private bool CanChangeLockToTarget(Transform targetTransform, bool changingLeft)
+        {
+            //If it's the same target as the one already locked
+            if (targetTransform == lockedTarget) return false;
+
+            //Get direction to new potential target and locked on target
+            Vector3 directionToLockedTarget = (lockedTarget.position - transform.position).normalized;
+            Vector3 directionToPotentialTarget = (targetTransform.position - transform.position).normalized;
+
+            //Use cross to define if the new possible target is on the left or the right of the camera
+            bool isOnLeft = (Vector3.Cross(directionToPotentialTarget, directionToLockedTarget).y < 0) ? false : true;
+
+            //Return if the target is in the same direction the player wants to switch to
+            return (isOnLeft == changingLeft);
+        }
+
+        /// <summary>
+        /// Move camera to the camera target
+        /// </summary>
+        private void FollowCameraTarget()
         {
             //Get the position the camera has to move to
             transform.position = Vector3.SmoothDamp(transform.position, new Vector3(cameraFollowTarget.position.x, cameraFollowTarget.position.y - .5f, cameraFollowTarget.position.z), ref cameraFollowVelocity, cameraFollowSpeed);
         }
 
+        /// <summary>
+        /// Rotate camera based on input (if not locked on)
+        /// </summary>
+        /// <param name="input">Camera movement input</param>
         private void RotateCamera(Vector2 input)
         {
-            if (!playerManager.isLockedOn) GetCameraAngles(input);
-            else GetCameraAnglesLockOn();
+            if (!playerManager.isLockedOn) SetCameraAngles(input); //Get camera angles if not locked on
+            else SetCameraAnglesLockOn(); //Get camera angles if locked on
 
             RotateCameraPitch(); //Rotate the camera on the vertical axis
             RotateCameraPivot(); //Rotate the camera on the horizontal axis
 
         }
 
-        private void GetCameraAnglesLockOn()
+        /// <summary>
+        /// Set camera angles the camera will go to if locked on
+        /// </summary>
+        private void SetCameraAnglesLockOn()
         {
-            if (lockedTarget == null) return;
+            if (lockedTarget == null) return; //If not locked on
 
+            //Get angles
             float horizontalAngle = GetHorizontalLockOnAngle();
             float verticalDifference = GetVerticalLockOnAngle();
 
+            //Change the pitch and pivot angles based on the camera movement input
             cameraPitchAngle -= (verticalDifference * cameraPitchSpeed * Time.deltaTime); //Vertical angle
             cameraPivotAngle -= (horizontalAngle * cameraPivotSpeed * Time.deltaTime); //Horizontal angle
 
@@ -245,28 +354,47 @@ namespace AlessioBorriello
 
         }
 
+        /// <summary>
+        /// Get horizontal angle to the target
+        /// </summary>
+        /// <returns>The horizontal angle to the target</returns>
         private float GetHorizontalLockOnAngle()
         {
+            //Get direction to the target
             Vector3 targetDirection = (lockedTarget.position - transform.position).normalized;
             targetDirection.y = 0;
 
+            //Get angle amount from the camera forward to the target direction
             float horizontalAngle = Vector3.Angle(transform.forward, targetDirection) * Mathf.Deg2Rad;
 
+            //Return positive or negative angle based on the direction the camera will have to rotate to to align to the target (left or right)
             return (Vector3.Cross(transform.forward, targetDirection).y < 0) ? horizontalAngle : -horizontalAngle;
         }
 
+        /// <summary>
+        /// Get vertical angle to the target
+        /// </summary>
+        /// <returns>The vertical angle to the target</returns>
         private float GetVerticalLockOnAngle()
         {
+            //Get direction to the target and forward of the camera pitch (only the y components)
             Vector3 targetDirection = new Vector3(0, ((lockedTarget.position - cameraPitchTransform.position).normalized).y, 1);
             Vector3 forward = new Vector3(0, cameraPitchTransform.forward.y, 1);
 
+            //Get angle fro the current forward of the camera pitch and the target direction
             float verticalAngle = Vector3.Angle(forward, targetDirection) * Mathf.Deg2Rad;
 
+            //Return positive or negative angle based on the direction the camera will have to rotate to to align to the target (up or down)
             return (Vector3.Cross(forward, targetDirection).x > 0) ? -verticalAngle : verticalAngle;
         }
 
-        private void GetCameraAngles(Vector2 input)
+        /// <summary>
+        /// Set camera angles the camera will go to if not locked on
+        /// </summary>
+        /// <param name="input">Camera movement input</param>
+        private void SetCameraAngles(Vector2 input)
         {
+            //Change the pitch and pivot angles based on the camera movement input
             cameraPitchAngle -= (input.y * cameraPitchSpeed * Time.deltaTime); //Vertical angle
             cameraPivotAngle += (input.x * cameraPivotSpeed * Time.deltaTime); //Horizontal angle
 
@@ -274,41 +402,58 @@ namespace AlessioBorriello
             cameraPitchAngle = Mathf.Clamp(cameraPitchAngle, minPitchAngle, maxPitchAngle);
         }
 
+        /// <summary>
+        /// Rotate camera vertically
+        /// </summary>
         private void RotateCameraPitch()
         {
+            //Get rotation based on the camera pitch angle
             Quaternion rotation = Quaternion.Euler(new Vector3(cameraPitchAngle, 0f, 0f));
             cameraPitchTransform.transform.localRotation = rotation; //Rotate the camera nested inside
         }
 
+        /// <summary>
+        /// Rotate camera horizontally
+        /// </summary>
         private void RotateCameraPivot()
         {
+            //Get rotation based on the camera pivot angle
             Quaternion rotation = Quaternion.Euler(new Vector3(0f, cameraPivotAngle, 0f));
-            transform.rotation = rotation;
+            transform.rotation = rotation; //Rotate
         }
 
+        /// <summary>
+        /// Makes the camera move if it collides with something
+        /// </summary>
         private void HandleCameraCollisions()
         {
-            Vector3 direction = (cameraTransform.position - cameraPitchTransform.position).normalized; //Direction of the ray, going outwards from where the camera is looking
+            //Get direction the camera is looking at
+            Vector3 direction = (cameraTransform.position - cameraPitchTransform.position).normalized;
 
-            float cameraDistance = CheckForCollisions(direction); //Check for collision and get the new distance in case of collision
+            //Check for collision and get the new distance in case of collision
+            float cameraDistance = CheckForCollisions(direction);
 
-            //if (Mathf.Abs(cameraDistance) < .2f) cameraDistance -= .2f;
-
+            //Move camera to the new camera distance
             cameraTransform.localPosition = new Vector3(cameraTransform.localPosition.x, cameraTransform.localPosition.y, Mathf.Lerp(cameraTransform.localPosition.z, cameraDistance, .2f)); //Move the camera to the new target
         }
 
+        /// <summary>
+        /// Gets the new distance the camera will have to go to if there is a collision with it
+        /// </summary>
+        /// <param name="direction">Direction the camera is looking at</param>
+        /// <returns>The distance the camera will go to</returns>
         private float CheckForCollisions(Vector3 direction)
         {
+            //Set distance as the default value
             float cameraDistance = -defaultCameraDistance;
+            
             RaycastHit hit;
-
             //Cast a sphere to see if the camera is hitting something
             if (Physics.SphereCast(cameraPitchTransform.position, .2f, direction, out hit, Mathf.Abs(cameraDistance), collisionLayers))
             {
-
+                //If there was a hit
                 float distance = Vector3.Distance(cameraPitchTransform.position, hit.point); //Get distance from the hit to the camera
                 cameraDistance = -(distance - cameraCollisionOffset); //Adjust camera position based on the distance (minus a small offset)
-
             }
 
             return cameraDistance;
