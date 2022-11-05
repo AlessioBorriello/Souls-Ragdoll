@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.ProBuilder.Shapes;
 
 namespace AlessioBorriello
 {
@@ -68,7 +69,8 @@ namespace AlessioBorriello
             playerManager.movementDirection = GetMovementDirection();
 
             Quaternion newRotation = Quaternion.LookRotation(playerManager.movementDirection);
-            playerManager.animatedPlayer.transform.rotation = Quaternion.Slerp(playerManager.animatedPlayer.transform.rotation, newRotation, playerManager.currentRotationSpeedMultiplier * Time.deltaTime);
+            float rotationSpeed = playerManager.currentRotationSpeedMultiplier * Time.deltaTime;
+            playerManager.animatedPlayer.transform.rotation = Quaternion.Slerp(playerManager.animatedPlayer.transform.rotation, newRotation, rotationSpeed);
 
             if(playerManager.playerData.tiltOnDirectionChange) HandleTilt();
         }

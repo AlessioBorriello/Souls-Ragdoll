@@ -17,7 +17,7 @@ MonoBehaviour:
   descriptionText: A simple metal short sword
   modelPrefab: {fileID: 4952564604112304397, guid: bdebf87f5321f7a49a5772d92cd098fe, type: 3}
   OneHandedIdle: OneHandItemIdle
-  movementSpeedMultiplier: 3.2
+  movementSpeedMultiplier: 4.2
   OneHandedLightAttackCombo:
   - OneHandLightAttackOne
   - OneHandLightAttackTwo

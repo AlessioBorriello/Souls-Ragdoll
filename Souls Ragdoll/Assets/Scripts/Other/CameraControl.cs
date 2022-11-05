@@ -16,29 +16,32 @@ namespace AlessioBorriello
         [Header("Camera transforms")]
         [SerializeField] private Transform cameraFollowTarget; //Transform of the target
         [SerializeField] Transform cameraPitchTransform; //Transform of the pitch camera (Used to look up and down)
+        private Transform cameraTransform; //Transform of the actual camera
 
         [Header("Camera options")]
         [SerializeField] private float cameraHeight = 1.8f;
         [SerializeField] private float defaultCameraDistance = 6f; //Camera distance when not obstructed
-        [SerializeField] private float cameraFollowSpeed = .3f; //How fast the camera will reach the target
+        [SerializeField] private float cameraFollowSpeed = 20f; //How fast the camera will reach the target
         [SerializeField] private float cameraPitchSpeed = 5f; //How fast the camera goes up and down
         [SerializeField] private float cameraPivotSpeed = 5f; //How fast the camera goes left and right
         [SerializeField] private float cameraCollisionOffset = .2f; //How much the camera will push away from a collision
         [SerializeField] private LayerMask collisionLayers; //What the camera will collide with
         [SerializeField] private bool followTarget = true; //If the camera should follow the player
 
+        [Header("Lock on options")]
+        [SerializeField] private float lockedOnCameraHeight = 1.8f;
+        [SerializeField] private float lockedOnDefaultCameraDistance = 8f; //Camera distance when not obstructed and locked on
+        [SerializeField] private float cameraLockOnPitchSpeed = 5f; //How fast the camera goes up and down when locked on
+        [SerializeField] private float cameraLockOnPivotSpeed = 5f; //How fast the camera goes left and right when locked on
         private Transform lockedTarget; //The target locked on to
 
+        //Camera angles
         private float cameraPitchAngle; //Up and down angle
         private float cameraPivotAngle; //Left and right angle
-
-        private Transform cameraTransform; //Transform of the actual camera
 
         //Angle limits
         private float minPitchAngle = -45;
         private float maxPitchAngle = 52;
-
-        private Vector3 cameraFollowVelocity; //Vector storing the current velocity of the camera
 
         private void Awake()
         {
@@ -48,12 +51,16 @@ namespace AlessioBorriello
         private void Update()
         {
             if (!playerManager.isClient) return;
+
+            //Handle lock on inputs
             HandleLockOnControls(playerManager.inputManager.cameraInput, playerManager.inputManager.rightStickInputPressed);
         }
 
         private void LateUpdate()
         {
             if (!playerManager.isClient) return;
+
+            //Move the camera
             HandleCameraMovement(playerManager.inputManager.cameraInput);
         }
 
@@ -63,7 +70,8 @@ namespace AlessioBorriello
         public void HandleCameraMovement(Vector2 cameraInput)
         {
             //Move camera to it's height
-            cameraPitchTransform.localPosition = new Vector3(0, Mathf.Lerp(cameraPitchTransform.localPosition.y, cameraHeight, .2f), 0);
+            float height = (playerManager.isLockedOn) ? lockedOnCameraHeight : cameraHeight;
+            cameraPitchTransform.localPosition = new Vector3(0, Mathf.Lerp(cameraPitchTransform.localPosition.y, height, 6 * Time.deltaTime), 0);
 
             if (followTarget)
             {
@@ -161,7 +169,6 @@ namespace AlessioBorriello
                 else //Otherwise just point camera forward
                 {
                     CenterCamera();
-
                 }
             }
             else //If a target was already locked on to
@@ -353,7 +360,8 @@ namespace AlessioBorriello
         private void FollowCameraTarget()
         {
             //Get the position the camera has to move to
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(cameraFollowTarget.position.x, cameraFollowTarget.position.y - .5f, cameraFollowTarget.position.z), ref cameraFollowVelocity, cameraFollowSpeed);
+            Vector3 targetPosition = new Vector3(cameraFollowTarget.position.x, cameraFollowTarget.position.y - .5f, cameraFollowTarget.position.z);
+            transform.position = Vector3.Lerp(transform.position, targetPosition, cameraFollowSpeed * Time.deltaTime);
         }
 
         /// <summary>
@@ -385,8 +393,8 @@ namespace AlessioBorriello
             float verticalAngle = GetVerticalLockOnAngle();
 
             //Change the pitch and pivot angles based on the camera movement input
-            cameraPitchAngle -= (verticalAngle * cameraPitchSpeed * Time.deltaTime); //Vertical angle
-            cameraPivotAngle -= (horizontalAngle * cameraPivotSpeed * Time.deltaTime); //Horizontal angle
+            cameraPitchAngle -= (verticalAngle * cameraLockOnPitchSpeed * Time.deltaTime); //Vertical angle
+            cameraPivotAngle -= (horizontalAngle * cameraLockOnPivotSpeed * Time.deltaTime); //Horizontal angle
 
         }
 
@@ -478,7 +486,7 @@ namespace AlessioBorriello
         private float CheckForCollisions(Vector3 direction)
         {
             //Set distance as the default value
-            float cameraDistance = -defaultCameraDistance;
+            float cameraDistance = (playerManager.isLockedOn)? -lockedOnDefaultCameraDistance : -defaultCameraDistance;
             
             RaycastHit hit;
             //Cast a sphere to see if the camera is hitting something

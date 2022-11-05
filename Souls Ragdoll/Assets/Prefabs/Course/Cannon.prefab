@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 483910854411084191}
   - component: {fileID: 483910854411084190}
   - component: {fileID: 483910854411084189}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 483910854422553101}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: Fire Position
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -138,7 +138,7 @@ GameObject:
   m_Component:
   - component: {fileID: 483910854483027023}
   - component: {fileID: 6134002807700640405}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: Cannon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -181,6 +181,7 @@ MonoBehaviour:
   strenght: 25
   reloadTime: 2
   startOffsetTime: 0
+  cannonEnabled: 1
 --- !u!1 &483910854839887631
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,7 +194,7 @@ GameObject:
   - component: {fileID: 483910854839887619}
   - component: {fileID: 483910854839887618}
   - component: {fileID: 483910854839887617}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}

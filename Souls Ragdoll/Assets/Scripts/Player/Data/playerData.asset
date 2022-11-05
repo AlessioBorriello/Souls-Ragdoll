@@ -27,8 +27,8 @@ MonoBehaviour:
   runSpeedMultiplier: 1.75
   sprintSpeedMultiplier: 2.15
   sprintThreshold: 0.4
-  rotationSpeed: 5
-  inAirRotationSpeed: 2
+  rotationSpeed: 8.8
+  inAirRotationSpeed: 3.5
   maxSlopeAngle: 35
   movingFriction: 0
   idleFriction: 0.5
@@ -36,7 +36,7 @@ MonoBehaviour:
   maxTiltAmount: 3.05
   tiltSpeed: 1.15
   speedNeededToTilt: 0.096
-  attackingRotationSpeed: 1
+  attackingRotationSpeed: 2.2
   rollingAttackWindow: 0.35
   backdashingAttackWindow: 0.35
   minDistanceToFall: 0.8
