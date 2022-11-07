@@ -80,7 +80,7 @@ namespace AlessioBorriello
 
             playerManager.currentRotationSpeedMultiplier = GetRotationSpeedMultiplier();
 
-            if(!playerManager.isLockedOn || playerManager.isSprinting) playerManager.movementDirection = GetMovementDirection();
+            if(!playerManager.isLockedOn || playerManager.isSprinting || playerManager.isRolling) playerManager.movementDirection = GetMovementDirection();
             else playerManager.movementDirection = GetLockedOnMovementDirection();
 
             Quaternion newRotation = Quaternion.LookRotation(playerManager.movementDirection);

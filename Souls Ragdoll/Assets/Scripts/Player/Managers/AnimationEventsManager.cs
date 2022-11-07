@@ -21,6 +21,16 @@ namespace AlessioBorriello
             playerManager.ragdollManager.AddForceToPlayer(playerManager.groundNormal * playerManager.playerData.rollJumpForce, ForceMode.Impulse);
         }
 
+        public void EnableRotation()
+        {
+            playerManager.canRotate = true;
+        }
+
+        public void DisableRotation()
+        {
+            playerManager.canRotate = false;
+        }
+
         #region Combos
         public void OpenComboChance()
         {
