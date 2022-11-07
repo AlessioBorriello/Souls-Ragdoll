@@ -33,9 +33,22 @@ namespace AlessioBorriello
         /// </summary>
         public void HandleMovement()
         {
-
-            float moveAmount = GetClampedMovementAmount(playerManager.inputManager.movementInput.magnitude);
-            playerManager.animationManager.UpdateMovementAnimatorValues(moveAmount, 0, .1f);
+            //If player is not sprinting
+            if(!playerManager.isSprinting)
+            {
+                //Not locked on animations
+                if (!playerManager.isLockedOn)
+                {
+                    float moveAmount = GetClampedMovementAmount(playerManager.inputManager.movementInput.magnitude);
+                    playerManager.animationManager.UpdateMovementAnimatorValues(moveAmount, 0, .1f);
+                }
+                //Locked on animations
+                else
+                {
+                    Vector2 input = GetClampedLockedOnMovementAmount(playerManager.inputManager.movementInput);
+                    playerManager.animationManager.UpdateMovementAnimatorValues(input.y, input.x, .06f);
+                }
+            }
 
             if (playerManager.disablePlayerInteraction) return;
 
@@ -66,7 +79,9 @@ namespace AlessioBorriello
             if (!playerManager.canRotate) return;
 
             playerManager.currentRotationSpeedMultiplier = GetRotationSpeedMultiplier();
-            playerManager.movementDirection = GetMovementDirection();
+
+            if(!playerManager.isLockedOn || playerManager.isSprinting) playerManager.movementDirection = GetMovementDirection();
+            else playerManager.movementDirection = GetLockedOnMovementDirection();
 
             Quaternion newRotation = Quaternion.LookRotation(playerManager.movementDirection);
             float rotationSpeed = playerManager.currentRotationSpeedMultiplier * Time.deltaTime;
@@ -217,7 +232,7 @@ namespace AlessioBorriello
                 return;
             }
 
-            playerManager.animationManager.UpdateMovementAnimatorValues(2, 0, .1f);
+            playerManager.animationManager.UpdateMovementAnimatorValues(1.8f, 0, .1f);
             playerManager.currentSpeedMultiplier = playerManager.playerData.sprintSpeedMultiplier;
         }
 
@@ -227,13 +242,27 @@ namespace AlessioBorriello
         /// <returns>The direction</returns>
         private Vector3 GetMovementDirection()
         {
-            Vector3 movementDirection = Vector3.ProjectOnPlane(playerManager.cameraTransform.forward, Vector3.up) * playerManager.inputManager.movementInput.y; //Camera's current z axis * vertical movement (Up, down input)
-            movementDirection += Vector3.ProjectOnPlane(playerManager.cameraTransform.right, Vector3.up) * playerManager.inputManager.movementInput.x; //Camera's current z axis * horizontal movement (Right, Left input)
+            Vector3 normal = (playerManager.isOnGround) ? playerManager.groundNormal : Vector3.up;
+            Vector3 movementDirection = Vector3.ProjectOnPlane(playerManager.cameraTransform.forward, normal) * playerManager.inputManager.movementInput.y; //Camera's current z axis * vertical movement (Up, down input)
+            movementDirection += Vector3.ProjectOnPlane(playerManager.cameraTransform.right, normal) * playerManager.inputManager.movementInput.x; //Camera's current z axis * horizontal movement (Right, Left input)
             movementDirection.Normalize();
-            movementDirection.y = 0; //Remove y component from the vector (Y component of the vector from the camera should be ignored)
-            movementDirection = Vector3.ProjectOnPlane(movementDirection, (playerManager.isOnGround) ? playerManager.groundNormal : Vector3.up); //Project for sloped ground
             
             if (playerManager.inputManager.movementInput.magnitude == 0) return Vector3.ProjectOnPlane(playerManager.animatedPlayer.transform.forward, Vector3.up); //If not moving return the forward
+            
+            return movementDirection;
+        }
+
+        /// <summary>
+        /// Get the direction of the movement based on locked enemy direction
+        /// </summary>
+        /// <returns>The direction</returns>
+        private Vector3 GetLockedOnMovementDirection()
+        {
+            if (playerManager.lockedTarget == null) return playerManager.physicalHips.transform.forward;
+
+            Vector3 normal = (playerManager.isOnGround) ? playerManager.groundNormal : Vector3.up;
+            Vector3 movementDirection = Vector3.ProjectOnPlane(playerManager.lockedTarget.position - playerManager.physicalHips.position, normal);
+            movementDirection.Normalize();
 
             return movementDirection;
         }
@@ -284,6 +313,43 @@ namespace AlessioBorriello
             }
 
             return clampedAmount;
+        }
+
+        /// <summary>
+        /// Sets amount to hard values to snap animation speed while locked on
+        /// </summary>
+        private Vector2 GetClampedLockedOnMovementAmount(Vector2 input)
+        {
+            Vector2 clampedInput = Vector2.zero;
+            float magnitude = input.magnitude;
+            float multiplier = 0;
+
+            if (Mathf.Abs(magnitude) > 0 && Mathf.Abs(magnitude) < .55f) //Walking
+            {
+                multiplier = .5f;
+            }
+            else if (Mathf.Abs(magnitude) > .55f) //Running
+            {
+                multiplier = 1f;
+            }
+
+            if (Mathf.Abs(input.x) > .8f * magnitude && Mathf.Abs(input.y) < .25f * magnitude) //Right Left
+            {
+                clampedInput.x = 1 * Mathf.Sign(input.x) * multiplier;
+                clampedInput.y = (input.y * Mathf.Sign(input.y));
+            }
+            else if (Mathf.Abs(input.y) > .8f * magnitude && Mathf.Abs(input.x) < .25f * magnitude) //Up Down
+            {
+                clampedInput.x = 0 + (input.x * Mathf.Sign(input.x));
+                clampedInput.y = 1 * Mathf.Sign(input.y) * multiplier;
+            }
+            else if (Mathf.Abs(input.x) > .25f * magnitude && Mathf.Abs(input.y) > .25f * magnitude) //Up-Right Down-Left
+            {
+                clampedInput.x = 1 * Mathf.Sign(input.x) * multiplier;
+                clampedInput.y = 1 * Mathf.Sign(input.y) * multiplier;
+            }
+
+            return clampedInput;
         }
 
         /// <summary>

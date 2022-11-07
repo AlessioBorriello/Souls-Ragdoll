@@ -12,10 +12,12 @@ public class GameControl : MonoBehaviour
     public int maxLines = 8;
     private Queue<string> queue = new Queue<string>();
     private string currentText = "";
-    public float xLeftOffset = 5;
+    public float xLeftOffset = 300;
     public float yBottomOffset = 150;
     public float width = 240;
     public float height = 120;
+
+    private float screenWidth = Screen.width;
 
     private void Start()
     {
@@ -51,7 +53,7 @@ public class GameControl : MonoBehaviour
     void OnGUI()
     {
         if (!showDebug) return;
-        GUI.Label(new Rect(xLeftOffset, Screen.height - yBottomOffset, width, height), currentText, GUI.skin.textArea);
+        GUI.Label(new Rect(screenWidth - xLeftOffset, Screen.height - yBottomOffset, width, height), currentText, GUI.skin.textArea);
     }
 
 }

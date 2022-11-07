@@ -76,7 +76,7 @@ namespace AlessioBorriello
         {
             int layer = playerManager.animationManager.animator.GetLayerIndex((loadOnLeft) ? "Left Arm" : "Right Arm");
             if (item != null && item.OneHandedIdle != "") playerManager.animationManager.animator.CrossFade(item.OneHandedIdle, .1f, layer);
-            else playerManager.animationManager.animator.CrossFade("Empty", .1f, layer);
+            else playerManager.animationManager.animator.CrossFade("Empty Hand Idle", .1f, layer);
         }
 
         private Collider GetItemCollider(HandItemHolder holder)

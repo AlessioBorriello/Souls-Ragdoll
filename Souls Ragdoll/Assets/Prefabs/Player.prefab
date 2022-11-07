@@ -506,7 +506,7 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LowAngularXLimit:
-    limit: -30
+    limit: -45
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
@@ -1981,7 +1981,6 @@ MonoBehaviour:
   physicalHips: {fileID: 3193748364022854742}
   inputManager: {fileID: 0}
   cameraTransform: {fileID: 0}
-  cameraManager: {fileID: 0}
   animationManager: {fileID: 0}
   playerLocomotionManager: {fileID: 0}
   ragdollManager: {fileID: 0}
@@ -1995,6 +1994,7 @@ MonoBehaviour:
   groundNormal: {x: 0, y: 0, z: 0}
   groundDistance: 0
   movementDirection: {x: 0, y: 0, z: 0}
+  lockedTarget: {fileID: 0}
   isClient: 1
   disablePlayerInteraction: 0
   canRotate: 1
@@ -3282,7 +3282,7 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LowAngularXLimit:
-    limit: -30
+    limit: -45
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:

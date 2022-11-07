@@ -33,7 +33,7 @@ namespace AlessioBorriello
         [SerializeField] private float lockedOnDefaultCameraDistance = 8f; //Camera distance when not obstructed and locked on
         [SerializeField] private float cameraLockOnPitchSpeed = 5f; //How fast the camera goes up and down when locked on
         [SerializeField] private float cameraLockOnPivotSpeed = 5f; //How fast the camera goes left and right when locked on
-        private Transform lockedTarget; //The target locked on to
+        [HideInInspector] public Transform lockedTarget; //The target locked on to
 
         //Camera angles
         private float cameraPitchAngle; //Up and down angle
@@ -117,6 +117,7 @@ namespace AlessioBorriello
             if (distanceFromTarget > playerManager.playerData.maxLoseTargetDistance || isObstructed)
             {
                 lockedTarget = null;
+                playerManager.lockedTarget = null;
                 playerManager.isLockedOn = false;
             }
         }
@@ -140,7 +141,11 @@ namespace AlessioBorriello
                 Transform newTarget = GetLockOnTarget(changeLeft);
 
                 //If it was found, set it as the locked target
-                if(newTarget != null && newTarget != lockedTarget) lockedTarget = newTarget;
+                if (newTarget != null && newTarget != lockedTarget)
+                {
+                    lockedTarget = newTarget;
+                    playerManager.lockedTarget = newTarget;
+                }
 
             }
 
@@ -163,6 +168,7 @@ namespace AlessioBorriello
             {
                 //Try to get a target
                 lockedTarget = GetLockOnTarget();
+                playerManager.lockedTarget = lockedTarget;
 
                 //If target is found
                 if (lockedTarget != null) playerManager.isLockedOn = true;
@@ -175,6 +181,7 @@ namespace AlessioBorriello
             {
                 //Remove lock on reference
                 lockedTarget = null;
+                playerManager.lockedTarget = null;
                 playerManager.isLockedOn = false;
             }
         }

@@ -29,6 +29,7 @@ namespace AlessioBorriello
         [HideInInspector] public Vector3 groundNormal;
         [HideInInspector] public float groundDistance;
         [HideInInspector] public Vector3 movementDirection;
+        [HideInInspector] public Transform lockedTarget;
 
         #region Flags
         [Header("Flags")]
