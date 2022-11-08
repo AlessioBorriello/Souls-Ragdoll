@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
+using UnityEngine.Animations;
+using UnityEngine.Playables;
 
 namespace AlessioBorriello
 {
+
     public class PlayerInventoryManager : MonoBehaviour
     {
 

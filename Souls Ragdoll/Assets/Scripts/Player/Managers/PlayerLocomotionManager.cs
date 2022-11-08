@@ -209,7 +209,7 @@ namespace AlessioBorriello
         private void Roll()
         {
             playerManager.currentSpeedMultiplier = playerManager.playerData.rollSpeedMultiplier;
-            playerManager.animationManager.PlayTargetAnimation("Roll", .2f);
+            playerManager.animationManager.PlayTargetAnimation("Roll", .15f);
         }
 
         /// <summary>
@@ -288,6 +288,8 @@ namespace AlessioBorriello
         /// </summary>
         private float GetRotationSpeedMultiplier()
         {
+            if (playerManager.isLockedOn && playerManager.isRolling) return playerManager.playerData.lockedOnRollRotationSpeedMultiplier;
+            else if(!playerManager.isLockedOn && playerManager.isRolling) return playerManager.playerData.rollRotationSpeedMultiplier;
 
             if (!playerManager.isOnGround) return playerManager.playerData.inAirRotationSpeed;
 

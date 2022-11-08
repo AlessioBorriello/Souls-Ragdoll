@@ -50,6 +50,8 @@ MonoBehaviour:
   knockoutLandThreshold: 1.45
   backdashSpeedMultiplier: 3.1
   rollSpeedMultiplier: 2.4
+  rollRotationSpeedMultiplier: 1
+  lockedOnRollRotationSpeedMultiplier: 12
   rollJumpForce: 5.22
   KOTime: 3.2
   maxKOTime: 15
