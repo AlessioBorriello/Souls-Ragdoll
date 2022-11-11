@@ -81,6 +81,9 @@ namespace AlessioBorriello
             //Set speed multiplier
             playerManager.currentSpeedMultiplier = attackMovementSpeedMultiplier;
             if (chainedAttack) Debug.Log("Combo: " + attackAnimation);
+
+            //Disable arms collision
+            playerManager.ragdollManager.ToggleCollisionOfArms(false);
         }
 
         private float GetAttackMovementSpeedMultiplier(WeaponItem weapon)

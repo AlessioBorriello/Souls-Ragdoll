@@ -11,7 +11,12 @@ namespace AlessioBorriello
         {
             PlayerManager playerManager = animator.transform.root.GetComponent<PlayerManager>();
 
-            if (!playerManager.attackManager.chainedAttack) playerManager.attackManager.nextComboAttackIndex = 0; //Reset combo if player has not chained an attack
+            if (!playerManager.attackManager.chainedAttack) //Reset combo if player has not chained an attack
+            {
+                playerManager.attackManager.nextComboAttackIndex = 0;
+                //Enable arms collision
+                playerManager.ragdollManager.ToggleCollisionOfArms(true);
+            }
             else
             {
                 //Continue attacking

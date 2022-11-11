@@ -557,6 +557,24 @@ BlendTree:
   m_UseAutomaticThresholds: 1
   m_NormalizedBlendValues: 0
   m_BlendType: 2
+--- !u!114 &-3580700381124939752
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 298602a63b1eb8b48972fbe38bb409a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEnter: 0
+  onEnterBoolName: 
+  onEnterBoolValue: 0
+  onExit: 0
+  onExitBoolName: 
+  onExitBoolValue: 0
 --- !u!1107 &-3568195086397809687
 AnimatorStateMachine:
   serializedVersion: 6
@@ -746,6 +764,24 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &-1562915624487503055
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 298602a63b1eb8b48972fbe38bb409a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEnter: 0
+  onEnterBoolName: 
+  onEnterBoolValue: 0
+  onExit: 0
+  onExitBoolName: 
+  onExitBoolValue: 0
 --- !u!114 &-1431754903225406233
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -974,6 +1010,24 @@ AnimatorStateMachine:
   m_ExitPosition: {x: 800, y: 120, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 7539268581909127836}
+--- !u!114 &-25729746151707290
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 298602a63b1eb8b48972fbe38bb409a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEnter: 1
+  onEnterBoolName: IsInEmptyOverride
+  onEnterBoolValue: 1
+  onExit: 1
+  onExitBoolName: IsInEmptyOverride
+  onExitBoolValue: 0
 --- !u!91 &9100000
 AnimatorController:
   m_ObjectHideFlags: 0
@@ -988,31 +1042,31 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: StrafeMovementAmount
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: onGround
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 1
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: attackingWithLeft
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: chainedAttack
+    m_Controller: {fileID: 0}
+  - m_Name: IsInEmptyOverride
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -1069,7 +1123,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Empty
+  m_Name: EmptyOverride
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -1080,6 +1134,7 @@ AnimatorState:
   - {fileID: -663633130404425087}
   - {fileID: -8455223065679199034}
   - {fileID: -8779780315918965077}
+  - {fileID: -25729746151707290}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1186,6 +1241,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 646156f637498964cb782a653b7014b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1005432229494327145
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 298602a63b1eb8b48972fbe38bb409a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEnter: 0
+  onEnterBoolName: 
+  onEnterBoolValue: 0
+  onExit: 0
+  onExitBoolName: 
+  onExitBoolValue: 0
 --- !u!1102 &1248851389602864274
 AnimatorState:
   serializedVersion: 6
@@ -1423,6 +1496,24 @@ AnimatorState:
   m_MirrorParameter: attackingWithLeft
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &5051319489970031197
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 298602a63b1eb8b48972fbe38bb409a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEnter: 0
+  onEnterBoolName: 
+  onEnterBoolValue: 0
+  onExit: 0
+  onExitBoolName: 
+  onExitBoolValue: 0
 --- !u!114 &5181294115518347575
 MonoBehaviour:
   m_ObjectHideFlags: 1

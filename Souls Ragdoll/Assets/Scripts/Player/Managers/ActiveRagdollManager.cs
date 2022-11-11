@@ -11,18 +11,23 @@ namespace AlessioBorriello
         [SerializeField] private Transform animatedHips; //Hips of the animated character
         [SerializeField] private Rigidbody physicalHips; //Hips of the physical character
 
-        public Transform[] AnimatedBones { get; private set; } //Set of transforms of the animated bones starting from the animated hips
-        public ConfigurableJoint[] Joints { get; private set; } //Set of joints of the physical bones starting from the physical hips
+        [HideInInspector] public Transform[] AnimatedBones { get; private set; } //Set of transforms of the animated bones starting from the animated hips
+        [HideInInspector] public ConfigurableJoint[] Joints { get; private set; } //Set of joints of the physical bones starting from the physical hips
+
         private Quaternion[] initialJointRotations; //Set of starting rotations of the joints
         private Collider[] Colliders; //Set of colliders of the joints
         private Rigidbody[] Bodies; //Set of rigidbodies of the player
+
+        private List<GameObject> arms = new List<GameObject>();
+        private LayerMask characterLayer;
+        private LayerMask ignoreCharacterLayer;
 
         private PlayerManager playerManager; //Player manager
         private Animator animator; //Animator of the animated character
 
         private float knockedOutTimer = 0;
         private float safenetKnockedOutTimer = 0; //Used to check if the player has been knocked out for too much
-
+        
         private float targetHipsForce;
         private float targetJointForce;
 
@@ -34,12 +39,6 @@ namespace AlessioBorriello
             if(Bodies == null) Bodies = physicalHips.GetComponentsInChildren<Rigidbody>();
 
             Joints[(int)BodyParts.Hip].configuredInWorldSpace = true; //Set hips in world space
-
-            //Debug.Log("Bones: " + AnimatedBones.Length + " - Joints: " + Joints.Length);
-            for(int i = 0; i < AnimatedBones.Length; i++)
-            {
-                //Debug.Log(Joints[i].name + " copies " + AnimatedBones[i].name);
-            }
 
             SetupColliders();
         }
@@ -54,6 +53,19 @@ namespace AlessioBorriello
             targetJointForce = playerManager.playerData.jointDriveForce;
 
             SetJointsDriveForces(targetHipsForce, targetJointForce); //Set up joint drive forces
+
+            //Get arms
+            arms.Add(GetBodyPart(BodyParts.Armr).gameObject);
+            arms.Add(GetBodyPart(BodyParts.Forearmr).gameObject);
+            arms.Add(GetBodyPart(BodyParts.Handr).gameObject);
+
+            arms.Add(GetBodyPart(BodyParts.Arml).gameObject);
+            arms.Add(GetBodyPart(BodyParts.Forearml).gameObject);
+            arms.Add(GetBodyPart(BodyParts.Handl).gameObject);
+
+            //Get layers
+            characterLayer = LayerMask.NameToLayer("Character");
+            ignoreCharacterLayer = LayerMask.NameToLayer("IgnoreCharacter");
         }
 
         private void Update()
@@ -317,9 +329,17 @@ namespace AlessioBorriello
             part.AddForce(force, mode);
         }
 
-        public Rigidbody GetBodyPart(BodyPart part)
+        public Rigidbody GetBodyPart(BodyParts part)
         {
             return Bodies[(int)part];
+        }
+
+        public void ToggleCollisionOfArms(bool enable)
+        {
+            foreach (GameObject part in arms)
+            {
+                part.layer = (enable)? characterLayer : ignoreCharacterLayer;
+            }
         }
 
     }

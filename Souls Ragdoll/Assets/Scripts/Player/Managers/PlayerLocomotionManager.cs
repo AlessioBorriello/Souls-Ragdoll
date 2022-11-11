@@ -52,6 +52,12 @@ namespace AlessioBorriello
 
             if (playerManager.playerIsStuckInAnimation) return;
 
+            //Allow the player to exit an override animation early if the player is moving, is not stuck in the animation and is NOT in the empty animation already
+            if (playerManager.inputManager.movementInput.magnitude > 0 && !playerManager.animationManager.animator.GetBool("IsInEmptyOverride"))
+            {
+                playerManager.animationManager.PlayTargetAnimation("EmptyOverride", .2f);
+            }
+
             playerManager.currentSpeedMultiplier = GetMovementSpeedMultiplier();
             HandleMovementFootFriction();
 
@@ -193,7 +199,7 @@ namespace AlessioBorriello
                 if(!playerManager.animationManager.animator.GetBool("onGround"))
                 {
                     playerManager.animationManager.UpdateOnGroundValue(true);
-                    playerManager.animationManager.PlayTargetAnimation("Empty", .2f);
+                    playerManager.animationManager.PlayTargetAnimation("EmptyOverride", .2f);
                 }
 
                 //Knock out
