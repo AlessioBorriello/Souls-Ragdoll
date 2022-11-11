@@ -1893,6 +1893,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 599358120a7b300408ff53a34b31e145, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  queueTime: 0.5
   movementInput: {x: 0, y: 0}
   cameraInput: {x: 0, y: 0}
   dPadInput: {x: 0, y: 0}
@@ -1996,7 +1997,8 @@ MonoBehaviour:
   movementDirection: {x: 0, y: 0, z: 0}
   lockedTarget: {fileID: 0}
   isClient: 1
-  disablePlayerInteraction: 0
+  playerIsStuckInAnimation: 0
+  consumeInputs: 1
   canRotate: 1
   isOnGround: 1
   shouldSlide: 0
@@ -2045,7 +2047,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackingWithLeft: 0
   nextComboAttackIndex: 0
-  canCombo: 0
   chainedAttack: 0
 --- !u!114 &8779414462503701537
 MonoBehaviour:

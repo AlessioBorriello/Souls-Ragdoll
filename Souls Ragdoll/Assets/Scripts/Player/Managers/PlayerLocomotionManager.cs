@@ -50,7 +50,7 @@ namespace AlessioBorriello
                 }
             }
 
-            if (playerManager.disablePlayerInteraction) return;
+            if (playerManager.playerIsStuckInAnimation) return;
 
             playerManager.currentSpeedMultiplier = GetMovementSpeedMultiplier();
             HandleMovementFootFriction();
@@ -98,7 +98,7 @@ namespace AlessioBorriello
         /// </summary>
         private void HandleTilt()
         {
-            if (playerManager.disablePlayerInteraction) return;
+            if (playerManager.playerIsStuckInAnimation) return;
 
             float speed = Vector3.ProjectOnPlane((playerManager.physicalHips.transform.position - currentPos), playerManager.groundNormal).magnitude;
             if (speed <= playerManager.playerData.speedNeededToTilt || !playerManager.isOnGround)
@@ -137,7 +137,7 @@ namespace AlessioBorriello
         public void HandleRollingAndSprinting()
         {
 
-            if (playerManager.disablePlayerInteraction)
+            if (playerManager.playerIsStuckInAnimation)
             {
                 //rollTimer = 0;
                 sprintTimer = 0;
@@ -272,14 +272,11 @@ namespace AlessioBorriello
         /// </summary>
         private float GetMovementSpeedMultiplier()
         {
+            if (playerManager.isRolling) return playerManager.playerData.rollSpeedMultiplier;
+            if (playerManager.isBackdashing) return playerManager.playerData.backdashSpeedMultiplier;
+            if (Mathf.Abs(playerManager.inputManager.movementInput.magnitude) > .55f) return playerManager.playerData.runSpeedMultiplier;
 
-            float speedMultiplier = playerManager.playerData.walkSpeedMultiplier;
-            if (Mathf.Abs(playerManager.inputManager.movementInput.magnitude) > .55f)
-            {
-                speedMultiplier = playerManager.playerData.runSpeedMultiplier;
-            }
-
-            return speedMultiplier;
+            return playerManager.playerData.walkSpeedMultiplier;
 
         }
 
@@ -388,7 +385,7 @@ namespace AlessioBorriello
 
             Vector3 gravityForce = Vector3.zero;
             //Increase in air timer
-            if (!isOnGround)
+            if (!isOnGround && playerManager.physicalHips.velocity.y < 0)
             {
                 //Apply more downwards force when not on the ground based on the in air timer
                 gravityForce += Vector3.down * (playerManager.playerData.fallingSpeed * inAirTimer);

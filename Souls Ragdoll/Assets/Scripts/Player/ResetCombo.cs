@@ -16,12 +16,11 @@ namespace AlessioBorriello
             {
                 //Continue attacking
                 playerManager.isAttacking = true;
-                playerManager.disablePlayerInteraction = true;
+                playerManager.playerIsStuckInAnimation = true;
             }
 
             //Reset
             playerManager.attackManager.chainedAttack = false; //Set chaining to false so the player has to press again
-            playerManager.attackManager.canCombo = false;
         }
 
     }

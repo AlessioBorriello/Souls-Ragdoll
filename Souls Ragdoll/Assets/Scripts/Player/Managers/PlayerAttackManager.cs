@@ -11,9 +11,8 @@ namespace AlessioBorriello
         [HideInInspector] public bool attackingWithLeft = false;
         private AttackType attackType;
 
-        [HideInInspector] public int nextComboAttackIndex = 0;
-        [HideInInspector] public bool canCombo = false;
-        [HideInInspector] public bool chainedAttack = false;
+        public int nextComboAttackIndex = 0;
+        public bool chainedAttack = false;
 
         private void Start()
         {
@@ -25,9 +24,6 @@ namespace AlessioBorriello
 
             HandleRollAndBackdashAttackTimers();
 
-            //If player is already attacking and can not combo into next attack, return
-            if (playerManager.disablePlayerInteraction && !canCombo) return;
-
             //Store presses
             bool rb = playerManager.inputManager.rbInputPressed;
             bool rt = playerManager.inputManager.rtInputPressed;
@@ -38,23 +34,28 @@ namespace AlessioBorriello
             bool isLeft = (lb || lt);
             bool isHeavy = (lt || rt);
 
-            //Try to attack if any one of the buttons is pressed
-            if(rb || rt || lb || lt) TryAttack(isLeft, isHeavy);
+            //If any of these is pressed
+            if (rb || rt || lb || lt)
+            {
+                //Check for combos
+                AttackType attackType = GetAttackType(isHeavy);
+                chainedAttack = CheckForCombo(isLeft, attackType);
+                //Try to attack
+                TryAttack(isLeft, isHeavy, attackType);
+            }
 
         }
 
-        private void TryAttack(bool isLeft, bool isHeavy)
+        private void TryAttack(bool isLeft, bool isHeavy, AttackType newAttackType)
         {
+            if (playerManager.playerIsStuckInAnimation) return;
+
             //Get right or left item
             HandEquippableItem item = (isLeft)? playerManager.inventoryManager.currentLeftHandItem : playerManager.inventoryManager.currentRightHandItem;
             if (item is not WeaponItem) return;
 
             //Get this new attack's proprieties
             bool newAttackingWithLeft = isLeft;
-            AttackType newAttackType = GetAttackType(isHeavy);
-
-            //Check for combos
-            if(nextComboAttackIndex > 0 && canCombo) chainedAttack = CheckForCombo(newAttackingWithLeft, newAttackType);
 
             //If an attack was NOT chained and it is not the first attack
             if (!chainedAttack && nextComboAttackIndex != 0) return;
@@ -70,9 +71,6 @@ namespace AlessioBorriello
 
             //Attack
             Attack(attackAnimation, attackMovementSpeedMultiplier);
-
-            //Disable combo until it is opened again in the animation events
-            canCombo = false;
         }
 
         private void Attack(string attackAnimation, float attackMovementSpeedMultiplier)
@@ -82,7 +80,7 @@ namespace AlessioBorriello
 
             //Set speed multiplier
             playerManager.currentSpeedMultiplier = attackMovementSpeedMultiplier;
-            //if (chainedAttack) Debug.Log("Combo: " + attackAnimation);
+            if (chainedAttack) Debug.Log("Combo: " + attackAnimation);
         }
 
         private float GetAttackMovementSpeedMultiplier(WeaponItem weapon)
@@ -93,6 +91,8 @@ namespace AlessioBorriello
 
         private bool CheckForCombo(bool isLeft, AttackType attackType)
         {
+            if (nextComboAttackIndex == 0) return false;
+
             //Cases where the combo is not performed
             if (isLeft != attackingWithLeft || this.attackType != attackType) return false;
             else return true;

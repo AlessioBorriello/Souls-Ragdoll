@@ -15,7 +15,7 @@ MonoBehaviour:
   hipsJointDriveForce: 1250
   jointDriveForce: 850
   maxLockOnDistance: 20
-  maxLockOnAngle: 145
+  maxLockOnAngle: 165
   targetMask:
     serializedVersion: 2
     m_Bits: 128

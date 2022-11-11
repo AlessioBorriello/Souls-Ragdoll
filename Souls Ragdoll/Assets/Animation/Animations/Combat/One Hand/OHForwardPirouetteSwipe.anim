@@ -69700,13 +69700,6 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 1.0666667
-    functionName: OpenComboChance
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
   - time: 1.2833333
     functionName: DisableDamageCollider
     data: 
@@ -69714,8 +69707,8 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 1.5
-    functionName: CloseComboChance
+  - time: 1.2833333
+    functionName: SetPlayerNotStuckInAnimation
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

@@ -24,8 +24,8 @@ namespace AlessioBorriello
         [HideInInspector] public PlayerCollisionManager collisionManager;
         [HideInInspector] public UIManager uiManager;
 
-        [HideInInspector] public float currentSpeedMultiplier;
-        [HideInInspector] public float currentRotationSpeedMultiplier;
+        public float currentSpeedMultiplier;
+        public float currentRotationSpeedMultiplier;
         [HideInInspector] public Vector3 groundNormal;
         [HideInInspector] public float groundDistance;
         [HideInInspector] public Vector3 movementDirection;
@@ -35,7 +35,8 @@ namespace AlessioBorriello
         [Header("Flags")]
         public bool isClient = true;
 
-        public bool disablePlayerInteraction = false;
+        public bool playerIsStuckInAnimation = false;
+        public bool consumeInputs = true;
         public bool canRotate = true;
         public bool isOnGround = true;
         public bool shouldSlide = false; //If the friction should be enabled or not
@@ -86,15 +87,6 @@ namespace AlessioBorriello
 
         private void Update()
         {
-            //Inputs
-            if(isClient)
-            {
-                inputManager.TickMovementInput();
-                inputManager.TickCameraMovementInput();
-                inputManager.TickDPadInput();
-                inputManager.TickActionsInput();
-            }
-            
 
             //Movement, animation logic
             playerLocomotionManager.HandleMovementRotation();

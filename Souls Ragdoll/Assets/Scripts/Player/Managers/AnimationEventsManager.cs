@@ -16,6 +16,16 @@ namespace AlessioBorriello
             inventoryManager = GetComponentInParent<PlayerInventoryManager>();
         }
 
+        public void SetPlayerStuckInAnimation()
+        {
+            playerManager.playerIsStuckInAnimation = true;
+        }
+
+        public void SetPlayerNotStuckInAnimation()
+        {
+            playerManager.playerIsStuckInAnimation = false;
+        }
+
         public void AddJumpForceOnRoll()
         {
             playerManager.ragdollManager.AddForceToPlayer(playerManager.groundNormal * playerManager.playerData.rollJumpForce, ForceMode.Impulse);
@@ -30,18 +40,6 @@ namespace AlessioBorriello
         {
             playerManager.canRotate = false;
         }
-
-        #region Combos
-        public void OpenComboChance()
-        {
-            playerManager.attackManager.canCombo = true;
-        }
-
-        public void CloseComboChance()
-        {
-            playerManager.attackManager.canCombo = false;
-        }
-        #endregion
 
         #region Collider stuff
         public void EnableDamageCollider()

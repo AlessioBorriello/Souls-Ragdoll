@@ -6,7 +6,7 @@ namespace AlessioBorriello
 {
     public class KnockOutResistance : MonoBehaviour
     {
-        public float knockOutResistance = 200f; //Strenght of collision before the player is knocked out
+        [HideInInspector] public float knockOutResistance = 200f; //Strenght of collision before the player is knocked out
         public BodyParts bodyPart;
         private PlayerManager playerManager;
 
@@ -23,7 +23,7 @@ namespace AlessioBorriello
 
             if (collision.impulse.magnitude > knockOutResistance)
             {
-                Debug.Log($"Collision of: {this.name} with {collision.collider.name}, force {collision.impulse.magnitude} (Res: {knockOutResistance})");
+                if(playerManager.isClient) Debug.Log($"Collision of: {this.name} with {collision.collider.name}, force {collision.impulse.magnitude} (Res: {knockOutResistance})");
                 playerManager.ragdollManager.KnockOut();
             }
         }
