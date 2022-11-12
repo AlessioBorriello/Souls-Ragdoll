@@ -48,8 +48,8 @@ MonoBehaviour:
   maxFallingSpeed: 40
   timeBeforeFalling: 0.32
   knockoutLandThreshold: 1.45
-  backdashSpeedMultiplier: 3.1
-  rollSpeedMultiplier: 2.4
+  backdashSpeedMultiplier: 3.15
+  rollSpeedMultiplier: 2.5
   rollRotationSpeedMultiplier: 1
   lockedOnRollRotationSpeedMultiplier: 12
   rollJumpForce: 5.22

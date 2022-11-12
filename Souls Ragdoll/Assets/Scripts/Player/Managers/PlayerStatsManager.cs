@@ -8,12 +8,14 @@ namespace AlessioBorriello
     {
 
         private PlayerManager playerManager;
+        private AnimationManager animationManager;
+
         [SerializeField] private PlayerStats playerStats;
 
         #region Vigor
         private int vigorLevel;
-        public int maxHealth;
-        public int currentHealth;
+        public int maxHealth { get; private set; }
+        public int currentHealth { get; private set; }
         public int VigorLevel
         {
             get { return vigorLevel; }
@@ -28,8 +30,8 @@ namespace AlessioBorriello
 
         #region Endurance
         private int enduranceLevel;
-        public int maxStamina;
-        public int currentStamina;
+        public int maxStamina { get; private set; }
+        public int currentStamina { get; private set; }
         public int EnduranceLevel
         {
             get { return vigorLevel; }
@@ -44,7 +46,7 @@ namespace AlessioBorriello
 
         #region Strength
         private int strengthLevel;
-        [SerializeField] private int power;
+        public int power { get; private set; }
         public int StrengthLevel
         {
             get { return strengthLevel; }
@@ -60,6 +62,7 @@ namespace AlessioBorriello
         {
 
             playerManager = GetComponent<PlayerManager>();
+            animationManager = playerManager.GetAnimationManager();
 
             VigorLevel = 1;
             StrengthLevel = 1;
@@ -67,10 +70,10 @@ namespace AlessioBorriello
 
         }
 
-        public void ReduceHealth(int damage, string hurtAnimationName, float transitionTime)
+        public void ReduceHealth(int damage, string hurtAnimationName, float transitionTime, bool stagger)
         {
             currentHealth -= damage;
-            playerManager.animationManager.PlayTargetAnimation(hurtAnimationName, transitionTime);
+            animationManager.PlayTargetAnimation(hurtAnimationName, transitionTime, stagger);
         }
 
         private int CalculateStatValue(int statLevel, int maxStatLevel, AnimationCurve diminishingCurve, int baseStatValue, int baseStatValueAddition)

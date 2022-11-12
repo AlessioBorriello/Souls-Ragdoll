@@ -5,21 +5,29 @@ using UnityEngine;
 namespace AlessioBorriello {
     public class AnimationManager : MonoBehaviour
     {
-        public Animator animator;
-        [HideInInspector] public PlayerManager playerManager;
+        private Animator animator;
+        private PlayerManager playerManager;
 
-        int normalMovementAmountHash;
-        int strafeMovementAmountHash;
-        int onGroundHash;
-        int attackingWithLeftHash;
+        private int normalMovementAmountHash;
+        private int strafeMovementAmountHash;
+        private int onGroundHash;
+        private int attackingWithLeftHash;
+        private int blockingWithLeftHash;
+
+        private void Awake()
+        {
+            animator = GetComponentInChildren<Animator>();
+            Initialize();
+        }
 
         public void Initialize()
         {
             playerManager = GetComponent<PlayerManager>();
             normalMovementAmountHash = Animator.StringToHash("NormalMovementAmount");
             strafeMovementAmountHash = Animator.StringToHash("StrafeMovementAmount");
-            onGroundHash = Animator.StringToHash("onGround");
-            attackingWithLeftHash = Animator.StringToHash("attackingWithLeft");
+            onGroundHash = Animator.StringToHash("OnGround");
+            attackingWithLeftHash = Animator.StringToHash("AttackingWithLeft");
+            blockingWithLeftHash = Animator.StringToHash("BlockingWithLeft");
 
             animator.applyRootMotion = true;
         }
@@ -34,17 +42,34 @@ namespace AlessioBorriello {
 
         public void UpdateOnGroundValue(bool onGround)
         {
-            playerManager.animationManager.animator.SetBool(onGroundHash, onGround);
+            animator.SetBool(onGroundHash, onGround);
         }
 
         public void UpdateAttackingWithLeftValue(bool attackingWithLeft)
         {
-            playerManager.animationManager.animator.SetBool(attackingWithLeftHash, attackingWithLeft);
+            animator.SetBool(attackingWithLeftHash, attackingWithLeft);
         }
 
-        public void PlayTargetAnimation(string targetAnimation, float fadeDuration)
+        public void UpdateBlockingWithLeftValue(bool blockingWithLeft)
         {
+            animator.SetBool(blockingWithLeftHash, blockingWithLeft);
+        }
+
+        public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
+        {
+            playerManager.playerIsStuckInAnimation = isStuckInAnimation;
             animator.CrossFade(targetAnimation, fadeDuration);
+        }
+
+        public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
+        {
+            playerManager.playerIsStuckInAnimation = isStuckInAnimation;
+            animator.CrossFade(targetAnimation, fadeDuration, layer);
+        }
+
+        public Animator GetAnimator()
+        {
+            return animator;
         }
 
     }

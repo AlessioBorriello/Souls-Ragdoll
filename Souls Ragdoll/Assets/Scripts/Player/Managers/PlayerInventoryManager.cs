@@ -11,29 +11,37 @@ namespace AlessioBorriello
     {
 
         private PlayerManager playerManager;
+        private InputManager inputManager;
+        private AnimationManager animationManager;
+        private Animator animator;
+        private UIManager uiManager;
 
         //Item holders
         private HandItemHolder leftHolder;
         private HandItemHolder rightHolder;
 
         //Item slots
-        public HandEquippableItem[] itemsInRightSlots = new HandEquippableItem[3];
-        public HandEquippableItem[] itemsInLeftSlots = new HandEquippableItem[3];
+        [SerializeField] private HandEquippableItem[] itemsInRightSlots = new HandEquippableItem[3];
+        [SerializeField] private HandEquippableItem[] itemsInLeftSlots = new HandEquippableItem[3];
 
         //The currently equipped items and the relative colliders
-        public HandEquippableItem currentRightHandItem;
-        [HideInInspector] public Collider currentRightSlotItemCollider;
+        private HandEquippableItem currentRightHandItem;
+        private ColliderControl currentRightSlotItemColliderControl;
         private int currentRightItemSlotIndex = 0;
 
-        public HandEquippableItem currentLeftHandItem;
-        [HideInInspector] public Collider currentLeftSlotItemCollider;
+        private HandEquippableItem currentLeftHandItem;
+        private ColliderControl currentLeftSlotItemColliderControl;
         private int currentLeftItemSlotIndex = 0;
 
         private void Start()
         {
             playerManager = GetComponent<PlayerManager>();
+            inputManager = playerManager.GetInputManager();
+            animationManager = playerManager.GetAnimationManager();
+            animator = animationManager.GetAnimator();
+            uiManager = playerManager.GetUiManager();
 
-            foreach(HandItemHolder itemHolder in GetComponentsInChildren<HandItemHolder>())
+            foreach (HandItemHolder itemHolder in GetComponentsInChildren<HandItemHolder>())
             {
                 if(itemHolder.name == "ltemHolder.l") leftHolder = itemHolder;
                 else rightHolder = itemHolder;
@@ -47,7 +55,7 @@ namespace AlessioBorriello
             LoadItemInHand(currentRightHandItem, false);
             LoadItemInHand(currentLeftHandItem, true);
 
-            playerManager.uiManager.UpdateQuickSlotsUI(this);
+            uiManager.UpdateQuickSlotsUI(this);
 
         }
 
@@ -59,14 +67,14 @@ namespace AlessioBorriello
                 //Set item on left
                 leftHolder.LoadItemModel(item);
                 currentLeftHandItem = item;
-                currentLeftSlotItemCollider = GetItemCollider(leftHolder);
+                currentLeftSlotItemColliderControl = SetItemColliderControl(leftHolder);
             }
             else
             {
                 //Set item on right
                 rightHolder.LoadItemModel(item);
                 currentRightHandItem = item;
-                currentRightSlotItemCollider = GetItemCollider(rightHolder);
+                currentRightSlotItemColliderControl = SetItemColliderControl(rightHolder);
             }
 
             //Set idle animation
@@ -76,23 +84,23 @@ namespace AlessioBorriello
 
         private void LoadIdleAnimation(HandEquippableItem item, bool loadOnLeft)
         {
-            int layer = playerManager.animationManager.animator.GetLayerIndex((loadOnLeft) ? "Left Arm" : "Right Arm");
-            if (item != null && item.OneHandedIdle != "") playerManager.animationManager.animator.CrossFade(item.OneHandedIdle, .1f, layer);
-            else playerManager.animationManager.animator.CrossFade("Empty Hand Idle", .1f, layer);
+            int layer = animator.GetLayerIndex((loadOnLeft) ? "Left Arm" : "Right Arm");
+            if (item != null && item.OneHandedIdle != "") animator.CrossFade(item.OneHandedIdle, .1f, layer);
+            else animator.CrossFade("Empty Hand Idle", .1f, layer);
         }
 
-        private Collider GetItemCollider(HandItemHolder holder)
+        private ColliderControl SetItemColliderControl(HandItemHolder holder)
         {
-            Collider collider;
+            ColliderControl collider;
             if (holder.currentItemModel == null) return null;
-            collider = holder.currentItemModel.GetComponentInChildren<Collider>();
+            collider = holder.currentItemModel.GetComponentInChildren<ColliderControl>();
             return (collider != null) ? collider : null;
         }
 
         public void HandleQuickSlots()
         {
             //Left and right hands
-            int horizontalInput = (int)playerManager.inputManager.dPadInput.x;
+            int horizontalInput = (int)inputManager.dPadInput.x;
 
             if(horizontalInput > 0) ChangeHandItemSlot(ref currentRightItemSlotIndex, itemsInRightSlots, ref currentRightHandItem, false); //Right slot
             else if(horizontalInput < 0) ChangeHandItemSlot(ref currentLeftItemSlotIndex, itemsInLeftSlots, ref currentLeftHandItem, true); //Left slot
@@ -104,7 +112,7 @@ namespace AlessioBorriello
 
 
             //Update icons
-            if(playerManager.inputManager.dPadInput.magnitude > 0) playerManager.uiManager.UpdateQuickSlotsUI(this);
+            if(inputManager.dPadInput.magnitude > 0) uiManager.UpdateQuickSlotsUI(this);
         }
 
         private void ChangeHandItemSlot(ref int index, HandEquippableItem[] slots, ref HandEquippableItem currentHandItem, bool onLeft)
@@ -112,6 +120,26 @@ namespace AlessioBorriello
             index = (index + 1) % slots.Length;
             currentHandItem = slots[index];
             LoadItemInHand(currentHandItem, onLeft);
+        }
+
+        /// <summary>
+        /// Gets the currently equipped item in either hands
+        /// </summary>
+        /// <param name="leftHand">Current item equipped in the left hand if true, in the right hand if false</param>
+        /// <returns>The currently equipped item</returns>
+        public HandEquippableItem GetCurrentItem(bool leftHand)
+        {
+            return (leftHand) ? currentLeftHandItem : currentRightHandItem;
+        }
+
+        /// <summary>
+        /// Gets the collider control of the currently equipped item in either hands
+        /// </summary>
+        /// <param name="leftHand">Collider control of the currently equipped item in the left hand if true, in the right hand if false</param>
+        /// <returns>The collider control of the currently equipped item</returns>
+        public ColliderControl GetCurrentItemColliderControl(bool leftHand)
+        {
+            return (leftHand) ? currentLeftSlotItemColliderControl : currentRightSlotItemColliderControl;
         }
 
     }

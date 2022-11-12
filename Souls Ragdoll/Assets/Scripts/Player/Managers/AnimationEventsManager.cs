@@ -8,12 +8,20 @@ namespace AlessioBorriello
     public class AnimationEventsManager : MonoBehaviour
     {
         private PlayerManager playerManager;
+        private PlayerLocomotionManager locomotionManager;
         private PlayerInventoryManager inventoryManager;
+        private ActiveRagdollManager ragdollManager;
+        private PlayerCombatManager combatManager;
+        private PlayerWeaponManager weaponManager;
 
         private void Start()
         {
             playerManager = GetComponentInParent<PlayerManager>();
-            inventoryManager = GetComponentInParent<PlayerInventoryManager>();
+            locomotionManager = playerManager.GetLocomotionManager();
+            inventoryManager = playerManager.GetInventoryManager();
+            ragdollManager = playerManager.GetRagdollManager();
+            combatManager = playerManager.GetCombatManager();
+            weaponManager = combatManager.GetWeaponManager();
         }
 
         public void SetPlayerStuckInAnimation()
@@ -28,7 +36,7 @@ namespace AlessioBorriello
 
         public void AddJumpForceOnRoll()
         {
-            playerManager.ragdollManager.AddForceToPlayer(playerManager.groundNormal * playerManager.playerData.rollJumpForce, ForceMode.Impulse);
+            ragdollManager.AddForceToPlayer(locomotionManager.GetGroundNormal() * playerManager.playerData.rollJumpForce, ForceMode.Impulse);
         }
 
         public void EnableRotation()
@@ -44,30 +52,24 @@ namespace AlessioBorriello
         #region Collider stuff
         public void EnableDamageCollider()
         {
-            if (!playerManager.attackManager.attackingWithLeft)
-            {
-                Collider collider = inventoryManager.currentRightSlotItemCollider;
-                if(collider != null) collider.enabled = true;
-            }
-            else
-            {
-                Collider collider = inventoryManager.currentLeftSlotItemCollider;
-                if (collider != null) collider.enabled = true;
-            }
+            ColliderControl colliderControl = GetDamageColliderControl();
+            if (colliderControl != null) colliderControl.ToggleCollider(true);
         }
 
         public void DisableDamageCollider()
         {
-            if (!playerManager.attackManager.attackingWithLeft)
+            ColliderControl colliderControl = GetDamageColliderControl();
+            if (colliderControl != null)
             {
-                Collider collider = inventoryManager.currentRightSlotItemCollider;
-                if (collider != null) collider.enabled = false;
+                colliderControl.ToggleCollider(false);
+                colliderControl.EmptyHitList();
             }
-            else
-            {
-                Collider collider = inventoryManager.currentLeftSlotItemCollider;
-                if (collider != null) collider.enabled = false;
-            }
+        }
+
+        private ColliderControl GetDamageColliderControl()
+        {
+            if (!weaponManager.IsAttackingWithLeft()) return inventoryManager.GetCurrentItemColliderControl(false);
+            else return inventoryManager.GetCurrentItemColliderControl(true);
         }
         #endregion
     }

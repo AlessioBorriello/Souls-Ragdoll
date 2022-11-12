@@ -41,12 +41,12 @@ namespace AlessioBorriello
         public void UpdateQuickSlotsUI(PlayerInventoryManager inventoryManager)
         {
             //Right slot
-            HandEquippableItem rightItem = inventoryManager.currentRightHandItem;
+            HandEquippableItem rightItem = inventoryManager.GetCurrentItem(false);
             Sprite rightSprite = (rightItem != null)? rightItem.iconSprite : null;
             SetIcon(rightSprite, ref rightItemIcon);
 
             //Left slot
-            HandEquippableItem leftItem = inventoryManager.currentLeftHandItem;
+            HandEquippableItem leftItem = inventoryManager.GetCurrentItem(true);
             Sprite leftSprite = (leftItem != null) ? leftItem.iconSprite : null;
             SetIcon(leftSprite, ref leftItemIcon);
         }

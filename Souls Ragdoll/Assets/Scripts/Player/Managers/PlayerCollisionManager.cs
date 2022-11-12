@@ -8,19 +8,34 @@ namespace AlessioBorriello
     public class PlayerCollisionManager : MonoBehaviour
     {
         private PlayerManager playerManager;
+        private AnimationManager animationManager;
+        private PlayerLocomotionManager locomotionManager;
+        private ActiveRagdollManager ragdollManager;
+        private PlayerStatsManager statsManager;
+
+        private Rigidbody physicalHips;
+
         private List<int> inContact = new List<int>();
+        private bool shouldStagger = true;
 
         private void Start()
         {
             playerManager = GetComponent<PlayerManager>();
+            locomotionManager = playerManager.GetLocomotionManager();
+            animationManager = playerManager.GetAnimationManager();
+            ragdollManager = playerManager.GetRagdollManager();
+            statsManager = playerManager.GetStatsManager();
+
+            physicalHips = playerManager.GetPhysicalHips();
         }
 
-        public void EnterCollision(DamageColliderControl damageCollider, Collider playerCollider, int damage, float knockbackStrength, float flinchStrenght)
+        public void EnterCollision(ColliderControl damageCollider, Collider playerCollider, int damage, float knockbackStrength, float flinchStrenght)
         {
             if (CheckIfHit(damageCollider.GetInstanceID()))
             {
-                playerManager.statsManager.ReduceHealth(damage, "Hurt", .1f);
-                playerManager.animationManager.UpdateMovementAnimatorValues(0, 0, 0); //Stop the player
+                Debug.Log("Hit");
+                statsManager.ReduceHealth(damage, "Hurt", .1f, shouldStagger);
+                animationManager.UpdateMovementAnimatorValues(0, 0, 0); //Stop the player
 
                 //Knockback
                 Knockback(playerCollider, damageCollider, knockbackStrength, flinchStrenght);
@@ -47,26 +62,26 @@ namespace AlessioBorriello
             }
             else
             {
+                inContact.Add(colliderId);
             }
-
-            inContact.Add(colliderId);
+            
             return firstCollision;
         }
 
         Vector3 collisionPoint;
         Vector3 hipsPos;
-        private void Knockback(Collider playerCollider, DamageColliderControl damageCollider, float knockbackStrength, float flinchStrenght)
+        private void Knockback(Collider playerCollider, ColliderControl damageCollider, float knockbackStrength, float flinchStrenght)
         {
             collisionPoint = playerCollider.ClosestPoint(damageCollider.transform.position);
-            hipsPos = playerManager.physicalHips.transform.position;
+            hipsPos = physicalHips.transform.position;
             hipsPos.y = collisionPoint.y;
 
             Vector3 knockbackDirection = (hipsPos - collisionPoint).normalized;
-            knockbackDirection = Vector3.ProjectOnPlane(knockbackDirection, playerManager.groundNormal);
-            playerManager.ragdollManager.AddForceToPlayer(knockbackStrength * knockbackDirection, ForceMode.VelocityChange);
+            knockbackDirection = Vector3.ProjectOnPlane(knockbackDirection, locomotionManager.GetGroundNormal());
+            ragdollManager.AddForceToPlayer(knockbackStrength * knockbackDirection, ForceMode.VelocityChange);
 
             Vector3 flinchDirection = (playerCollider.transform.position - collisionPoint).normalized;
-            playerManager.ragdollManager.AddForceToBodyPart(playerCollider.attachedRigidbody, flinchStrenght * flinchDirection, ForceMode.VelocityChange);
+            ragdollManager.AddForceToBodyPart(playerCollider.attachedRigidbody, flinchStrenght * flinchDirection, ForceMode.VelocityChange);
         }
 
         private void OnDrawGizmos()

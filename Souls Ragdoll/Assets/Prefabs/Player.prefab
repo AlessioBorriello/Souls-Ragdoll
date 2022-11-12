@@ -284,7 +284,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!135 &3193748364022855050
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -459,7 +459,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!136 &3193748364022855044
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -635,7 +635,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!136 &3193748364022855053
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -686,18 +686,18 @@ ConfigurableJoint:
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 140
+    limit: 160
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
     spring: 0
     damper: 0
   m_AngularYLimit:
-    limit: 0
+    limit: 60
     bounciness: 0
     contactDistance: 0
   m_AngularZLimit:
-    limit: 0
+    limit: 52
     bounciness: 0
     contactDistance: 0
   m_TargetPosition: {x: 0, y: 0, z: 0}
@@ -811,7 +811,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!136 &3193748364022855043
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -987,7 +987,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!135 &3193748364022855051
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1162,7 +1162,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!136 &3193748364022855055
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1213,7 +1213,7 @@ ConfigurableJoint:
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 110
+    limit: 135
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
@@ -1848,15 +1848,15 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2217555875885131132}
-  - component: {fileID: 2579650961228759777}
-  - component: {fileID: 1203124241}
-  - component: {fileID: 1231754897983099194}
-  - component: {fileID: 1332648215203446742}
   - component: {fileID: 623422895}
+  - component: {fileID: 5964148670617802857}
+  - component: {fileID: 6689907184753797086}
+  - component: {fileID: 6120355895486431565}
+  - component: {fileID: 8178083674505769664}
+  - component: {fileID: 1332648215203446742}
   - component: {fileID: 1068158116}
-  - component: {fileID: 905612787}
   - component: {fileID: 8779414462503701537}
-  - component: {fileID: 2069407352}
+  - component: {fileID: 5404178150840914989}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -1881,7 +1881,40 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2579650961228759777
+--- !u!114 &623422895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2217555875885131135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 904065db9e003c84ab28a0b6d0a7c497, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lockOnTargetTransform: {fileID: 224072189}
+  playerData: {fileID: 11400000, guid: 8fa2a1b0f04ee6c44ad4d4475bbf4d18, type: 2}
+  animatedPlayer: {fileID: 2217555875006252269}
+  groundCheckTransform: {fileID: 1567946972}
+  physicalHips: {fileID: 3193748364022854742}
+  animatedHips: {fileID: 0}
+  lockedTarget: {fileID: 0}
+  isClient: 1
+  playerIsStuckInAnimation: 0
+  consumeInputs: 1
+  isOnGround: 1
+  isKnockedOut: 0
+  canRotate: 1
+  shouldSlide: 0
+  isRolling: 0
+  isBackdashing: 0
+  isSprinting: 0
+  isAttacking: 0
+  isBlocking: 0
+  canLockOn: 1
+  isLockingOn: 0
+--- !u!114 &5964148670617802857
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1893,7 +1926,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 599358120a7b300408ff53a34b31e145, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  queueTime: 0.5
   movementInput: {x: 0, y: 0}
   cameraInput: {x: 0, y: 0}
   dPadInput: {x: 0, y: 0}
@@ -1918,21 +1950,7 @@ MonoBehaviour:
   ltInput: 0
   ltInputReleased: 0
   ltInputPressed: 0
---- !u!114 &1203124241
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2217555875885131135}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0f61ba78d5a821439b5962ab333be20, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animatedHips: {fileID: 2217555876070721474}
-  physicalHips: {fileID: 3193748364022854742}
---- !u!114 &1231754897983099194
+--- !u!114 &6689907184753797086
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1944,8 +1962,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aaae387126823b4caadf3bd011f9af9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animator: {fileID: 2217555875006252243}
-  playerManager: {fileID: 0}
+--- !u!114 &6120355895486431565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2217555875885131135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0f61ba78d5a821439b5962ab333be20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8178083674505769664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2217555875885131135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 269d1c702f94a1e40a64b54295247c95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1332648215203446742
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1963,52 +2003,6 @@ MonoBehaviour:
   feetColliders:
   - {fileID: 3193748364022855049}
   - {fileID: 3193748364022855050}
---- !u!114 &623422895
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2217555875885131135}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 904065db9e003c84ab28a0b6d0a7c497, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lockOnTargetTransform: {fileID: 224072189}
-  playerData: {fileID: 11400000, guid: 8fa2a1b0f04ee6c44ad4d4475bbf4d18, type: 2}
-  animatedPlayer: {fileID: 2217555875006252269}
-  groundCheckTransform: {fileID: 1567946972}
-  physicalHips: {fileID: 3193748364022854742}
-  inputManager: {fileID: 0}
-  cameraTransform: {fileID: 0}
-  animationManager: {fileID: 0}
-  playerLocomotionManager: {fileID: 0}
-  ragdollManager: {fileID: 0}
-  inventoryManager: {fileID: 0}
-  attackManager: {fileID: 0}
-  statsManager: {fileID: 0}
-  collisionManager: {fileID: 0}
-  uiManager: {fileID: 0}
-  currentSpeedMultiplier: 0
-  currentRotationSpeedMultiplier: 0
-  groundNormal: {x: 0, y: 0, z: 0}
-  groundDistance: 0
-  movementDirection: {x: 0, y: 0, z: 0}
-  lockedTarget: {fileID: 0}
-  isClient: 1
-  playerIsStuckInAnimation: 0
-  consumeInputs: 1
-  canRotate: 1
-  isOnGround: 1
-  shouldSlide: 0
-  isRolling: 0
-  isBackdashing: 0
-  isSprinting: 0
-  isAttacking: 0
-  isKnockedOut: 0
-  canLockOn: 1
-  isLockedOn: 0
 --- !u!114 &1068158116
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2024,30 +2018,15 @@ MonoBehaviour:
   itemsInRightSlots:
   - {fileID: 11400000, guid: 47d20fcc74c7319499117cec8edcc7f6, type: 2}
   - {fileID: 11400000, guid: 61a7f954cfdd09d4987d33b3aa9384f7, type: 2}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
   itemsInLeftSlots:
   - {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
   - {fileID: 11400000, guid: 61a7f954cfdd09d4987d33b3aa9384f7, type: 2}
   - {fileID: 0}
   currentRightHandItem: {fileID: 0}
-  currentRightSlotItemCollider: {fileID: 0}
+  currentRightSlotItemColliderControl: {fileID: 0}
   currentLeftHandItem: {fileID: 0}
-  currentLeftSlotItemCollider: {fileID: 0}
---- !u!114 &905612787
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2217555875885131135}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 34dd55da317f50044bb67d74eb010e7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackingWithLeft: 0
-  nextComboAttackIndex: 0
-  chainedAttack: 0
+  currentLeftSlotItemColliderControl: {fileID: 0}
 --- !u!114 &8779414462503701537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2061,12 +2040,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStats: {fileID: 11400000, guid: 8ea18976d0b4a4f4ebda7417ebbfdf65, type: 2}
-  maxHealth: 0
-  currentHealth: 0
-  maxStamina: 0
-  currentStamina: 0
-  power: 0
---- !u!114 &2069407352
+--- !u!114 &5404178150840914989
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2075,7 +2049,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2217555875885131135}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 269d1c702f94a1e40a64b54295247c95, type: 3}
+  m_Script: {fileID: 11500000, guid: f5c188baeef9d6045a8cd3a5e04a5356, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2217555876070721501
@@ -2322,7 +2296,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!136 &3193748364022855046
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2373,7 +2347,7 @@ ConfigurableJoint:
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 110
+    limit: 135
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
@@ -2675,7 +2649,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!135 &3193748364022855049
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2885,7 +2859,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!65 &3193748364022855047
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3060,7 +3034,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!136 &3193748364022855045
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3236,7 +3210,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!136 &3193748364022855042
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3412,7 +3386,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!135 &3193748364022855054
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3587,7 +3561,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!135 &3193748364022855041
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3863,7 +3837,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!136 &3193748364022855040
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3914,14 +3888,14 @@ ConfigurableJoint:
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 140
+    limit: 160
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
     spring: 0
     damper: 0
   m_AngularYLimit:
-    limit: 60.633816
+    limit: 60
     bounciness: 0
     contactDistance: 0
   m_AngularZLimit:
@@ -4038,7 +4012,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
 --- !u!135 &3193748364022855052
 SphereCollider:
   m_ObjectHideFlags: 0

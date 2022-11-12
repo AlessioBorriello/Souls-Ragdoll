@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,12 +11,12 @@ namespace AlessioBorriello
 
     public class InputManager : MonoBehaviour
     {
-        private class Action
+        private class InputAction
         {
             public string name;
             public float creationTime;
 
-            public Action(string name)
+            public InputAction(string name)
             {
                 this.name = name;
                 this.creationTime = Time.time;
@@ -23,10 +24,10 @@ namespace AlessioBorriello
         }
 
         private PlayerManager playerManager;
-        private PlayerControls inputAction;
+        private PlayerControls controls;
 
-        private Stack<Action> actions = new Stack<Action>();
-        public float queueTime = .2f;
+        private Stack<InputAction> actions = new Stack<InputAction>();
+        private float queueTime = .2f;
 
         //Analogs
         [Header("Analogs")]
@@ -44,34 +45,34 @@ namespace AlessioBorriello
         #endregion
 
         #region Buttons
-        [Header("Buttons - east")]
+        //East
         public bool eastInput;
         public bool eastInputReleased;
         public bool eastInputPressed;
 
-        [Header("Buttons - south")]
+        //South
         public bool southInput;
         public bool southInputReleased;
         public bool southInputPressed;
         #endregion
 
         #region Triggers - Bumpers
-        [Header("Bumpers - right")]
+        //Bumper - right
         public bool rbInput;
         public bool rbInputReleased;
         public bool rbInputPressed;
 
-        [Header("Triggers - right")]
+        //Trigger - right
         public bool rtInput;
         public bool rtInputReleased;
         public bool rtInputPressed;
 
-        [Header("Bumpers - left")]
+        //Bumper - left
         public bool lbInput;
         public bool lbInputReleased;
         public bool lbInputPressed;
 
-        [Header("Triggers - left")]
+        //Trigger - left
         public bool ltInput;
         public bool ltInputReleased;
         public bool ltInputPressed;
@@ -80,6 +81,7 @@ namespace AlessioBorriello
         private void Start()
         {
             if (!playerManager.isClient) this.enabled = false;
+            queueTime = playerManager.playerData.inputQueueTime;
         }
 
         public void OnEnable()
@@ -87,117 +89,117 @@ namespace AlessioBorriello
 
             playerManager = GetComponent<PlayerManager>();
 
-            if (inputAction == null)
+            if (controls == null)
             {
 
-                inputAction = new PlayerControls();
+                controls = new PlayerControls();
 
                 //Movement
-                inputAction.PlayerGameplay.Movement.performed += inputAction => movementInput = inputAction.ReadValue<Vector2>();
+                controls.PlayerGameplay.Movement.performed += inputAction => movementInput = inputAction.ReadValue<Vector2>();
 
                 //Camera movement
-                inputAction.PlayerGameplay.CameraMovement.performed += inputAction => cameraInput = inputAction.ReadValue<Vector2>().normalized;
+                controls.PlayerGameplay.CameraMovement.performed += inputAction => cameraInput = inputAction.ReadValue<Vector2>().normalized;
 
                 #region Sticks
                 //Right stick
-                inputAction.PlayerGameplay.LockOn.started += inputAction =>
+                controls.PlayerGameplay.LockOn.started += inputAction =>
                 {
                     rightStickInput = true;
-                    actions.Push(new Action("RightStickPressed"));
+                    actions.Push(new InputAction("RightStickPressed"));
                 };
-                inputAction.PlayerGameplay.LockOn.canceled += inputAction =>
+                controls.PlayerGameplay.LockOn.canceled += inputAction =>
                 {
                     rightStickInput = false;
-                    actions.Push(new Action("RightStickReleased"));
+                    actions.Push(new InputAction("RightStickReleased"));
                 };
                 #endregion
 
                 #region Buttons
                 //East button
-                inputAction.PlayerGameplay.EastButton.started += inputAction =>
+                controls.PlayerGameplay.EastButton.started += inputAction =>
                 {
                     eastInput = true;
-                    actions.Push(new Action("EastButtonPressed"));
+                    actions.Push(new InputAction("EastButtonPressed"));
                 };
-                inputAction.PlayerGameplay.EastButton.canceled += inputAction =>
+                controls.PlayerGameplay.EastButton.canceled += inputAction =>
                 {
                     eastInput = false;
-                    actions.Push(new Action("EastButtonReleased"));
+                    actions.Push(new InputAction("EastButtonReleased"));
                 };
 
                 //South button
-                inputAction.PlayerGameplay.SouthButton.started += inputAction =>
+                controls.PlayerGameplay.SouthButton.started += inputAction =>
                 {
                     southInput = true;
-                    actions.Push(new Action("SouthButtonPressed"));
+                    actions.Push(new InputAction("SouthButtonPressed"));
                 };
-                inputAction.PlayerGameplay.SouthButton.canceled += inputAction =>
+                controls.PlayerGameplay.SouthButton.canceled += inputAction =>
                 {
                     southInput = false;
-                    actions.Push(new Action("SouthButtonReleased"));
+                    actions.Push(new InputAction("SouthButtonReleased"));
                 };
                 #endregion
 
                 #region Bumpers and Triggers
                 //Right bumper
-                inputAction.PlayerGameplay.RightLightButton.started += inputAction =>
+                controls.PlayerGameplay.RightLightButton.started += inputAction =>
                 {
                     rbInput = true;
-                    actions.Push(new Action("RightLightButtonPressed"));
+                    actions.Push(new InputAction("RightLightButtonPressed"));
                 };
-                inputAction.PlayerGameplay.RightLightButton.canceled += inputAction =>
+                controls.PlayerGameplay.RightLightButton.canceled += inputAction =>
                 {
                     rbInput = false;
-                    actions.Push(new Action("RightLightButtonReleased"));
+                    actions.Push(new InputAction("RightLightButtonReleased"));
                 };
 
                 //Left bumper
-                inputAction.PlayerGameplay.LeftLightButton.started += inputAction =>
+                controls.PlayerGameplay.LeftLightButton.started += inputAction =>
                 {
                     lbInput = true;
-                    actions.Push(new Action("LeftLightButtonPressed"));
+                    actions.Push(new InputAction("LeftLightButtonPressed"));
                 };
-                inputAction.PlayerGameplay.LeftLightButton.canceled += inputAction =>
+                controls.PlayerGameplay.LeftLightButton.canceled += inputAction =>
                 {
                     lbInput = false;
-                    actions.Push(new Action("LeftLightButtonReleased"));
+                    actions.Push(new InputAction("LeftLightButtonReleased"));
                 };
 
                 //Right trigger
-                inputAction.PlayerGameplay.RightHeavyButton.started += inputAction =>
+                controls.PlayerGameplay.RightHeavyButton.started += inputAction =>
                 {
                     rtInput = true;
-                    actions.Push(new Action("RightHeavyButtonPressed"));
+                    actions.Push(new InputAction("RightHeavyButtonPressed"));
                 };
-                inputAction.PlayerGameplay.RightHeavyButton.canceled += inputAction =>
+                controls.PlayerGameplay.RightHeavyButton.canceled += inputAction =>
                 {
                     rtInput = false;
-                    actions.Push(new Action("RightHeavyButtonReleased"));
+                    actions.Push(new InputAction("RightHeavyButtonReleased"));
                 };
 
                 //Left trigger
-                inputAction.PlayerGameplay.LeftHeavyButton.started += inputAction =>
+                controls.PlayerGameplay.LeftHeavyButton.started += inputAction =>
                 {
                     ltInput = true;
-                    actions.Push(new Action("LeftHeavyButtonPressed"));
+                    actions.Push(new InputAction("LeftHeavyButtonPressed"));
                 };
-                inputAction.PlayerGameplay.LeftHeavyButton.canceled += inputAction =>
+                controls.PlayerGameplay.LeftHeavyButton.canceled += inputAction =>
                 {
                     ltInput = false;
-                    actions.Push(new Action("LeftHeavyButtonReleased"));
+                    actions.Push(new InputAction("LeftHeavyButtonReleased"));
                 };
                 #endregion
 
                 #region Dpad
-                inputAction.PlayerGameplay.DPadUp.started += inputAction => actions.Push(new Action("DPadUpPressed"));
-                inputAction.PlayerGameplay.DPadDown.started += inputAction => actions.Push(new Action("DPadDownPressed"));
-                inputAction.PlayerGameplay.DPadRight.started += inputAction => actions.Push(new Action("DPadLeftPressed"));
-                inputAction.PlayerGameplay.DPadLeft.started += inputAction => actions.Push(new Action("DPadRightPressed"));
+                controls.PlayerGameplay.DPadUp.started += inputAction => actions.Push(new InputAction("DPadUpPressed"));
+                controls.PlayerGameplay.DPadDown.started += inputAction => actions.Push(new InputAction("DPadDownPressed"));
+                controls.PlayerGameplay.DPadRight.started += inputAction => actions.Push(new InputAction("DPadLeftPressed"));
+                controls.PlayerGameplay.DPadLeft.started += inputAction => actions.Push(new InputAction("DPadRightPressed"));
                 #endregion
 
             }
 
-            inputAction.Enable();
+            controls.Enable();
 
         }
 
@@ -210,27 +212,23 @@ namespace AlessioBorriello
 
         private void LateUpdate()
         {
-            //Reset flags
-            ResetInputBooleans();
+            ResetAllInputValues();
         }
 
         private void OnDisable()
         {
-            inputAction.Disable();
+            controls.Disable();
         }
 
-        private void ConsumeInputs(Stack<Action> actions)
+        private void ConsumeInputs(Stack<InputAction> actions)
         {
             //While there are still actions to process
-            while(actions.Any())
+            while (actions.Any())
             {
                 //Get action
-                Action action = actions.Pop();
-                //If the action is not too old
-                if(action.creationTime > Time.time - queueTime)
-                {
-                    ProcessInput(action.name);
-                }
+                InputAction action = actions.Pop();
+                //If the action is not too old, process it
+                if (action.creationTime > Time.time - queueTime) ProcessInput(action.name);
             }
         }
 
@@ -272,7 +270,7 @@ namespace AlessioBorriello
                 case "LeftHeavyButtonReleased": ltInputReleased = true; break;
                 #endregion
 
-                #region DPad
+                #region DPad()
                 case "DPadUpPressed": dPadInput = new Vector2(0, -1); break;
                 case "DPadDownPressed": dPadInput = new Vector2(0, 1); break;
                 case "DPadRightPressed": dPadInput = new Vector2(-1, 0); break;
@@ -283,13 +281,13 @@ namespace AlessioBorriello
             }
         }
 
-        private void ResetInputBooleans()
+        private void ResetAllInputValues()
         {
             #region Sticks
             rightStickInputPressed = false;
             rightStickInputReleased = false;
             #endregion
-            
+
             #region Buttons
             //East button
             eastInputPressed = false;
@@ -322,7 +320,13 @@ namespace AlessioBorriello
             dPadInput = Vector2.zero;
             #endregion
         }
+    
+        private IEnumerator SetValueAtNextFrame<T>(Action<T> action, T newValue)
+        {
+            //Use: StartCoroutine(SetValueAtNextFrame<int>(newValue => var = newValue, 99)); (99 is the new value)
+            yield return null;
+            action(newValue);
+        }
 
     }
-
 }

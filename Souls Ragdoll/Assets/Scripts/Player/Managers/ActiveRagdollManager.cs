@@ -7,23 +7,21 @@ namespace AlessioBorriello
 {
     public class ActiveRagdollManager : MonoBehaviour
     {
+        private PlayerManager playerManager; //Player manager
+        private Animator animator; //Animator of the animated character
 
-        [SerializeField] private Transform animatedHips; //Hips of the animated character
-        [SerializeField] private Rigidbody physicalHips; //Hips of the physical character
+        private Transform animatedHips; //Hips of the animated character
+        private Rigidbody physicalHips; //Hips of the physical character
 
-        [HideInInspector] public Transform[] AnimatedBones { get; private set; } //Set of transforms of the animated bones starting from the animated hips
-        [HideInInspector] public ConfigurableJoint[] Joints { get; private set; } //Set of joints of the physical bones starting from the physical hips
-
+        private Transform[] animatedBones; //Set of transforms of the animated bones starting from the animated hips
+        private ConfigurableJoint[] joints; //Set of joints of the physical bones starting from the physical hips
         private Quaternion[] initialJointRotations; //Set of starting rotations of the joints
-        private Collider[] Colliders; //Set of colliders of the joints
-        private Rigidbody[] Bodies; //Set of rigidbodies of the player
+        private Collider[] colliders; //Set of colliders of the joints
+        private Rigidbody[] bodies; //Set of rigidbodies of the player
 
         private List<GameObject> arms = new List<GameObject>();
         private LayerMask characterLayer;
         private LayerMask ignoreCharacterLayer;
-
-        private PlayerManager playerManager; //Player manager
-        private Animator animator; //Animator of the animated character
 
         private float knockedOutTimer = 0;
         private float safenetKnockedOutTimer = 0; //Used to check if the player has been knocked out for too much
@@ -31,41 +29,10 @@ namespace AlessioBorriello
         private float targetHipsForce;
         private float targetJointForce;
 
-        private void Awake()
-        {
-            if (AnimatedBones == null) AnimatedBones = animatedHips.GetComponentsInChildren<Transform>(); //Get transforms of the animated bones starting from the hips
-            if (Joints == null) Joints = physicalHips.GetComponentsInChildren<ConfigurableJoint>(); //Get joints of the physical bones starting from the hips
-            if (Colliders == null) Colliders = physicalHips.GetComponentsInChildren<Collider>(); //Get all the colliders
-            if(Bodies == null) Bodies = physicalHips.GetComponentsInChildren<Rigidbody>();
-
-            Joints[(int)BodyParts.Hip].configuredInWorldSpace = true; //Set hips in world space
-
-            SetupColliders();
-        }
 
         private void Start()
         {
-            playerManager = GetComponent<PlayerManager>(); //Get player manager
-            animator = GetComponentInChildren<Animator>(); //Get animator
-            initialJointRotations = GetJointsStartingLocalRotations(Joints); //Get initial rotations of athe joints
-
-            targetHipsForce = playerManager.playerData.hipsJointDriveForce;
-            targetJointForce = playerManager.playerData.jointDriveForce;
-
-            SetJointsDriveForces(targetHipsForce, targetJointForce); //Set up joint drive forces
-
-            //Get arms
-            arms.Add(GetBodyPart(BodyParts.Armr).gameObject);
-            arms.Add(GetBodyPart(BodyParts.Forearmr).gameObject);
-            arms.Add(GetBodyPart(BodyParts.Handr).gameObject);
-
-            arms.Add(GetBodyPart(BodyParts.Arml).gameObject);
-            arms.Add(GetBodyPart(BodyParts.Forearml).gameObject);
-            arms.Add(GetBodyPart(BodyParts.Handl).gameObject);
-
-            //Get layers
-            characterLayer = LayerMask.NameToLayer("Character");
-            ignoreCharacterLayer = LayerMask.NameToLayer("IgnoreCharacter");
+            Initialize();
         }
 
         private void Update()
@@ -77,8 +44,46 @@ namespace AlessioBorriello
 
         void FixedUpdate()
         {
-            UpdateJointTargets(Joints, AnimatedBones, initialJointRotations); //Update te joints target rotation to match the relative animated bone rotation
+            UpdateJointTargets(joints, animatedBones, initialJointRotations); //Update te joints target rotation to match the relative animated bone rotation
             SyncPosition(); //Sync the position of the 2 hips
+        }
+
+        private void Initialize()
+        {
+            playerManager = GetComponent<PlayerManager>(); //Get player manager
+            animator = playerManager.GetAnimationManager().GetAnimator(); //Get animator
+
+            //Get hips
+            physicalHips = playerManager.GetPhysicalHips();
+            animatedHips = playerManager.GetAnimatedHips();
+
+            SetUpBonesAndJoints();
+
+            joints[(int)BodyParts.Hip].configuredInWorldSpace = true; //Set hips in world space
+
+            SetupColliders();
+
+            initialJointRotations = GetJointsStartingLocalRotations(joints); //Get initial rotations of athe joints
+
+            targetHipsForce = playerManager.playerData.hipsJointDriveForce;
+            targetJointForce = playerManager.playerData.jointDriveForce;
+
+            SetJointsDriveForces(targetHipsForce, targetJointForce); //Set up joint drive forces
+
+            //Get arms
+            GetArms();
+
+            //Get layers
+            characterLayer = LayerMask.NameToLayer("Character");
+            ignoreCharacterLayer = LayerMask.NameToLayer("IgnoreCharacter");
+        }
+
+        private void SetUpBonesAndJoints()
+        {
+            if (animatedBones == null) animatedBones = animatedHips.GetComponentsInChildren<Transform>(); //Get transforms of the animated bones starting from the hips
+            if (joints == null) joints = physicalHips.GetComponentsInChildren<ConfigurableJoint>(); //Get joints of the physical bones starting from the hips
+            if (colliders == null) colliders = physicalHips.GetComponentsInChildren<Collider>(); //Get all the colliders
+            if (bodies == null) bodies = physicalHips.GetComponentsInChildren<Rigidbody>(); //Get all the rigid bodies
         }
 
         public IEnumerator SetJointsDriveForcesOverTime(float targetHipsForce, float targetJointForce, float time)
@@ -106,13 +111,13 @@ namespace AlessioBorriello
             jointDrive.maximumForce = float.PositiveInfinity; //Set the max force to infinite (It is set to 0 otherwise and the ragdoll falls)
 
             jointDrive.positionSpring = hipsForce; //Set the force of the spring for the hips
-            SetJointDrive(Joints[0], jointDrive); //Set the drive
+            SetJointDrive(joints[0], jointDrive); //Set the drive
 
             //Set rest of the joint drives
             jointDrive.positionSpring = jointForce; //Set the force of the spring for the rest of the body
-            for (int i = 1; i < Joints.Length; i++)
+            for (int i = 1; i < joints.Length; i++)
             {
-                SetJointDrive(Joints[i], jointDrive); //Set the drives
+                SetJointDrive(joints[i], jointDrive); //Set the drives
             }
         }
 
@@ -205,36 +210,36 @@ namespace AlessioBorriello
         private void SetupColliders()
         {
             //Hips
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Legl]); //Hip and Leg.l
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Legr]); //Hip and Leg.r
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Torso]); //Hip and Torso
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Arml]); //Hip and Arm.l
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Hip], Colliders[(int)BodyParts.Armr]); //Hip and Arm.r
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Hip], colliders[(int)BodyParts.Legl]); //Hip and Leg.l
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Hip], colliders[(int)BodyParts.Legr]); //Hip and Leg.r
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Hip], colliders[(int)BodyParts.Torso]); //Hip and Torso
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Hip], colliders[(int)BodyParts.Arml]); //Hip and Arm.l
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Hip], colliders[(int)BodyParts.Armr]); //Hip and Arm.r
 
             //Left leg
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Legl], Colliders[(int)BodyParts.Shinl]); //Leg.l and Shin.l
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Shinl], Colliders[(int)BodyParts.Footl]); //Shin.l and Foot.l
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Legl], colliders[(int)BodyParts.Shinl]); //Leg.l and Shin.l
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Shinl], colliders[(int)BodyParts.Footl]); //Shin.l and Foot.l
 
             //Right leg
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Legr], Colliders[(int)BodyParts.Shinr]); //Leg.r and Shin.r
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Shinr], Colliders[(int)BodyParts.Footr]); //Shin.r and Foot.r
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Legr], colliders[(int)BodyParts.Shinr]); //Leg.r and Shin.r
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Shinr], colliders[(int)BodyParts.Footr]); //Shin.r and Foot.r
 
             //Torso
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Arml]); //Torso and Arm.l
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Armr]); //Torso and Arm.r
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Neck]); //Torso and Neck
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Torso], Colliders[(int)BodyParts.Head]); //Torso and Head
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Torso], colliders[(int)BodyParts.Arml]); //Torso and Arm.l
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Torso], colliders[(int)BodyParts.Armr]); //Torso and Arm.r
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Torso], colliders[(int)BodyParts.Neck]); //Torso and Neck
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Torso], colliders[(int)BodyParts.Head]); //Torso and Head
 
             //Left arm
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Arml], Colliders[(int)BodyParts.Forearml]); //Arm.l and Forearm.l
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Forearml], Colliders[(int)BodyParts.Handl]); //Forearm.l and Hand.l
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Arml], colliders[(int)BodyParts.Forearml]); //Arm.l and Forearm.l
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Forearml], colliders[(int)BodyParts.Handl]); //Forearm.l and Hand.l
 
             //Right arm
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Armr], Colliders[(int)BodyParts.Forearmr]); //Arm.r and Forearm.r
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Forearmr], Colliders[(int)BodyParts.Handr]); //Forearm.r and Hand.r
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Armr], colliders[(int)BodyParts.Forearmr]); //Arm.r and Forearm.r
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Forearmr], colliders[(int)BodyParts.Handr]); //Forearm.r and Hand.r
 
             //Neck
-            Physics.IgnoreCollision(Colliders[(int)BodyParts.Neck], Colliders[(int)BodyParts.Head]); //Neck and Head
+            Physics.IgnoreCollision(colliders[(int)BodyParts.Neck], colliders[(int)BodyParts.Head]); //Neck and Head
         }
 
         /// <summary>
@@ -302,7 +307,7 @@ namespace AlessioBorriello
         /// </summary>
         private bool IsPlayerVelocityApproxZero(float approximation)
         {
-            return (Mathf.Abs(playerManager.physicalHips.velocity.magnitude) < approximation);
+            return (Mathf.Abs(physicalHips.velocity.magnitude) < approximation);
         }
 
         /// <summary>
@@ -310,12 +315,11 @@ namespace AlessioBorriello
         /// </summary>
         public void AddForceToPlayer(Vector3 force, ForceMode mode)
         {
-
             //Hips
             physicalHips.AddForce(force, mode);
 
             //Rest
-            foreach(Rigidbody rb in Bodies) {
+            foreach(Rigidbody rb in bodies) {
                 rb.AddForce(force, mode);
             }
 
@@ -329,9 +333,20 @@ namespace AlessioBorriello
             part.AddForce(force, mode);
         }
 
+        private void GetArms()
+        {
+            arms.Add(GetBodyPart(BodyParts.Armr).gameObject);
+            arms.Add(GetBodyPart(BodyParts.Forearmr).gameObject);
+            arms.Add(GetBodyPart(BodyParts.Handr).gameObject);
+
+            arms.Add(GetBodyPart(BodyParts.Arml).gameObject);
+            arms.Add(GetBodyPart(BodyParts.Forearml).gameObject);
+            arms.Add(GetBodyPart(BodyParts.Handl).gameObject);
+        }
+
         public Rigidbody GetBodyPart(BodyParts part)
         {
-            return Bodies[(int)part];
+            return bodies[(int)part];
         }
 
         public void ToggleCollisionOfArms(bool enable)

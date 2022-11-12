@@ -11,7 +11,9 @@ namespace AlessioBorriello
 {
     public class CameraControl : MonoBehaviour
     {
-        [SerializeField] public PlayerManager playerManager;
+        [SerializeField] private PlayerManager playerManager;
+        private InputManager inputManager;
+        private Rigidbody physicalHips;
 
         [Header("Camera transforms")]
         [SerializeField] private Transform cameraFollowTarget; //Transform of the target
@@ -48,12 +50,18 @@ namespace AlessioBorriello
             cameraTransform = Camera.main.transform;
         }
 
+        private void Start()
+        {
+            inputManager = playerManager.GetInputManager();
+            physicalHips = playerManager.GetPhysicalHips();
+        }
+
         private void Update()
         {
             if (!playerManager.isClient) return;
 
             //Handle lock on inputs
-            HandleLockOnControls(playerManager.inputManager.cameraInput, playerManager.inputManager.rightStickInputPressed);
+            HandleLockOnControls(inputManager.cameraInput, inputManager.rightStickInputPressed);
         }
 
         private void LateUpdate()
@@ -61,7 +69,7 @@ namespace AlessioBorriello
             if (!playerManager.isClient) return;
 
             //Move the camera
-            HandleCameraMovement(playerManager.inputManager.cameraInput);
+            HandleCameraMovement(inputManager.cameraInput);
         }
 
         /// <summary>
@@ -70,7 +78,7 @@ namespace AlessioBorriello
         public void HandleCameraMovement(Vector2 cameraInput)
         {
             //Move camera to it's height
-            float height = (playerManager.isLockedOn) ? lockedOnCameraHeight : cameraHeight;
+            float height = (playerManager.isLockingOn) ? lockedOnCameraHeight : cameraHeight;
             cameraPitchTransform.localPosition = new Vector3(0, Mathf.Lerp(cameraPitchTransform.localPosition.y, height, 6 * Time.deltaTime), 0);
 
             if (followTarget)
@@ -98,7 +106,7 @@ namespace AlessioBorriello
             }
 
             //Lose and change target
-            if(lockedTarget != null && playerManager.isLockedOn) //If there is a target already
+            if(lockedTarget != null && playerManager.isLockingOn) //If there is a target already
             {
                 HandleLosingLockOnTarget(); //Check if the target is lost
                 HandleChangingTarget(cameraInput); //Check if the player changes target
@@ -110,15 +118,15 @@ namespace AlessioBorriello
         /// </summary>
         private void HandleLosingLockOnTarget()
         {
-            float distanceFromTarget = Vector3.Distance(playerManager.physicalHips.position, lockedTarget.position);
-            Vector3 directionToTarget = (lockedTarget.position - playerManager.physicalHips.position).normalized;
+            float distanceFromTarget = Vector3.Distance(physicalHips.position, lockedTarget.position);
+            Vector3 directionToTarget = (lockedTarget.position - physicalHips.position).normalized;
 
-            bool isObstructed = (Physics.Raycast(playerManager.physicalHips.position, directionToTarget, Vector3.Distance(playerManager.physicalHips.position, lockedTarget.position), playerManager.playerData.obstructionMask));
+            bool isObstructed = (Physics.Raycast(physicalHips.position, directionToTarget, Vector3.Distance(physicalHips.position, lockedTarget.position), playerManager.playerData.obstructionMask));
             if (distanceFromTarget > playerManager.playerData.maxLoseTargetDistance || isObstructed)
             {
                 lockedTarget = null;
                 playerManager.lockedTarget = null;
-                playerManager.isLockedOn = false;
+                playerManager.isLockingOn = false;
             }
         }
 
@@ -171,7 +179,7 @@ namespace AlessioBorriello
                 playerManager.lockedTarget = lockedTarget;
 
                 //If target is found
-                if (lockedTarget != null) playerManager.isLockedOn = true;
+                if (lockedTarget != null) playerManager.isLockingOn = true;
                 else //Otherwise just point camera forward
                 {
                     CenterCamera();
@@ -182,7 +190,7 @@ namespace AlessioBorriello
                 //Remove lock on reference
                 lockedTarget = null;
                 playerManager.lockedTarget = null;
-                playerManager.isLockedOn = false;
+                playerManager.isLockingOn = false;
             }
         }
 
@@ -192,7 +200,7 @@ namespace AlessioBorriello
         private void CenterCamera()
         {
             //Get player and camera forward
-            Vector3 playerForward = Vector3.ProjectOnPlane(playerManager.physicalHips.transform.forward, Vector3.up);
+            Vector3 playerForward = Vector3.ProjectOnPlane(physicalHips.transform.forward, Vector3.up);
             Vector3 cameraForward = Vector3.ProjectOnPlane(transform.forward, Vector3.up);
 
             //Get angle between camera and player
@@ -213,7 +221,7 @@ namespace AlessioBorriello
         {
 
             //Check for colliders in a radius
-            Collider[] collidersInsideRadius = Physics.OverlapSphere(playerManager.physicalHips.position, playerManager.playerData.maxLockOnDistance, playerManager.playerData.targetMask);
+            Collider[] collidersInsideRadius = Physics.OverlapSphere(physicalHips.position, playerManager.playerData.maxLockOnDistance, playerManager.playerData.targetMask);
 
             //No colliders found
             if (collidersInsideRadius.Length == 0) return null;
@@ -239,12 +247,12 @@ namespace AlessioBorriello
                 }
 
                 //Add only those who are in front and are not obstructed
-                if (IsLockable(newPossibleTarget, playerManager.physicalHips.transform)) possibleTargets.Add(newPossibleTarget);
+                if (IsLockable(newPossibleTarget, physicalHips.transform)) possibleTargets.Add(newPossibleTarget);
 
             }
 
             //Get the best target based on distance and angle difference from the camera
-            return GetBestTarget(playerManager.physicalHips.transform.position, possibleTargets);
+            return GetBestTarget(physicalHips.transform.position, possibleTargets);
 
         }
 
@@ -377,7 +385,7 @@ namespace AlessioBorriello
         /// <param name="input">Camera movement input</param>
         private void RotateCamera(Vector2 input)
         {
-            if (!playerManager.isLockedOn) SetCameraAngles(input); //Get camera angles if not locked on
+            if (!playerManager.isLockingOn) SetCameraAngles(input); //Get camera angles if not locked on
             else SetCameraAnglesLockOn(); //Get camera angles if locked on
 
             //Clamp pitch angle
@@ -493,7 +501,7 @@ namespace AlessioBorriello
         private float CheckForCollisions(Vector3 direction)
         {
             //Set distance as the default value
-            float cameraDistance = (playerManager.isLockedOn)? -lockedOnDefaultCameraDistance : -defaultCameraDistance;
+            float cameraDistance = (playerManager.isLockingOn)? -lockedOnDefaultCameraDistance : -defaultCameraDistance;
             
             RaycastHit hit;
             //Cast a sphere to see if the camera is hitting something

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AlessioBorriello
 {
-    public class DamageColliderControl : MonoBehaviour
+    public class ColliderControl : MonoBehaviour
     {
         private Collider hitbox;
         private List<int> alreadyHit = new List<int>();
@@ -62,6 +62,16 @@ namespace AlessioBorriello
             {
                 //If it's an enemy
             }
+        }
+
+        public void ToggleCollider(bool enabled)
+        {
+            hitbox.enabled = enabled;
+        }
+
+        public void EmptyHitList()
+        {
+            alreadyHit.Clear();
         }
 
         private bool CanHit(int otherId)

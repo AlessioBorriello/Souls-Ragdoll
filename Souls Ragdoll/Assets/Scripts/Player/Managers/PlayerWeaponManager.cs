@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Bson;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -5,18 +6,29 @@ using UnityEngine;
 
 namespace AlessioBorriello
 {
-    public class PlayerAttackManager : MonoBehaviour
+    public class PlayerWeaponManager : MonoBehaviour
     {
         private PlayerManager playerManager;
-        [HideInInspector] public bool attackingWithLeft = false;
+        private InputManager inputManager;
+        private PlayerLocomotionManager locomotionManager;
+        private AnimationManager animationManager;
+        private PlayerInventoryManager inventoryManager;
+        private ActiveRagdollManager ragdollManager;
+
+        private bool attackingWithLeft = false;
         private AttackType attackType;
 
-        public int nextComboAttackIndex = 0;
-        public bool chainedAttack = false;
+        private int nextComboAttackIndex = 0;
+        private bool chainedAttack = false;
 
         private void Start()
         {
             playerManager = GetComponent<PlayerManager>();
+            inputManager = playerManager.GetInputManager();
+            locomotionManager = playerManager.GetLocomotionManager();
+            animationManager = playerManager.GetAnimationManager();
+            inventoryManager = playerManager.GetInventoryManager();
+            ragdollManager = playerManager.GetRagdollManager();
         }
 
         public void HandleAttacks()
@@ -25,10 +37,10 @@ namespace AlessioBorriello
             HandleRollAndBackdashAttackTimers();
 
             //Store presses
-            bool rb = playerManager.inputManager.rbInputPressed;
-            bool rt = playerManager.inputManager.rtInputPressed;
-            bool lb = playerManager.inputManager.lbInputPressed;
-            bool lt = playerManager.inputManager.ltInputPressed;
+            bool rb = inputManager.rbInputPressed;
+            bool rt = inputManager.rtInputPressed;
+            bool lb = inputManager.lbInputPressed;
+            bool lt = inputManager.ltInputPressed;
 
             //Define if the attack is left handed and if its heavy
             bool isLeft = (lb || lt);
@@ -51,7 +63,7 @@ namespace AlessioBorriello
             if (playerManager.playerIsStuckInAnimation) return;
 
             //Get right or left item
-            HandEquippableItem item = (isLeft)? playerManager.inventoryManager.currentLeftHandItem : playerManager.inventoryManager.currentRightHandItem;
+            HandEquippableItem item = (isLeft)? inventoryManager.GetCurrentItem(true) : inventoryManager.GetCurrentItem(false);
             if (item is not WeaponItem) return;
 
             //Get this new attack's proprieties
@@ -63,7 +75,7 @@ namespace AlessioBorriello
             //Update proprieties
             attackingWithLeft = newAttackingWithLeft;
             attackType = newAttackType;
-            playerManager.animationManager.UpdateAttackingWithLeftValue(attackingWithLeft);
+            animationManager.UpdateAttackingWithLeftValue(attackingWithLeft);
 
             //Get animation to play and movement speed multiplier
             string attackAnimation = GetAttackAnimationString((WeaponItem)item, attackType);
@@ -76,14 +88,14 @@ namespace AlessioBorriello
         private void Attack(string attackAnimation, float attackMovementSpeedMultiplier)
         {
             //Play animation
-            playerManager.animationManager.PlayTargetAnimation(attackAnimation, .2f);
+            animationManager.PlayTargetAnimation(attackAnimation, .2f, true);
 
             //Set speed multiplier
-            playerManager.currentSpeedMultiplier = attackMovementSpeedMultiplier;
-            if (chainedAttack) Debug.Log("Combo: " + attackAnimation);
+            locomotionManager.SetMovementSpeedMultiplier(attackMovementSpeedMultiplier);
+            //if (chainedAttack) Debug.Log("Combo: " + attackAnimation);
 
             //Disable arms collision
-            playerManager.ragdollManager.ToggleCollisionOfArms(false);
+            ragdollManager.ToggleCollisionOfArms(false);
         }
 
         private float GetAttackMovementSpeedMultiplier(WeaponItem weapon)
@@ -167,6 +179,30 @@ namespace AlessioBorriello
             }
 
             return true;
+        }
+
+        public void ResetCombo()
+        {
+            if (!chainedAttack) //Reset combo if player has not chained an attack
+            {
+                nextComboAttackIndex = 0;
+                //Enable arms collision
+                playerManager.GetRagdollManager().ToggleCollisionOfArms(true);
+            }
+            else
+            {
+                //Continue attacking
+                playerManager.isAttacking = true;
+                playerManager.playerIsStuckInAnimation = true;
+            }
+
+            //Reset
+            chainedAttack = false; //Set chaining to false so the player has to press again
+        }
+
+        public bool IsAttackingWithLeft()
+        {
+            return attackingWithLeft;
         }
 
         private enum AttackType

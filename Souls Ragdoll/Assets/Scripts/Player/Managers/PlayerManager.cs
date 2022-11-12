@@ -1,131 +1,164 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.EnhancedTouch;
 using UnityEngine.Windows;
 
 namespace AlessioBorriello
 {
     public class PlayerManager : CharacterManager
     {
+        [Header("Set up")]
         public PlayerData playerData; //Player data reference
-        public GameObject animatedPlayer; //Player data reference
         public Transform groundCheckTransform; //Player's ground check's transform
 
-        [HideInInspector] public Rigidbody physicalHips; //Player's physical hips
+        private GameObject animatedPlayer; //Player data reference
+        private Rigidbody physicalHips; //Player's physical hips
+        private Transform animatedHips; //Player's animated hips
 
-        [HideInInspector] public InputManager inputManager;
-        [HideInInspector] public Transform cameraTransform;
-        [HideInInspector] public AnimationManager animationManager;
-        [HideInInspector] public PlayerLocomotionManager playerLocomotionManager;
-        [HideInInspector] public ActiveRagdollManager ragdollManager;
-        [HideInInspector] public PlayerInventoryManager inventoryManager;
-        [HideInInspector] public PlayerAttackManager attackManager;
-        [HideInInspector] public PlayerStatsManager statsManager;
-        [HideInInspector] public PlayerCollisionManager collisionManager;
-        [HideInInspector] public UIManager uiManager;
+        //Components
+        private InputManager inputManager;
+        private Transform cameraTransform;
+        private AnimationManager animationManager;
+        private PlayerLocomotionManager locomotionManager;
+        private ActiveRagdollManager ragdollManager;
+        private PlayerInventoryManager inventoryManager;
+        private PlayerCombatManager combatManager;
+        private PlayerStatsManager statsManager;
+        private PlayerCollisionManager collisionManager;
+        private UIManager uiManager;
 
-        public float currentSpeedMultiplier;
-        public float currentRotationSpeedMultiplier;
-        [HideInInspector] public Vector3 groundNormal;
-        [HideInInspector] public float groundDistance;
-        [HideInInspector] public Vector3 movementDirection;
         [HideInInspector] public Transform lockedTarget;
 
         #region Flags
-        [Header("Flags")]
+        [Header("General flags")]
         public bool isClient = true;
-
         public bool playerIsStuckInAnimation = false;
         public bool consumeInputs = true;
-        public bool canRotate = true;
         public bool isOnGround = true;
-        public bool shouldSlide = false; //If the friction should be enabled or not
+        public bool isKnockedOut = false;
 
+        [Header("Locomotion flags")]
+        public bool canRotate = true;
+        public bool shouldSlide = false; //If the friction should be enabled or not
         public bool isRolling = false;
         public bool isBackdashing = false;
         public bool isSprinting = false;
 
+        [Header("Combat flag")]
         public bool isAttacking = false;
-
-        public bool isKnockedOut = false;
-
+        public bool isBlocking = false;
         public bool canLockOn = true;
-        public bool isLockedOn = false;
+        public bool isLockingOn = false;
         #endregion
 
         private void Awake()
         {
-
             inputManager = GetComponent<InputManager>();
             animationManager = GetComponent<AnimationManager>();
-            animationManager.Initialize();
-            playerLocomotionManager = GetComponent<PlayerLocomotionManager>();
-            ragdollManager = GetComponentInChildren<ActiveRagdollManager>();
-            inventoryManager = GetComponentInChildren<PlayerInventoryManager>();
-            attackManager = GetComponent<PlayerAttackManager>();
-            statsManager = GetComponent<PlayerStatsManager>();
+            ragdollManager = GetComponent<ActiveRagdollManager>();
             collisionManager = GetComponent<PlayerCollisionManager>();
+            locomotionManager = GetComponent<PlayerLocomotionManager>();
+            inventoryManager = GetComponent<PlayerInventoryManager>();
+            statsManager = GetComponent<PlayerStatsManager>();
+            combatManager = GetComponent<PlayerCombatManager>();
 
             uiManager = FindObjectOfType<UIManager>();
 
+            animatedPlayer = transform.Find("AnimatedPlayer").gameObject;
+            physicalHips = transform.Find("PhysicalPlayer/Armature/Hip").GetComponent<Rigidbody>();
+            animatedHips = transform.Find("AnimatedPlayer/Armature/Hip");
+
             cameraTransform = Camera.main.transform;
-
-        }
-
-        private void Start()
-        {
-            physicalHips = ragdollManager.GetBodyPart((int)BodyParts.Hip);
         }
 
         private void FixedUpdate()
         {
             //Move player with animation (Order is important for some reason)
-            ApplyGravity();
-            MovePlayerWithAnimation(currentSpeedMultiplier);
+            locomotionManager.ApplyGravity();
+            locomotionManager.MovePlayerWithAnimation();
 
         }
 
         private void Update()
         {
 
-            //Movement, animation logic
-            playerLocomotionManager.HandleMovementRotation();
-            playerLocomotionManager.HandleMovement();
-            playerLocomotionManager.HandleFootFriction();
-            playerLocomotionManager.CheckIfOnGround();
-            playerLocomotionManager.HandleFallingAndLanding();
-            playerLocomotionManager.HandleRollingAndSprinting();
+            //Locomotion
+            locomotionManager.HandleLocomotion();
 
-            //Attacks
-            attackManager.HandleAttacks();
+            //Combat
+            combatManager.HandleCombat();
 
             //QuickSlots
             inventoryManager.HandleQuickSlots();
 
+    }
+
+        public InputManager GetInputManager()
+        {
+            return inputManager;
         }
 
-        /// <summary>
-        /// Move the player with the root motion of the animator and based on the current gravity force
-        /// </summary>
-        private void MovePlayerWithAnimation(float speedMultiplier)
+        public AnimationManager GetAnimationManager()
         {
-            if (isKnockedOut) return;
-            //Debug.Log(animationManager.animator.velocity * speedMultiplier);
-            physicalHips.velocity = Vector3.ProjectOnPlane(animationManager.animator.velocity * speedMultiplier, groundNormal);
-
+            return animationManager;
         }
 
-        private Vector3 additionalGravityForce;
-        private void ApplyGravity()
+        public PlayerLocomotionManager GetLocomotionManager()
         {
+            return locomotionManager;
+        }
 
-            //Base gravity
-            ragdollManager.AddForceToPlayer(Vector3.down * playerData.baseGravityForce * ((isKnockedOut) ? 0 : 1), ForceMode.Acceleration);
+        public PlayerInventoryManager GetInventoryManager()
+        {
+            return inventoryManager;
+        }
 
-            //Add additional gravity force if not too fast
-            additionalGravityForce = playerLocomotionManager.GetGravity(isOnGround);
-            if (Mathf.Abs(physicalHips.velocity.y) < playerData.maxFallingSpeed) ragdollManager.AddForceToPlayer(additionalGravityForce, ForceMode.Acceleration);
+        public ActiveRagdollManager GetRagdollManager()
+        {
+            return ragdollManager;
+        }
 
+        public PlayerCombatManager GetCombatManager()
+        {
+            return combatManager;
+        }
+
+        public PlayerStatsManager GetStatsManager()
+        {
+            return statsManager;
+        }
+
+        public PlayerCollisionManager GetCollisionManager()
+        {
+            return collisionManager;
+        }
+
+        public UIManager GetUiManager()
+        {
+            return uiManager;
+        }
+
+        public Transform GetCameraTransform()
+        {
+            return cameraTransform;
+        }
+
+        public GameObject GetAnimatedPlayer()
+        {
+            return animatedPlayer;
+        }
+
+        public Rigidbody GetPhysicalHips()
+        {
+            return physicalHips;
+        }
+
+        public Transform GetAnimatedHips()
+        {
+            return animatedHips;
         }
 
     }

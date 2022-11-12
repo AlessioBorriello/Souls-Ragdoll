@@ -345,11 +345,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 30
-  knockbackStrength: 2
+  knockbackStrength: 1.7
   flinchStrenght: 25
   startEnabled: 0
   canHitMultipleTimes: 1
-  hitFrequencyDelay: 0.3
+  hitFrequencyDelay: 0.25
 --- !u!1 &8513785602460388389
 GameObject:
   m_ObjectHideFlags: 0

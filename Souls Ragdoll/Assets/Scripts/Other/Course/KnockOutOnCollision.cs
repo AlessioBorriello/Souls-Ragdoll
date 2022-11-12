@@ -13,10 +13,7 @@ namespace AlessioBorriello
             if (collision.collider.CompareTag("Player"))
             {
                 PlayerManager playerManager = collision.collider.GetComponentInParent<PlayerManager>(); //Get player manager
-                if (collision.impulse.magnitude > forceToKnockOut)
-                {
-                    playerManager.ragdollManager.KnockOut();
-                }
+                if (collision.impulse.magnitude > forceToKnockOut) playerManager.GetRagdollManager().KnockOut();
             }
         }
     }

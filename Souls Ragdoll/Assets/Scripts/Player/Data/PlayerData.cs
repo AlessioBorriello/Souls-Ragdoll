@@ -7,6 +7,8 @@ namespace AlessioBorriello
     [CreateAssetMenu(fileName = "newPlayerData", menuName = "Data/Player Data/Base Data")]
     public class PlayerData : ScriptableObject
     {
+        [Header("Input")]
+        public float inputQueueTime = .5f; //For how much an input is stored before being ignored
 
         [Header("Ragdoll")]
         public float hipsJointDriveForce; //The force of the spring in the hips joint
@@ -39,7 +41,6 @@ namespace AlessioBorriello
         public float attackingRotationSpeed = 3f; //Rotation speed while attacking
         public float rollingAttackWindow = .35f; //How fast the player has to attack after a roll to do a rolling attack
         public float backdashingAttackWindow = .35f; //How fast the player has to attack after a backdash to do a backdashing attack
-
 
         [Header("Ground check")]
         public float minDistanceToFall = .1f; //How far the player has to be from the ground to be actually falling

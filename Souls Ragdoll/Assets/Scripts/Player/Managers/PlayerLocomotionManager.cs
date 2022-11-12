@@ -9,11 +9,26 @@ namespace AlessioBorriello
     {
 
         private PlayerManager playerManager;
+        private InputManager inputManager;
+        private AnimationManager animationManager;
+        private ActiveRagdollManager ragdollManager;
+        private Animator animator;
 
+        [Header("Set up")]
         [SerializeField] private PhysicMaterial physicalFootMaterialIdle; //Player's physical foot material when idle
         [SerializeField] private PhysicMaterial physicalFootMaterialMoving; //Player's physical foot material when moving
         [SerializeField] private Collider[] feetColliders = new Collider[2];
+
+        private GameObject animatedPlayer;
         private PhysicMaterial currentFootMaterial;
+        private Rigidbody physicalHips;
+        private Transform cameraTransform;
+
+        private float currentSpeedMultiplier;
+        private float currentRotationSpeedMultiplier;
+
+        private Vector3 groundNormal;
+        private Vector3 movementDirection;
 
         //Timers
         private float sprintTimer;
@@ -24,41 +39,84 @@ namespace AlessioBorriello
         {
 
             playerManager = GetComponent<PlayerManager>();
+            animatedPlayer = playerManager.GetAnimatedPlayer();
+            inputManager = playerManager.GetInputManager();
+            animationManager = playerManager.GetAnimationManager();
+            animator = animationManager.GetAnimator();
+            ragdollManager = playerManager.GetRagdollManager();
             SetFeetMaterial(false);
 
+            physicalHips = playerManager.GetPhysicalHips();
+            cameraTransform = playerManager.GetCameraTransform();
+
+        }
+
+        /// <summary>
+        /// Move the player with the root motion of the animator and based on the current gravity force
+        /// </summary>
+        public void MovePlayerWithAnimation()
+        {
+            if (playerManager.isKnockedOut) return;
+            //Debug.Log(animationManager.animator.velocity * speedMultiplier);
+            physicalHips.velocity = Vector3.ProjectOnPlane(animator.velocity * currentSpeedMultiplier, groundNormal);
+
+        }
+
+        private Vector3 additionalGravityForce;
+        public void ApplyGravity()
+        {
+
+            //Base gravity
+            ragdollManager.AddForceToPlayer(Vector3.down * playerManager.playerData.baseGravityForce * ((playerManager.isKnockedOut) ? 0 : 1), ForceMode.Acceleration);
+
+            //Add additional gravity force if not too fast
+            additionalGravityForce = GetGravity(playerManager.isOnGround);
+            if (Mathf.Abs(physicalHips.velocity.y) < playerManager.playerData.maxFallingSpeed) ragdollManager.AddForceToPlayer(additionalGravityForce, ForceMode.Acceleration);
+
+        }
+
+        public void HandleLocomotion()
+        {
+            HandleMovementRotation();
+            HandleMovement();
+            HandleFootFriction();
+            CheckIfOnGround();
+            HandleFallingAndLanding();
+            HandleRollingAndSprinting();
         }
 
         /// <summary>
         /// Move player with animation
         /// </summary>
-        public void HandleMovement()
+        private void HandleMovement()
         {
             //If player is not sprinting
             if(!playerManager.isSprinting)
             {
                 //Not locked on animations
-                if (!playerManager.isLockedOn)
+                if (!playerManager.isLockingOn)
                 {
-                    float moveAmount = GetClampedMovementAmount(playerManager.inputManager.movementInput.magnitude);
-                    playerManager.animationManager.UpdateMovementAnimatorValues(moveAmount, 0, .1f);
+                    float moveAmount = GetClampedMovementAmount(inputManager.movementInput.magnitude);
+                    animationManager.UpdateMovementAnimatorValues(moveAmount, 0, .1f);
                 }
                 //Locked on animations
                 else
                 {
-                    Vector2 input = GetClampedLockedOnMovementAmount(playerManager.inputManager.movementInput);
-                    playerManager.animationManager.UpdateMovementAnimatorValues(input.y, input.x, .06f);
+                    Vector2 input = GetClampedLockedOnMovementAmount(inputManager.movementInput);
+                    animationManager.UpdateMovementAnimatorValues(input.y, input.x, .06f);
                 }
             }
 
             if (playerManager.playerIsStuckInAnimation) return;
 
             //Allow the player to exit an override animation early if the player is moving, is not stuck in the animation and is NOT in the empty animation already
-            if (playerManager.inputManager.movementInput.magnitude > 0 && !playerManager.animationManager.animator.GetBool("IsInEmptyOverride"))
+            if (inputManager.movementInput.magnitude > 0 && !animator.GetBool("IsInEmptyOverride"))
             {
-                playerManager.animationManager.PlayTargetAnimation("EmptyOverride", .2f);
+                animationManager.PlayTargetAnimation("EmptyOverride", .2f, false);
             }
 
-            playerManager.currentSpeedMultiplier = GetMovementSpeedMultiplier();
+            float multiplier = CalculateMovementSpeedMultiplier();
+            SetMovementSpeedMultiplier(multiplier);
             HandleMovementFootFriction();
 
         }
@@ -66,7 +124,7 @@ namespace AlessioBorriello
         /// <summary>
         /// Sets the foot friction based on shouldSlide bool
         /// </summary>
-        public void HandleFootFriction()
+        private void HandleFootFriction()
         {
             if(playerManager.shouldSlide && currentFootMaterial == physicalFootMaterialIdle)
             {
@@ -80,18 +138,18 @@ namespace AlessioBorriello
         /// <summary>
         /// Rotate player towards direction
         /// </summary>
-        public void HandleMovementRotation()
+        private void HandleMovementRotation()
         {
             if (!playerManager.canRotate) return;
 
-            playerManager.currentRotationSpeedMultiplier = GetRotationSpeedMultiplier();
+            currentRotationSpeedMultiplier = GetRotationSpeedMultiplier();
 
-            if(!playerManager.isLockedOn || playerManager.isSprinting || playerManager.isRolling) playerManager.movementDirection = GetMovementDirection();
-            else playerManager.movementDirection = GetLockedOnMovementDirection();
+            if(!playerManager.isLockingOn || playerManager.isSprinting || playerManager.isRolling) movementDirection = GetMovementDirection();
+            else movementDirection = GetLockedOnMovementDirection();
 
-            Quaternion newRotation = Quaternion.LookRotation(playerManager.movementDirection);
-            float rotationSpeed = playerManager.currentRotationSpeedMultiplier * Time.deltaTime;
-            playerManager.animatedPlayer.transform.rotation = Quaternion.Slerp(playerManager.animatedPlayer.transform.rotation, newRotation, rotationSpeed);
+            Quaternion newRotation = Quaternion.LookRotation(movementDirection);
+            float rotationSpeed = currentRotationSpeedMultiplier * Time.deltaTime;
+            animatedPlayer.transform.rotation = Quaternion.Slerp(animatedPlayer.transform.rotation, newRotation, rotationSpeed);
 
             if(playerManager.playerData.tiltOnDirectionChange) HandleTilt();
         }
@@ -106,23 +164,23 @@ namespace AlessioBorriello
         {
             if (playerManager.playerIsStuckInAnimation) return;
 
-            float speed = Vector3.ProjectOnPlane((playerManager.physicalHips.transform.position - currentPos), playerManager.groundNormal).magnitude;
+            float speed = Vector3.ProjectOnPlane((physicalHips.transform.position - currentPos), groundNormal).magnitude;
             if (speed <= playerManager.playerData.speedNeededToTilt || !playerManager.isOnGround)
             {
                 tiltAmount = 0;
                 return;
             }
 
-            float angleDifference = Mathf.DeltaAngle(playerManager.physicalHips.rotation.eulerAngles.y, currentDirectionAngle);
+            float angleDifference = Mathf.DeltaAngle(physicalHips.rotation.eulerAngles.y, currentDirectionAngle);
 
             tiltAmount = Mathf.Lerp(tiltAmount, angleDifference * speed * 10, Time.deltaTime * playerManager.playerData.tiltSpeed);
             tiltAmount = Mathf.Clamp(tiltAmount, -playerManager.playerData.maxTiltAmount, playerManager.playerData.maxTiltAmount);
 
-            Quaternion tiltedRotation = Quaternion.AngleAxis(tiltAmount, playerManager.animatedPlayer.transform.forward) * playerManager.animatedPlayer.transform.rotation;
-            playerManager.animatedPlayer.transform.rotation = tiltedRotation;
+            Quaternion tiltedRotation = Quaternion.AngleAxis(tiltAmount, animatedPlayer.transform.forward) * animatedPlayer.transform.rotation;
+            animatedPlayer.transform.rotation = tiltedRotation;
 
-            currentDirectionAngle = playerManager.physicalHips.rotation.eulerAngles.y;
-            currentPos = playerManager.physicalHips.transform.position;
+            currentDirectionAngle = physicalHips.rotation.eulerAngles.y;
+            currentPos = physicalHips.transform.position;
 
         }
 
@@ -132,45 +190,48 @@ namespace AlessioBorriello
         private void HandleMovementFootFriction()
         {
 
-            if (playerManager.inputManager.movementInput.magnitude == 0) playerManager.shouldSlide = false;
-            else if (playerManager.inputManager.movementInput.magnitude > 0) playerManager.shouldSlide = true;
+            if (inputManager.movementInput.magnitude == 0) playerManager.shouldSlide = false;
+            else if (inputManager.movementInput.magnitude > 0) playerManager.shouldSlide = true;
 
         }
 
         /// <summary>
         /// Manages rolls, backdashes and sprinting based on the player's east button press duration and movement velocity
         /// </summary>
-        public void HandleRollingAndSprinting()
+        private void HandleRollingAndSprinting()
         {
 
             if (playerManager.playerIsStuckInAnimation)
             {
-                //rollTimer = 0;
                 sprintTimer = 0;
                 playerManager.isSprinting = false;
                 return;
             }
 
+            if(inputManager.eastInputPressed)
+            {
+                rollTimer = 0;
+            }
 
-            if (playerManager.inputManager.eastInput)
+            if (inputManager.eastInput)
             {
                 float delta = Time.deltaTime;
                 rollTimer += delta;
-                if (playerManager.inputManager.movementInput.magnitude > 0) sprintTimer += delta;
+                if (inputManager.movementInput.magnitude > 0) sprintTimer += delta;
                 else sprintTimer = 0;
             }
 
-            if (playerManager.inputManager.eastInput && sprintTimer > playerManager.playerData.sprintThreshold) playerManager.isSprinting = true;
+            if (inputManager.eastInput && sprintTimer > playerManager.playerData.sprintThreshold) playerManager.isSprinting = true;
 
-            if (playerManager.inputManager.eastInputReleased && rollTimer < playerManager.playerData.sprintThreshold)
+            if (inputManager.eastInputReleased && rollTimer < playerManager.playerData.sprintThreshold)
             {
-                if (playerManager.inputManager.movementInput.magnitude > 0) Roll();
+                if (inputManager.movementInput.magnitude > 0) Roll();
                 else Backdash();
             }
 
             if (playerManager.isSprinting) Sprint();
 
-            if (playerManager.inputManager.eastInputReleased)
+            if (inputManager.eastInputReleased)
             {
                 rollTimer = 0;
                 sprintTimer = 0;
@@ -181,29 +242,29 @@ namespace AlessioBorriello
         /// <summary>
         /// Manages falling and landing, start falling when in air for enough time and land when isOnGround is back to true
         /// </summary>
-        public void HandleFallingAndLanding()
+        private void HandleFallingAndLanding()
         {
             //Fall
             if (!playerManager.isOnGround && inAirTimer > playerManager.playerData.timeBeforeFalling)
             {
-                if(playerManager.animationManager.animator.GetBool("onGround"))
+                if(animator.GetBool("OnGround"))
                 {
-                    playerManager.animationManager.UpdateOnGroundValue(false);
-                    playerManager.animationManager.PlayTargetAnimation("Fall", .2f);
+                    animationManager.UpdateOnGroundValue(false);
+                    animationManager.PlayTargetAnimation("Fall", .2f, true);
                 }
             }
 
             //Land
             if (playerManager.isOnGround && inAirTimer > 0)
             {
-                if(!playerManager.animationManager.animator.GetBool("onGround"))
+                if(!animator.GetBool("OnGround"))
                 {
-                    playerManager.animationManager.UpdateOnGroundValue(true);
-                    playerManager.animationManager.PlayTargetAnimation("EmptyOverride", .2f);
+                    animationManager.UpdateOnGroundValue(true);
+                    animationManager.PlayTargetAnimation("EmptyOverride", .2f, false);
                 }
 
                 //Knock out
-                if (!playerManager.isKnockedOut && inAirTimer > playerManager.playerData.knockoutLandThreshold) playerManager.ragdollManager.KnockOut();
+                if (!playerManager.isKnockedOut && inAirTimer > playerManager.playerData.knockoutLandThreshold) ragdollManager.KnockOut();
 
                 inAirTimer = 0;
             }
@@ -214,8 +275,8 @@ namespace AlessioBorriello
         /// </summary>
         private void Roll()
         {
-            playerManager.currentSpeedMultiplier = playerManager.playerData.rollSpeedMultiplier;
-            playerManager.animationManager.PlayTargetAnimation("Roll", .15f);
+            currentSpeedMultiplier = playerManager.playerData.rollSpeedMultiplier;
+            animationManager.PlayTargetAnimation("Roll", .15f, true);
         }
 
         /// <summary>
@@ -223,8 +284,8 @@ namespace AlessioBorriello
         /// </summary>
         private void Backdash()
         {
-            playerManager.currentSpeedMultiplier = playerManager.playerData.backdashSpeedMultiplier;
-            playerManager.animationManager.PlayTargetAnimation("Backdash", .2f);
+            currentSpeedMultiplier = playerManager.playerData.backdashSpeedMultiplier;
+            animationManager.PlayTargetAnimation("Backdash", .2f, true);
         }
 
         /// <summary>
@@ -232,14 +293,14 @@ namespace AlessioBorriello
         /// </summary>
         private void Sprint()
         {
-            if (playerManager.inputManager.movementInput.magnitude == 0 || playerManager.inputManager.eastInputReleased)
+            if (inputManager.movementInput.magnitude == 0 || inputManager.eastInputReleased)
             {
                 playerManager.isSprinting = false;
                 return;
             }
 
-            playerManager.animationManager.UpdateMovementAnimatorValues(1.8f, 0, .1f);
-            playerManager.currentSpeedMultiplier = playerManager.playerData.sprintSpeedMultiplier;
+            animationManager.UpdateMovementAnimatorValues(1.8f, 0, .1f);
+            currentSpeedMultiplier = playerManager.playerData.sprintSpeedMultiplier;
         }
 
         /// <summary>
@@ -248,12 +309,12 @@ namespace AlessioBorriello
         /// <returns>The direction</returns>
         private Vector3 GetMovementDirection()
         {
-            Vector3 normal = (playerManager.isOnGround) ? playerManager.groundNormal : Vector3.up;
-            Vector3 movementDirection = Vector3.ProjectOnPlane(playerManager.cameraTransform.forward, normal) * playerManager.inputManager.movementInput.y; //Camera's current z axis * vertical movement (Up, down input)
-            movementDirection += Vector3.ProjectOnPlane(playerManager.cameraTransform.right, normal) * playerManager.inputManager.movementInput.x; //Camera's current z axis * horizontal movement (Right, Left input)
+            Vector3 normal = (playerManager.isOnGround) ? groundNormal : Vector3.up;
+            Vector3 movementDirection = Vector3.ProjectOnPlane(cameraTransform.forward, normal) * inputManager.movementInput.y; //Camera's current z axis * vertical movement (Up, down input)
+            movementDirection += Vector3.ProjectOnPlane(cameraTransform.right, normal) * inputManager.movementInput.x; //Camera's current z axis * horizontal movement (Right, Left input)
             movementDirection.Normalize();
             
-            if (playerManager.inputManager.movementInput.magnitude == 0) return Vector3.ProjectOnPlane(playerManager.animatedPlayer.transform.forward, Vector3.up); //If not moving return the forward
+            if (inputManager.movementInput.magnitude == 0) return Vector3.ProjectOnPlane(animatedPlayer.transform.forward, Vector3.up); //If not moving return the forward
             
             return movementDirection;
         }
@@ -264,10 +325,10 @@ namespace AlessioBorriello
         /// <returns>The direction</returns>
         private Vector3 GetLockedOnMovementDirection()
         {
-            if (playerManager.lockedTarget == null) return playerManager.physicalHips.transform.forward;
+            if (playerManager.lockedTarget == null) return physicalHips.transform.forward;
 
-            Vector3 normal = (playerManager.isOnGround) ? playerManager.groundNormal : Vector3.up;
-            Vector3 movementDirection = Vector3.ProjectOnPlane(playerManager.lockedTarget.position - playerManager.physicalHips.position, normal);
+            Vector3 normal = (playerManager.isOnGround) ? groundNormal : Vector3.up;
+            Vector3 movementDirection = Vector3.ProjectOnPlane(playerManager.lockedTarget.position - physicalHips.position, normal);
             movementDirection.Normalize();
 
             return movementDirection;
@@ -276,11 +337,11 @@ namespace AlessioBorriello
         /// <summary>
         /// Calculate the player's speed multiplier based on how much the movement input is being pressed
         /// </summary>
-        private float GetMovementSpeedMultiplier()
+        private float CalculateMovementSpeedMultiplier()
         {
             if (playerManager.isRolling) return playerManager.playerData.rollSpeedMultiplier;
             if (playerManager.isBackdashing) return playerManager.playerData.backdashSpeedMultiplier;
-            if (Mathf.Abs(playerManager.inputManager.movementInput.magnitude) > .55f) return playerManager.playerData.runSpeedMultiplier;
+            if (Mathf.Abs(inputManager.movementInput.magnitude) > .55f) return playerManager.playerData.runSpeedMultiplier;
 
             return playerManager.playerData.walkSpeedMultiplier;
 
@@ -291,8 +352,8 @@ namespace AlessioBorriello
         /// </summary>
         private float GetRotationSpeedMultiplier()
         {
-            if (playerManager.isLockedOn && playerManager.isRolling) return playerManager.playerData.lockedOnRollRotationSpeedMultiplier;
-            else if(!playerManager.isLockedOn && playerManager.isRolling) return playerManager.playerData.rollRotationSpeedMultiplier;
+            if (playerManager.isLockingOn && playerManager.isRolling) return playerManager.playerData.lockedOnRollRotationSpeedMultiplier;
+            else if(!playerManager.isLockingOn && playerManager.isRolling) return playerManager.playerData.rollRotationSpeedMultiplier;
 
             if (!playerManager.isOnGround) return playerManager.playerData.inAirRotationSpeed;
 
@@ -361,7 +422,7 @@ namespace AlessioBorriello
         /// Check if the player is currently touching the ground,
         /// if so set the ground normal and the isOnGround flag
         /// </summary>
-        public void CheckIfOnGround()
+        private void CheckIfOnGround()
         {
             RaycastHit hit;
             Vector3 pos = playerManager.groundCheckTransform.position;
@@ -373,8 +434,8 @@ namespace AlessioBorriello
                 if (hit.distance < playerManager.playerData.minDistanceToFall && Vector3.Angle(Vector3.up, hit.normal) < playerManager.playerData.maxSlopeAngle) playerManager.isOnGround = true;
                 else (playerManager.isOnGround) = false;
 
-                playerManager.groundNormal = hit.normal;
-                playerManager.groundDistance = hit.distance;
+                groundNormal = hit.normal;
+                //groundDistance = hit.distance;
             }
             else
             {
@@ -391,7 +452,7 @@ namespace AlessioBorriello
 
             Vector3 gravityForce = Vector3.zero;
             //Increase in air timer
-            if (!isOnGround && playerManager.physicalHips.velocity.y < 0)
+            if (!isOnGround && physicalHips.velocity.y < 0)
             {
                 //Apply more downwards force when not on the ground based on the in air timer
                 gravityForce += Vector3.down * (playerManager.playerData.fallingSpeed * inAirTimer);
@@ -426,6 +487,20 @@ namespace AlessioBorriello
         }
 
         /// <summary>
+        /// Sets the current movement speed multiplier that gets applied to the animator root movement
+        /// </summary>
+        /// <param name="multiplier">The multiplier</param>
+        public void SetMovementSpeedMultiplier(float multiplier)
+        {
+            currentSpeedMultiplier = multiplier;
+        }
+
+        public Vector3 GetGroundNormal()
+        {
+            return groundNormal;
+        }
+
+        /// <summary>
         /// Makes the player do a 180 animation if the direction changes suddenly (Not used)
         /// </summary>
         private void HandleSharpTurns()
@@ -433,7 +508,7 @@ namespace AlessioBorriello
 
             if (!playerManager.isSprinting) return;
 
-            float angle = Vector3.Angle(playerManager.movementDirection, Vector3.ProjectOnPlane(playerManager.physicalHips.velocity, Vector3.up).normalized);
+            float angle = Vector3.Angle(movementDirection, Vector3.ProjectOnPlane(physicalHips.velocity, Vector3.up).normalized);
             //if (angle > playerManager.playerData.minimumSharpTurnAngle)
             if (angle > 170)
             {
