@@ -207,7 +207,10 @@ namespace AlessioBorriello
         {
             if (!playerManager.isClient) return;
 
-            if (actions.Count > 0 && !playerManager.playerIsStuckInAnimation && playerManager.consumeInputs) ConsumeInputs(actions);
+            if (actions.Count > 0 && 
+                !playerManager.playerIsStuckInAnimation && 
+                playerManager.consumeInputs &&
+                !playerManager.disableActions) ConsumeInputs(actions);
         }
 
         private void LateUpdate()

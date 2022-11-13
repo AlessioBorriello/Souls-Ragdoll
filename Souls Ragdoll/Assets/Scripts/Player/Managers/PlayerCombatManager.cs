@@ -19,6 +19,8 @@ namespace AlessioBorriello
 
         public void HandleCombat()
         {
+            if (playerManager.disableActions) return;
+
             //Attacks
             weaponManager.HandleAttacks();
             //Shields

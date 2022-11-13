@@ -13,6 +13,7 @@ namespace AlessioBorriello {
         private int onGroundHash;
         private int attackingWithLeftHash;
         private int blockingWithLeftHash;
+        private int changingLeftItemHash;
 
         private void Awake()
         {
@@ -28,6 +29,7 @@ namespace AlessioBorriello {
             onGroundHash = Animator.StringToHash("OnGround");
             attackingWithLeftHash = Animator.StringToHash("AttackingWithLeft");
             blockingWithLeftHash = Animator.StringToHash("BlockingWithLeft");
+            changingLeftItemHash = Animator.StringToHash("ChangingLeftItem");
 
             animator.applyRootMotion = true;
         }
@@ -53,6 +55,11 @@ namespace AlessioBorriello {
         public void UpdateBlockingWithLeftValue(bool blockingWithLeft)
         {
             animator.SetBool(blockingWithLeftHash, blockingWithLeft);
+        }
+
+        public void UpdateChangingLeftItemValue(bool changingLeftItem)
+        {
+            animator.SetBool(changingLeftItemHash, changingLeftItem);
         }
 
         public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation)

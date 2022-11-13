@@ -29,22 +29,15 @@ namespace AlessioBorriello
         {
             if (other.CompareTag("Player"))
             {
-                int otherId = other.transform.root.GetInstanceID();
-                if (!CanHit(otherId) || this.transform.root.GetInstanceID() == otherId) return;
-
-                alreadyHit.Add(otherId);
-                if (canHitMultipleTimes) StartCoroutine(RemoveHitId(otherId));
-
-
-                PlayerCollisionManager playerCollisionManager = other.GetComponentInParent<PlayerCollisionManager>();
-                if (playerCollisionManager != null)
-                {
-                    playerCollisionManager.EnterCollision(this, other, damage, knockbackStrength, flinchStrenght);
-                }
+                PlayerTriggerEnter(other);
             }
             else if(other.CompareTag("Enemy"))
             {
                 //If it's an enemy
+            }
+            else if (other.CompareTag("Static"))
+            {
+                Debug.Log("Weapon bounce");
             }
         }
 
@@ -61,6 +54,22 @@ namespace AlessioBorriello
             else if (other.CompareTag("Enemy"))
             {
                 //If it's an enemy
+            }
+        }
+
+        private void PlayerTriggerEnter(Collider other)
+        {
+            int otherId = other.transform.root.GetInstanceID();
+            if (!CanHit(otherId) || this.transform.root.GetInstanceID() == otherId) return;
+
+            alreadyHit.Add(otherId);
+            if (canHitMultipleTimes) StartCoroutine(RemoveHitId(otherId));
+
+
+            PlayerCollisionManager playerCollisionManager = other.GetComponentInParent<PlayerCollisionManager>();
+            if (playerCollisionManager != null)
+            {
+                playerCollisionManager.EnterCollision(this, other, damage, knockbackStrength, flinchStrenght);
             }
         }
 

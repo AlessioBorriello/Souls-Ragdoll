@@ -506,11 +506,11 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LowAngularXLimit:
-    limit: -45
+    limit: -70
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 45
+    limit: 70
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
@@ -521,7 +521,7 @@ ConfigurableJoint:
     bounciness: 0
     contactDistance: 0
   m_AngularZLimit:
-    limit: 15
+    limit: 25
     bounciness: 0
     contactDistance: 0
   m_TargetPosition: {x: 0, y: 0, z: 0}
@@ -1895,13 +1895,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lockOnTargetTransform: {fileID: 224072189}
   playerData: {fileID: 11400000, guid: 8fa2a1b0f04ee6c44ad4d4475bbf4d18, type: 2}
-  animatedPlayer: {fileID: 2217555875006252269}
   groundCheckTransform: {fileID: 1567946972}
-  physicalHips: {fileID: 3193748364022854742}
-  animatedHips: {fileID: 0}
   lockedTarget: {fileID: 0}
   isClient: 1
   playerIsStuckInAnimation: 0
+  disableActions: 0
   consumeInputs: 1
   isOnGround: 1
   isKnockedOut: 0
@@ -1912,8 +1910,9 @@ MonoBehaviour:
   isSprinting: 0
   isAttacking: 0
   isBlocking: 0
-  canLockOn: 1
+  canBlock: 1
   isLockingOn: 0
+  canLockOn: 1
 --- !u!114 &5964148670617802857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2018,15 +2017,11 @@ MonoBehaviour:
   itemsInRightSlots:
   - {fileID: 11400000, guid: 47d20fcc74c7319499117cec8edcc7f6, type: 2}
   - {fileID: 11400000, guid: 61a7f954cfdd09d4987d33b3aa9384f7, type: 2}
-  - {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
+  - {fileID: 11400000, guid: 15459b580f8f2e546892db2e9691edb4, type: 2}
   itemsInLeftSlots:
+  - {fileID: 11400000, guid: 15459b580f8f2e546892db2e9691edb4, type: 2}
   - {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
   - {fileID: 11400000, guid: 61a7f954cfdd09d4987d33b3aa9384f7, type: 2}
-  - {fileID: 0}
-  currentRightHandItem: {fileID: 0}
-  currentRightSlotItemColliderControl: {fileID: 0}
-  currentLeftHandItem: {fileID: 0}
-  currentLeftSlotItemColliderControl: {fileID: 0}
 --- !u!114 &8779414462503701537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3257,11 +3252,11 @@ ConfigurableJoint:
     spring: 0
     damper: 0
   m_LowAngularXLimit:
-    limit: -45
+    limit: -70
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 45
+    limit: 70
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
@@ -3272,7 +3267,7 @@ ConfigurableJoint:
     bounciness: 0
     contactDistance: 0
   m_AngularZLimit:
-    limit: 15
+    limit: 25
     bounciness: 0
     contactDistance: 0
   m_TargetPosition: {x: 0, y: 0, z: 0}

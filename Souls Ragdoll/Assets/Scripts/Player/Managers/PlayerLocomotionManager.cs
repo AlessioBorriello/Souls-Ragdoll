@@ -78,7 +78,7 @@ namespace AlessioBorriello
         public void HandleLocomotion()
         {
             HandleMovementRotation();
-            HandleMovement();
+            HandleMovementAnimations();
             HandleFootFriction();
             CheckIfOnGround();
             HandleFallingAndLanding();
@@ -88,10 +88,16 @@ namespace AlessioBorriello
         /// <summary>
         /// Move player with animation
         /// </summary>
-        private void HandleMovement()
+        private void HandleMovementAnimations()
         {
+            if (playerManager.playerIsStuckInAnimation)
+            {
+                animationManager.UpdateMovementAnimatorValues(0, 0, .1f); //Stop
+                return;
+            }
+
             //If player is not sprinting
-            if(!playerManager.isSprinting)
+            if (!playerManager.isSprinting)
             {
                 //Not locked on animations
                 if (!playerManager.isLockingOn)
@@ -106,8 +112,6 @@ namespace AlessioBorriello
                     animationManager.UpdateMovementAnimatorValues(input.y, input.x, .06f);
                 }
             }
-
-            if (playerManager.playerIsStuckInAnimation) return;
 
             //Allow the player to exit an override animation early if the player is moving, is not stuck in the animation and is NOT in the empty animation already
             if (inputManager.movementInput.magnitude > 0 && !animator.GetBool("IsInEmptyOverride"))
@@ -149,6 +153,7 @@ namespace AlessioBorriello
 
             Quaternion newRotation = Quaternion.LookRotation(movementDirection);
             float rotationSpeed = currentRotationSpeedMultiplier * Time.deltaTime;
+
             animatedPlayer.transform.rotation = Quaternion.Slerp(animatedPlayer.transform.rotation, newRotation, rotationSpeed);
 
             if(playerManager.playerData.tiltOnDirectionChange) HandleTilt();
@@ -275,6 +280,8 @@ namespace AlessioBorriello
         /// </summary>
         private void Roll()
         {
+            if (playerManager.disableActions) return;
+
             currentSpeedMultiplier = playerManager.playerData.rollSpeedMultiplier;
             animationManager.PlayTargetAnimation("Roll", .15f, true);
         }
@@ -284,6 +291,8 @@ namespace AlessioBorriello
         /// </summary>
         private void Backdash()
         {
+            if (playerManager.disableActions) return;
+
             currentSpeedMultiplier = playerManager.playerData.backdashSpeedMultiplier;
             animationManager.PlayTargetAnimation("Backdash", .2f, true);
         }

@@ -35,7 +35,8 @@ namespace AlessioBorriello
         #region Flags
         [Header("General flags")]
         public bool isClient = true;
-        public bool playerIsStuckInAnimation = false;
+        public bool playerIsStuckInAnimation = false; //Disables actions like dodging, attacking... and movement
+        public bool disableActions = false; //If the player can perform actions like dodging, attacking, blocking... (Indipendent from movement)
         public bool consumeInputs = true;
         public bool isOnGround = true;
         public bool isKnockedOut = false;
@@ -50,8 +51,9 @@ namespace AlessioBorriello
         [Header("Combat flag")]
         public bool isAttacking = false;
         public bool isBlocking = false;
-        public bool canLockOn = true;
+        public bool canBlock = true;
         public bool isLockingOn = false;
+        public bool canLockOn = true;
         #endregion
 
         private void Awake()

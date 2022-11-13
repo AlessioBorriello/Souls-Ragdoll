@@ -117,9 +117,18 @@ namespace AlessioBorriello
 
         private void ChangeHandItemSlot(ref int index, HandEquippableItem[] slots, ref HandEquippableItem currentHandItem, bool onLeft)
         {
+            if (playerManager.disableActions) return;
+
             index = (index + 1) % slots.Length;
             currentHandItem = slots[index];
             LoadItemInHand(currentHandItem, onLeft);
+
+            //Play animation
+            animationManager.UpdateChangingLeftItemValue(onLeft);
+            animationManager.PlayTargetAnimation("ChangeItem", .15f, false);
+
+            //Stop blocking
+            playerManager.isBlocking = false;
         }
 
         /// <summary>
