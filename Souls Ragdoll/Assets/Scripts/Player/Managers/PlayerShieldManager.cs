@@ -10,6 +10,7 @@ namespace AlessioBorriello
         private InputManager inputManager;
         private AnimationManager animationManager;
         private PlayerInventoryManager inventoryManager;
+        private PlayerCombatManager combatManager;
 
         private bool blockingWithLeft = false;
 
@@ -17,8 +18,9 @@ namespace AlessioBorriello
         {
             playerManager = GetComponent<PlayerManager>();
             inputManager = playerManager.GetInputManager();
-            inventoryManager = playerManager.GetInventoryManager();
             animationManager = playerManager.GetAnimationManager();
+            inventoryManager = playerManager.GetInventoryManager();
+            combatManager = playerManager.GetCombatManager();
         }
 
         public void HandleBlocks()
@@ -37,6 +39,8 @@ namespace AlessioBorriello
 
             if (rb || lb)
             {
+                //If it's not a shield
+                if (inventoryManager.GetCurrentItemType(isLeft) != PlayerInventoryManager.ItemType.shield) return;
                 TryBlock(isLeft);
             }
             else
@@ -50,7 +54,6 @@ namespace AlessioBorriello
 
             //Get right or left item
             HandEquippableItem item = (isLeft) ? inventoryManager.GetCurrentItem(true) : inventoryManager.GetCurrentItem(false);
-            if (item is not ShieldItem) return;
 
             blockingWithLeft = isLeft;
             animationManager.UpdateBlockingWithLeftValue(blockingWithLeft);

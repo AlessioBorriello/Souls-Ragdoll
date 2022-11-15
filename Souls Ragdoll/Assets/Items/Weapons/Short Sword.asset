@@ -16,7 +16,8 @@ MonoBehaviour:
   iconSprite: {fileID: 21300000, guid: 720b8a7f08d91b04e81c1d9d6902512d, type: 3}
   descriptionText: A simple metal short sword
   modelPrefab: {fileID: 4952564604112304397, guid: bdebf87f5321f7a49a5772d92cd098fe, type: 3}
-  OneHandedIdle: OneHandItemIdle
+  oneHandedIdle: OneHandItemIdle
+  physicalDamageAbsorption: 0
   movementSpeedMultiplier: 4.2
   OneHandedLightAttackCombo:
   - OneHandLightAttackOne

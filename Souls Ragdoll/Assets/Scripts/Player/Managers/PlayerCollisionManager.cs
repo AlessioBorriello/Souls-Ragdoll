@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using UnityEngine;
+using static System.TimeZoneInfo;
 
 namespace AlessioBorriello
 {
@@ -12,11 +13,13 @@ namespace AlessioBorriello
         private PlayerLocomotionManager locomotionManager;
         private ActiveRagdollManager ragdollManager;
         private PlayerStatsManager statsManager;
+        private PlayerCombatManager combatManager;
+        private PlayerInventoryManager inventoryManager;
 
         private Rigidbody physicalHips;
 
         private List<int> inContact = new List<int>();
-        private bool shouldStagger = true;
+        public bool shouldStagger = true; //Should be private and be true if the hit breaks the poise
 
         private void Start()
         {
@@ -25,21 +28,54 @@ namespace AlessioBorriello
             animationManager = playerManager.GetAnimationManager();
             ragdollManager = playerManager.GetRagdollManager();
             statsManager = playerManager.GetStatsManager();
+            combatManager = playerManager.GetCombatManager();
+            inventoryManager = playerManager.GetInventoryManager();
 
             physicalHips = playerManager.GetPhysicalHips();
         }
 
-        public void EnterCollision(ColliderControl damageCollider, Collider playerCollider, int damage, float knockbackStrength, float flinchStrenght)
+        public void EnterCollision(ColliderControl damageCollider, Collider damagedPlayerCollider, int damage, float knockbackStrength, float flinchStrenght)
         {
             if (CheckIfHit(damageCollider.GetInstanceID()))
             {
-                Debug.Log("Hit");
-                statsManager.ReduceHealth(damage, "Hurt", .1f, shouldStagger);
-                animationManager.UpdateMovementAnimatorValues(0, 0, 0); //Stop the player
+                bool attackBlocked = false;
+                if(playerManager.isBlocking)
+                {
+                    //Check for blocking
+                    PlayerManager playerManagerHitting = damageCollider.GetComponentInParent<PlayerManager>();
+                    if (playerManagerHitting != null && CheckForBlock(physicalHips.transform.position, playerManagerHitting.GetPhysicalHips().transform.position))
+                    {
+                        attackBlocked = true;
+                        damage = AbsorbDamage(damage);
+                    }
+                }
+
+                statsManager.ReduceHealth(damage);
+                if(shouldStagger && !attackBlocked) animationManager.PlayTargetAnimation("Hurt", .1f, true);
+                if (attackBlocked) StartCoroutine(locomotionManager.StopMovementForTime(.22f));
 
                 //Knockback
-                Knockback(playerCollider, damageCollider, knockbackStrength, flinchStrenght);
+                Knockback(damagedPlayerCollider, damageCollider, knockbackStrength, flinchStrenght);
             }
+        }
+
+        private int AbsorbDamage(int damage)
+        {
+            float absorption = 0;
+            HandEquippableItem blockingItem = (combatManager.GetShieldManager().IsBlockingWithLeft())? inventoryManager.GetCurrentItem(true) : inventoryManager.GetCurrentItem(false);
+            if (blockingItem != null) absorption = blockingItem.physicalDamageAbsorption;
+
+            damage -= Mathf.RoundToInt((damage * absorption) / 100);
+            return damage;
+        }
+
+        private bool CheckForBlock(Vector3 thisHipsPosition, Vector3 hittingHipsPosition)
+        {
+            Vector3 hitDirection = (thisHipsPosition - hittingHipsPosition).normalized;
+            float hitAngle = Vector3.Angle(physicalHips.transform.forward, hitDirection);
+
+            if (hitAngle > 95f) return true;
+            else return false;
         }
 
         public void ExitCollision(int colliderId)
@@ -68,12 +104,10 @@ namespace AlessioBorriello
             return firstCollision;
         }
 
-        Vector3 collisionPoint;
-        Vector3 hipsPos;
         private void Knockback(Collider playerCollider, ColliderControl damageCollider, float knockbackStrength, float flinchStrenght)
         {
-            collisionPoint = playerCollider.ClosestPoint(damageCollider.transform.position);
-            hipsPos = physicalHips.transform.position;
+            Vector3 collisionPoint = playerCollider.ClosestPoint(damageCollider.transform.position);
+            Vector3 hipsPos = physicalHips.transform.position;
             hipsPos.y = collisionPoint.y;
 
             Vector3 knockbackDirection = (hipsPos - collisionPoint).normalized;
@@ -82,12 +116,6 @@ namespace AlessioBorriello
 
             Vector3 flinchDirection = (playerCollider.transform.position - collisionPoint).normalized;
             ragdollManager.AddForceToBodyPart(playerCollider.attachedRigidbody, flinchStrenght * flinchDirection, ForceMode.VelocityChange);
-        }
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.DrawSphere(collisionPoint, .07f);
-            Gizmos.DrawLine(collisionPoint, hipsPos);
         }
 
     }

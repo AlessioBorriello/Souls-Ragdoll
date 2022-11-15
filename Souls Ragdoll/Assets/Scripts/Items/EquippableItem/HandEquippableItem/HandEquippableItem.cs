@@ -10,6 +10,9 @@ namespace AlessioBorriello
         public GameObject modelPrefab;
 
         [Header("One handed Idle")]
-        public string OneHandedIdle;
+        public string oneHandedIdle;
+
+        [Header("Damage absorptions %")]
+        public float physicalDamageAbsorption;
     }
 }

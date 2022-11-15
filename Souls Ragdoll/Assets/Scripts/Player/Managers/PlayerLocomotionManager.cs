@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using UnityEngine;
 using UnityEngine.ProBuilder.Shapes;
 
@@ -20,12 +21,13 @@ namespace AlessioBorriello
         [SerializeField] private Collider[] feetColliders = new Collider[2];
 
         private GameObject animatedPlayer;
+        private GameObject physicalPlayer;
         private PhysicMaterial currentFootMaterial;
         private Rigidbody physicalHips;
         private Transform cameraTransform;
 
         private float currentSpeedMultiplier;
-        private float currentRotationSpeedMultiplier;
+        private float currentRotationSpeed;
 
         private Vector3 groundNormal;
         private Vector3 movementDirection;
@@ -40,6 +42,7 @@ namespace AlessioBorriello
 
             playerManager = GetComponent<PlayerManager>();
             animatedPlayer = playerManager.GetAnimatedPlayer();
+            physicalPlayer = playerManager.GetPhysicalPlayer();
             inputManager = playerManager.GetInputManager();
             animationManager = playerManager.GetAnimationManager();
             animator = animationManager.GetAnimator();
@@ -48,6 +51,8 @@ namespace AlessioBorriello
 
             physicalHips = playerManager.GetPhysicalHips();
             cameraTransform = playerManager.GetCameraTransform();
+
+            movementDirection = transform.forward;
 
         }
 
@@ -146,15 +151,16 @@ namespace AlessioBorriello
         {
             if (!playerManager.canRotate) return;
 
-            currentRotationSpeedMultiplier = GetRotationSpeedMultiplier();
+            currentRotationSpeed = GetRotationSpeed();
 
             if(!playerManager.isLockingOn || playerManager.isSprinting || playerManager.isRolling) movementDirection = GetMovementDirection();
             else movementDirection = GetLockedOnMovementDirection();
 
             Quaternion newRotation = Quaternion.LookRotation(movementDirection);
-            float rotationSpeed = currentRotationSpeedMultiplier * Time.deltaTime;
+            float rotationSpeed = currentRotationSpeed * Time.deltaTime;
 
             animatedPlayer.transform.rotation = Quaternion.Slerp(animatedPlayer.transform.rotation, newRotation, rotationSpeed);
+            //animatedPlayer.transform.rotation = Quaternion.RotateTowards(animatedPlayer.transform.rotation, newRotation, rotationSpeed);
 
             if(playerManager.playerData.tiltOnDirectionChange) HandleTilt();
         }
@@ -359,10 +365,10 @@ namespace AlessioBorriello
         /// <summary>
         /// Calculate the player's rotation speed multiplier based on various factors
         /// </summary>
-        private float GetRotationSpeedMultiplier()
+        private float GetRotationSpeed()
         {
-            if (playerManager.isLockingOn && playerManager.isRolling) return playerManager.playerData.lockedOnRollRotationSpeedMultiplier;
-            else if(!playerManager.isLockingOn && playerManager.isRolling) return playerManager.playerData.rollRotationSpeedMultiplier;
+            if (playerManager.isLockingOn && playerManager.isRolling) return playerManager.playerData.lockedOnRollRotationSpeed;
+            else if(!playerManager.isLockingOn && playerManager.isRolling) return playerManager.playerData.rollRotationSpeed;
 
             if (!playerManager.isOnGround) return playerManager.playerData.inAirRotationSpeed;
 
@@ -507,6 +513,31 @@ namespace AlessioBorriello
         public Vector3 GetGroundNormal()
         {
             return groundNormal;
+        }
+
+        public IEnumerator StopMovementForTime(float time)
+        {
+            while (time > 0)
+            {
+                yield return null;
+                time -= Time.deltaTime;
+                animationManager.UpdateMovementAnimatorValues(0, 0, 0);
+                StopMovementForTime(time);
+            }
+        }
+
+        public IEnumerator StopActionsForTime(float time)
+        {
+            playerManager.disableActions = true;
+            yield return new WaitForSeconds(time);
+            playerManager.disableActions = false;
+        }
+
+        public IEnumerator DisablePlayerControlForTime(float time)
+        {
+            playerManager.playerIsStuckInAnimation = true;
+            yield return new WaitForSeconds(time);
+            playerManager.playerIsStuckInAnimation = false;
         }
 
         /// <summary>

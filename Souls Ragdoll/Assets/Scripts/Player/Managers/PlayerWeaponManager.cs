@@ -14,10 +14,10 @@ namespace AlessioBorriello
         private AnimationManager animationManager;
         private PlayerInventoryManager inventoryManager;
         private ActiveRagdollManager ragdollManager;
+        private PlayerCombatManager combatManager;
 
         private bool attackingWithLeft = false;
         private AttackType attackType;
-
         private int nextComboAttackIndex = 0;
         private bool chainedAttack = false;
 
@@ -29,6 +29,7 @@ namespace AlessioBorriello
             animationManager = playerManager.GetAnimationManager();
             inventoryManager = playerManager.GetInventoryManager();
             ragdollManager = playerManager.GetRagdollManager();
+            combatManager = playerManager.GetCombatManager();
         }
 
         public void HandleAttacks()
@@ -37,7 +38,7 @@ namespace AlessioBorriello
             HandleRollAndBackdashAttackTimers();
 
             //Store presses
-            bool rb = inputManager.rbInputPressed;
+            bool rb = inputManager.rbInputPressed || !playerManager.isClient;
             bool rt = inputManager.rtInputPressed;
             bool lb = inputManager.lbInputPressed;
             bool lt = inputManager.ltInputPressed;
@@ -46,6 +47,9 @@ namespace AlessioBorriello
             bool isLeft = (lb || lt);
             bool isHeavy = (lt || rt);
 
+            //If it's not a weapon
+            if (inventoryManager.GetCurrentItemType(isLeft) != PlayerInventoryManager.ItemType.weapon) return;
+
             //If any of these is pressed
             if (rb || rt || lb || lt)
             {
@@ -53,18 +57,17 @@ namespace AlessioBorriello
                 AttackType attackType = GetAttackType(isHeavy);
                 chainedAttack = CheckForCombo(isLeft, attackType);
                 //Try to attack
-                TryAttack(isLeft, isHeavy, attackType);
+                TryAttack(isLeft, attackType);
             }
 
         }
 
-        private void TryAttack(bool isLeft, bool isHeavy, AttackType newAttackType)
+        private void TryAttack(bool isLeft, AttackType newAttackType)
         {
             if (playerManager.playerIsStuckInAnimation) return;
 
             //Get right or left item
             HandEquippableItem item = (isLeft)? inventoryManager.GetCurrentItem(true) : inventoryManager.GetCurrentItem(false);
-            if (item is not WeaponItem) return;
 
             //Get this new attack's proprieties
             bool newAttackingWithLeft = isLeft;
@@ -181,6 +184,11 @@ namespace AlessioBorriello
             return true;
         }
 
+        public bool IsAttackingWithLeft()
+        {
+            return attackingWithLeft;
+        }
+
         public void ResetCombo()
         {
             if (!chainedAttack) //Reset combo if player has not chained an attack
@@ -198,11 +206,6 @@ namespace AlessioBorriello
 
             //Reset
             chainedAttack = false; //Set chaining to false so the player has to press again
-        }
-
-        public bool IsAttackingWithLeft()
-        {
-            return attackingWithLeft;
         }
 
         private enum AttackType

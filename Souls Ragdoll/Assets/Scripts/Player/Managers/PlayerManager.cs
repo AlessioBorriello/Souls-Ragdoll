@@ -14,7 +14,8 @@ namespace AlessioBorriello
         public PlayerData playerData; //Player data reference
         public Transform groundCheckTransform; //Player's ground check's transform
 
-        private GameObject animatedPlayer; //Player data reference
+        private GameObject animatedPlayer; //Animated player reference
+        private GameObject physicalPlayer; //Physical player reference
         private Rigidbody physicalHips; //Player's physical hips
         private Transform animatedHips; //Player's animated hips
 
@@ -70,6 +71,7 @@ namespace AlessioBorriello
             uiManager = FindObjectOfType<UIManager>();
 
             animatedPlayer = transform.Find("AnimatedPlayer").gameObject;
+            physicalPlayer = transform.Find("PhysicalPlayer").gameObject;
             physicalHips = transform.Find("PhysicalPlayer/Armature/Hip").GetComponent<Rigidbody>();
             animatedHips = transform.Find("AnimatedPlayer/Armature/Hip");
 
@@ -151,6 +153,11 @@ namespace AlessioBorriello
         public GameObject GetAnimatedPlayer()
         {
             return animatedPlayer;
+        }
+
+        public GameObject GetPhysicalPlayer()
+        {
+            return physicalPlayer;
         }
 
         public Rigidbody GetPhysicalHips()

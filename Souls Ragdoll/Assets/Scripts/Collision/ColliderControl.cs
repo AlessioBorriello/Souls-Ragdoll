@@ -65,7 +65,6 @@ namespace AlessioBorriello
             alreadyHit.Add(otherId);
             if (canHitMultipleTimes) StartCoroutine(RemoveHitId(otherId));
 
-
             PlayerCollisionManager playerCollisionManager = other.GetComponentInParent<PlayerCollisionManager>();
             if (playerCollisionManager != null)
             {

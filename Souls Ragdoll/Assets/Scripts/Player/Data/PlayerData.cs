@@ -56,8 +56,8 @@ namespace AlessioBorriello
         [Header("Roll and Backdash")]
         public float backdashSpeedMultiplier = 1f; //Velocity multiplier when backdashing
         public float rollSpeedMultiplier = 1f; //Velocity multiplier when backdashing
-        public float rollRotationSpeedMultiplier = 1f; //Rotation speed while starting a roll
-        public float lockedOnRollRotationSpeedMultiplier = 12f; //Rotation speed while starting a roll and locked on
+        public float rollRotationSpeed = 1f; //Rotation speed while starting a roll
+        public float lockedOnRollRotationSpeed = 12f; //Rotation speed while starting a roll and locked on
         public float rollJumpForce = 5.2f; //Force added upwards when player rolls
 
         [Header("KO")]
@@ -65,7 +65,7 @@ namespace AlessioBorriello
         public float maxKOTime = 10f; //Max time the player can be ko for
         public float wakeUpTime = .6f; //Time it takes for the player's body to wake up
 
-        [Header("KO Resistances")]
+        [Header("KO Resistances")] //Strenght needed to ko player on impact
         public float hipResistance = 120;
         public float legResistance = 200;
         public float shinResistance = 250;

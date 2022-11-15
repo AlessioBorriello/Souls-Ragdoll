@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 4639691849725609387}
   - component: {fileID: 8271875516501347285}
   - component: {fileID: 4885442601818145827}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}

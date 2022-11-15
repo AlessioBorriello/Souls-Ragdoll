@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Playables;
+using static AlessioBorriello.PlayerCombatManager;
 
 namespace AlessioBorriello
 {
@@ -13,6 +14,8 @@ namespace AlessioBorriello
         private PlayerManager playerManager;
         private InputManager inputManager;
         private AnimationManager animationManager;
+        private PlayerCombatManager combatManager;
+
         private Animator animator;
         private UIManager uiManager;
 
@@ -28,16 +31,20 @@ namespace AlessioBorriello
         private HandEquippableItem currentRightHandItem;
         private ColliderControl currentRightSlotItemColliderControl;
         private int currentRightItemSlotIndex = 0;
+        private ItemType currentLeftItemType;
 
         private HandEquippableItem currentLeftHandItem;
         private ColliderControl currentLeftSlotItemColliderControl;
         private int currentLeftItemSlotIndex = 0;
+        private ItemType currentRightItemType;
 
         private void Start()
         {
             playerManager = GetComponent<PlayerManager>();
             inputManager = playerManager.GetInputManager();
             animationManager = playerManager.GetAnimationManager();
+            combatManager = playerManager.GetCombatManager();
+
             animator = animationManager.GetAnimator();
             uiManager = playerManager.GetUiManager();
 
@@ -80,12 +87,15 @@ namespace AlessioBorriello
             //Set idle animation
             LoadIdleAnimation(item, loadOnLeft);
 
+            //Set item type
+            SetCurrentItemType(item, loadOnLeft);
+
         }
 
         private void LoadIdleAnimation(HandEquippableItem item, bool loadOnLeft)
         {
             int layer = animator.GetLayerIndex((loadOnLeft) ? "Left Arm" : "Right Arm");
-            if (item != null && item.OneHandedIdle != "") animator.CrossFade(item.OneHandedIdle, .1f, layer);
+            if (item != null && item.oneHandedIdle != "") animator.CrossFade(item.oneHandedIdle, .1f, layer);
             else animator.CrossFade("Empty Hand Idle", .1f, layer);
         }
 
@@ -149,6 +159,29 @@ namespace AlessioBorriello
         public ColliderControl GetCurrentItemColliderControl(bool leftHand)
         {
             return (leftHand) ? currentLeftSlotItemColliderControl : currentRightSlotItemColliderControl;
+        }
+
+        public void SetCurrentItemType(HandEquippableItem item, bool leftHand)
+        {
+            ItemType type = ItemType.unarmed;
+
+            if (item is WeaponItem) type = ItemType.weapon;
+            else if (item is ShieldItem) type = ItemType.shield;
+
+            if (leftHand) currentLeftItemType = type;
+            else currentRightItemType = type;
+        }
+
+        public ItemType GetCurrentItemType(bool leftHand)
+        {
+            return (leftHand) ? currentLeftItemType : currentRightItemType;
+        }
+
+        public enum ItemType
+        {
+            unarmed,
+            weapon,
+            shield
         }
 
     }
