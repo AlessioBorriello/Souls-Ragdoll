@@ -29,12 +29,12 @@ namespace AlessioBorriello
 
         //The currently equipped items and the relative colliders
         private HandEquippableItem currentRightHandItem;
-        private ColliderControl currentRightSlotItemColliderControl;
+        private DamageColliderControl currentRightItemDamageColliderControl;
         private int currentRightItemSlotIndex = 0;
         private ItemType currentLeftItemType;
 
         private HandEquippableItem currentLeftHandItem;
-        private ColliderControl currentLeftSlotItemColliderControl;
+        private DamageColliderControl currentLeftItemDamageColliderControl;
         private int currentLeftItemSlotIndex = 0;
         private ItemType currentRightItemType;
 
@@ -74,14 +74,14 @@ namespace AlessioBorriello
                 //Set item on left
                 leftHolder.LoadItemModel(item);
                 currentLeftHandItem = item;
-                currentLeftSlotItemColliderControl = SetItemColliderControl(leftHolder);
+                currentLeftItemDamageColliderControl = SetItemColliderControl(leftHolder);
             }
             else
             {
                 //Set item on right
                 rightHolder.LoadItemModel(item);
                 currentRightHandItem = item;
-                currentRightSlotItemColliderControl = SetItemColliderControl(rightHolder);
+                currentRightItemDamageColliderControl = SetItemColliderControl(rightHolder);
             }
 
             //Set idle animation
@@ -99,11 +99,11 @@ namespace AlessioBorriello
             else animator.CrossFade("Empty Hand Idle", .1f, layer);
         }
 
-        private ColliderControl SetItemColliderControl(HandItemHolder holder)
+        private DamageColliderControl SetItemColliderControl(HandItemHolder holder)
         {
-            ColliderControl collider;
+            DamageColliderControl collider;
             if (holder.currentItemModel == null) return null;
-            collider = holder.currentItemModel.GetComponentInChildren<ColliderControl>();
+            collider = holder.currentItemModel.GetComponentInChildren<DamageColliderControl>();
             return (collider != null) ? collider : null;
         }
 
@@ -156,9 +156,9 @@ namespace AlessioBorriello
         /// </summary>
         /// <param name="leftHand">Collider control of the currently equipped item in the left hand if true, in the right hand if false</param>
         /// <returns>The collider control of the currently equipped item</returns>
-        public ColliderControl GetCurrentItemColliderControl(bool leftHand)
+        public DamageColliderControl GetCurrentItemDamageColliderControl(bool leftHand)
         {
-            return (leftHand) ? currentLeftSlotItemColliderControl : currentRightSlotItemColliderControl;
+            return (leftHand) ? currentLeftItemDamageColliderControl : currentRightItemDamageColliderControl;
         }
 
         public void SetCurrentItemType(HandEquippableItem item, bool leftHand)

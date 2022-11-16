@@ -52,13 +52,13 @@ namespace AlessioBorriello
         #region Collider stuff
         public void EnableDamageCollider()
         {
-            ColliderControl colliderControl = GetDamageColliderControl();
+            DamageColliderControl colliderControl = GetDamageColliderControl();
             if (colliderControl != null) colliderControl.ToggleCollider(true);
         }
 
         public void DisableDamageCollider()
         {
-            ColliderControl colliderControl = GetDamageColliderControl();
+            DamageColliderControl colliderControl = GetDamageColliderControl();
             if (colliderControl != null)
             {
                 colliderControl.ToggleCollider(false);
@@ -66,10 +66,10 @@ namespace AlessioBorriello
             }
         }
 
-        private ColliderControl GetDamageColliderControl()
+        private DamageColliderControl GetDamageColliderControl()
         {
-            if (!weaponManager.IsAttackingWithLeft()) return inventoryManager.GetCurrentItemColliderControl(false);
-            else return inventoryManager.GetCurrentItemColliderControl(true);
+            if (!weaponManager.IsAttackingWithLeft()) return inventoryManager.GetCurrentItemDamageColliderControl(false);
+            else return inventoryManager.GetCurrentItemDamageColliderControl(true);
         }
         #endregion
     }

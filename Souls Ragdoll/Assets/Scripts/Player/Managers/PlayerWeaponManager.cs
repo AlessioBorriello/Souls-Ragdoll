@@ -38,7 +38,7 @@ namespace AlessioBorriello
             HandleRollAndBackdashAttackTimers();
 
             //Store presses
-            bool rb = inputManager.rbInputPressed || !playerManager.isClient;
+            bool rb = inputManager.rbInputPressed;
             bool rt = inputManager.rtInputPressed;
             bool lb = inputManager.lbInputPressed;
             bool lt = inputManager.ltInputPressed;

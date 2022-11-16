@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace AlessioBorriello
 {
-    public class ColliderControl : MonoBehaviour
+    public class DamageColliderControl : MonoBehaviour
     {
         private Collider hitbox;
         private List<int> alreadyHit = new List<int>();
@@ -37,7 +37,7 @@ namespace AlessioBorriello
             }
             else if (other.CompareTag("Static"))
             {
-                Debug.Log("Weapon bounce");
+                StaticTriggerEnter();
             }
         }
 
@@ -55,6 +55,13 @@ namespace AlessioBorriello
             {
                 //If it's an enemy
             }
+        }
+
+        private void StaticTriggerEnter()
+        {
+            AnimationManager animationManager = GetComponentInParent<AnimationManager>();
+            if (animationManager != null) animationManager.PlayTargetAnimation("AttackBounce", .1f, true);
+            ToggleCollider(false);
         }
 
         private void PlayerTriggerEnter(Collider other)

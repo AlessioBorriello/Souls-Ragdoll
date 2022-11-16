@@ -1978,7 +1978,7 @@ MonoBehaviour:
   itemsInLeftSlots:
   - {fileID: 11400000, guid: 15459b580f8f2e546892db2e9691edb4, type: 2}
   - {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 61a7f954cfdd09d4987d33b3aa9384f7, type: 2}
 --- !u!114 &8779414462503701537
 MonoBehaviour:
   m_ObjectHideFlags: 0
