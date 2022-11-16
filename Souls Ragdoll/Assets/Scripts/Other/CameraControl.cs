@@ -58,7 +58,7 @@ namespace AlessioBorriello
 
         private void Update()
         {
-            if (!playerManager.isClient) return;
+            if (!playerManager.isClient || playerManager.isDead || playerManager.isKnockedOut) return;
 
             //Handle lock on inputs
             HandleLockOnControls(inputManager.cameraInput, inputManager.rightStickInputPressed);

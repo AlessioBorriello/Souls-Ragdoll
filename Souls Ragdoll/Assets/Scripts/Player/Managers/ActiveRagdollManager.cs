@@ -35,16 +35,9 @@ namespace AlessioBorriello
             Initialize();
         }
 
-        private void Update()
-        {
-
-            HandleWakeUp();
-
-        }
-
         void FixedUpdate()
         {
-            UpdateJointTargets(joints, animatedBones, initialJointRotations); //Update te joints target rotation to match the relative animated bone rotation
+            UpdateJointTargets(joints, animatedBones, initialJointRotations); //Update the joints target rotation to match the relative animated bone rotation
             SyncPosition(); //Sync the position of the 2 hips
         }
 
@@ -105,7 +98,6 @@ namespace AlessioBorriello
 
         public void SetJointsDriveForces(float hipsForce, float jointForce)
         {
-
             //Set hips joint drive
             JointDrive jointDrive = new JointDrive(); //Create new drive
             jointDrive.maximumForce = float.PositiveInfinity; //Set the max force to infinite (It is set to 0 otherwise and the ragdoll falls)
@@ -297,6 +289,16 @@ namespace AlessioBorriello
 
             knockedOutTimer = playerManager.playerData.KOTime;
             safenetKnockedOutTimer = playerManager.playerData.maxKOTime;
+
+            //Changes friction of the feet so that they don't slide around (set it to idle friction)
+            playerManager.shouldSlide = false;
+        }
+
+        public void Die()
+        {
+            playerManager.isDead = true;
+
+            SetJointsDriveForces(0, 0);
 
             //Changes friction of the feet so that they don't slide around (set it to idle friction)
             playerManager.shouldSlide = false;

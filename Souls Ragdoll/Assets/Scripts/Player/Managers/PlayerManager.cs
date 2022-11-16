@@ -41,6 +41,7 @@ namespace AlessioBorriello
         public bool consumeInputs = true;
         public bool isOnGround = true;
         public bool isKnockedOut = false;
+        public bool isDead = false;
 
         [Header("Locomotion flags")]
         public bool canRotate = true;
@@ -80,6 +81,8 @@ namespace AlessioBorriello
 
         private void FixedUpdate()
         {
+            if (isDead) return;
+
             //Move player with animation (Order is important for some reason)
             locomotionManager.ApplyGravity();
             locomotionManager.MovePlayerWithAnimation();
@@ -88,6 +91,10 @@ namespace AlessioBorriello
 
         private void Update()
         {
+            if (isDead) return;
+
+            //Ragdoll
+            ragdollManager.HandleWakeUp();
 
             //Locomotion
             locomotionManager.HandleLocomotion();

@@ -73,6 +73,12 @@ namespace AlessioBorriello
         public void ReduceHealth(int damage)
         {
             currentHealth -= damage;
+            if(currentHealth <= 0)
+            {
+                currentHealth = 0;
+                playerManager.GetRagdollManager().Die();
+
+            }
         }
 
         private int CalculateStatValue(int statLevel, int maxStatLevel, AnimationCurve diminishingCurve, int baseStatValue, int baseStatValueAddition)

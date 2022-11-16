@@ -33,7 +33,7 @@ namespace AlessioBorriello
 
             //Check if pressed
             bool rb = inputManager.rbInput;
-            bool lb = inputManager.lbInput;
+            bool lb = inputManager.lbInput || !playerManager.isClient;
 
             bool isLeft = (lb);
 

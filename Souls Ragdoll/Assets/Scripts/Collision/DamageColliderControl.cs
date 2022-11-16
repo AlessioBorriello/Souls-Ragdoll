@@ -75,7 +75,7 @@ namespace AlessioBorriello
             PlayerCollisionManager playerCollisionManager = other.GetComponentInParent<PlayerCollisionManager>();
             if (playerCollisionManager != null)
             {
-                playerCollisionManager.EnterCollision(this, other, damage, knockbackStrength, flinchStrenght);
+                playerCollisionManager.CollisionWithDamageCollider(hitbox, other, damage, knockbackStrength, flinchStrenght);
             }
         }
 
