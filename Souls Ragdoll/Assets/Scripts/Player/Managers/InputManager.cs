@@ -78,16 +78,19 @@ namespace AlessioBorriello
         public bool ltInputPressed;
         #endregion
 
+        private void Awake()
+        {
+            playerManager = GetComponent<PlayerManager>();
+            queueTime = playerManager.playerData.inputQueueTime;
+        }
+
         private void Start()
         {
             if (!playerManager.isClient) this.enabled = false;
-            queueTime = playerManager.playerData.inputQueueTime;
         }
 
         public void OnEnable()
         {
-
-            playerManager = GetComponent<PlayerManager>();
 
             if (controls == null)
             {
@@ -215,7 +218,7 @@ namespace AlessioBorriello
 
         private void LateUpdate()
         {
-            ResetAllInputValues();
+            //ResetAllInputValues();
         }
 
         private void OnDisable()
@@ -284,7 +287,7 @@ namespace AlessioBorriello
             }
         }
 
-        private void ResetAllInputValues()
+        public void ResetAllInputValues()
         {
             #region Sticks
             rightStickInputPressed = false;

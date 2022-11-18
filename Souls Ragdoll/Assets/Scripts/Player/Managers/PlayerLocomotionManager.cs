@@ -37,7 +37,7 @@ namespace AlessioBorriello
         private float rollTimer;
         private float inAirTimer;
 
-        private void Start()
+        private void Awake()
         {
 
             playerManager = GetComponent<PlayerManager>();

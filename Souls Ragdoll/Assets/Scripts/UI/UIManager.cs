@@ -24,6 +24,8 @@ namespace AlessioBorriello
 
         private void Update()
         {
+            if (statsManager == null) return;
+
             HandleHealthBar();
             HandleStaminaBar();
         }
@@ -58,6 +60,10 @@ namespace AlessioBorriello
             slotImage.preserveAspect = true;
         }
 
+        public void SetPlayerStatsManager(PlayerStatsManager statsManager)
+        {
+            this.statsManager = statsManager;
+        }
     }
 
 }

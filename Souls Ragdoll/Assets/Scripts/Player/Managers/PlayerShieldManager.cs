@@ -14,7 +14,7 @@ namespace AlessioBorriello
 
         private bool blockingWithLeft = false;
 
-        private void Start()
+        private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
             inputManager = playerManager.GetInputManager();
@@ -33,7 +33,7 @@ namespace AlessioBorriello
 
             //Check if pressed
             bool rb = inputManager.rbInput;
-            bool lb = inputManager.lbInput || !playerManager.isClient;
+            bool lb = inputManager.lbInput;
 
             bool isLeft = (lb);
 

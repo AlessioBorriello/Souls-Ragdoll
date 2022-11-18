@@ -58,7 +58,7 @@ namespace AlessioBorriello
         }
         #endregion
 
-        void Start()
+        void Awake()
         {
 
             playerManager = GetComponent<PlayerManager>();

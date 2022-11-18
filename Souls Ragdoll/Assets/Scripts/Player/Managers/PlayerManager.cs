@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -29,7 +30,12 @@ namespace AlessioBorriello
         private PlayerCombatManager combatManager;
         private PlayerStatsManager statsManager;
         private PlayerCollisionManager collisionManager;
+        private PlayerWeaponManager weaponManager;
+        private PlayerShieldManager shieldManager;
+
         private UIManager uiManager;
+
+        private CameraControl cameraControl;
 
         [HideInInspector] public Transform lockedTarget;
 
@@ -68,6 +74,8 @@ namespace AlessioBorriello
             inventoryManager = GetComponent<PlayerInventoryManager>();
             statsManager = GetComponent<PlayerStatsManager>();
             combatManager = GetComponent<PlayerCombatManager>();
+            weaponManager = GetComponent<PlayerWeaponManager>();
+            shieldManager = GetComponent<PlayerShieldManager>();
 
             uiManager = FindObjectOfType<UIManager>();
 
@@ -77,6 +85,40 @@ namespace AlessioBorriello
             animatedHips = transform.Find("AnimatedPlayer/Armature/Hip");
 
             cameraTransform = Camera.main.transform;
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            if (!IsOwner)
+            {
+                inputManager.enabled = false;
+                animationManager.GetAnimator().applyRootMotion = false;
+                isClient = false;
+                Destroy(inputManager);
+                //Destroy(animationManager);
+                Destroy(collisionManager);
+                Destroy(locomotionManager);
+                Destroy(inventoryManager);
+                Destroy(statsManager);
+                Destroy(combatManager);
+                Destroy(weaponManager);
+                Destroy(shieldManager);
+            }
+            else
+            {
+                isClient = true;
+                transform.position = new Vector3(58, 20, 0);
+
+                cameraControl = cameraTransform.GetComponentInParent<CameraControl>();
+
+                cameraControl.SetCameraPlayerManager(this);
+                cameraControl.SetCameraInputManager(inputManager);
+
+                cameraControl.SetCameraPhysicalHips(physicalHips);
+                cameraControl.SetCameraFollowTransform(physicalHips.transform);
+
+                uiManager.SetPlayerStatsManager(statsManager);
+            }
         }
 
         private void FixedUpdate()
@@ -105,7 +147,10 @@ namespace AlessioBorriello
             //QuickSlots
             inventoryManager.HandleQuickSlots();
 
-    }
+            //Reset inputs
+            inputManager.ResetAllInputValues();
+
+        }
 
         public InputManager GetInputManager()
         {
@@ -135,6 +180,16 @@ namespace AlessioBorriello
         public PlayerCombatManager GetCombatManager()
         {
             return combatManager;
+        }
+
+        public PlayerWeaponManager GetWeaponManager()
+        {
+            return weaponManager;
+        }
+
+        public PlayerShieldManager GetShieldManager()
+        {
+            return shieldManager;
         }
 
         public PlayerStatsManager GetStatsManager()

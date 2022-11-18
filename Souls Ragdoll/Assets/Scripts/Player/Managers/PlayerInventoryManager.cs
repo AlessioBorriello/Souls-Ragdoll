@@ -38,7 +38,7 @@ namespace AlessioBorriello
         private int currentLeftItemSlotIndex = 0;
         private ItemType currentRightItemType;
 
-        private void Start()
+        private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
             inputManager = playerManager.GetInputManager();

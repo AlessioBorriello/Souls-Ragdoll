@@ -30,8 +30,9 @@ namespace AlessioBorriello
         private float targetJointForce;
 
 
-        private void Start()
+        private void Awake()
         {
+            playerManager = GetComponent<PlayerManager>(); //Get player manager
             Initialize();
         }
 
@@ -43,7 +44,6 @@ namespace AlessioBorriello
 
         private void Initialize()
         {
-            playerManager = GetComponent<PlayerManager>(); //Get player manager
             animator = playerManager.GetAnimationManager().GetAnimator(); //Get animator
 
             //Get hips
@@ -241,7 +241,6 @@ namespace AlessioBorriello
         /// </summary>
         public void HandleWakeUp()
         {
-
             if (!playerManager.isKnockedOut) return;
 
             if (IsPlayerVelocityApproxZero(.08f)) //If the player body has stopped

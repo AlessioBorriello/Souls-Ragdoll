@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace AlessioBorriello {
-    public class AnimationManager : MonoBehaviour
+    public class AnimationManager : NetworkBehaviour
     {
         private Animator animator;
         private PlayerManager playerManager;
@@ -64,8 +65,12 @@ namespace AlessioBorriello {
 
         public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
         {
-            playerManager.playerIsStuckInAnimation = isStuckInAnimation;
-            animator.CrossFade(targetAnimation, fadeDuration);
+            PlayTargetAnimationServerRpc(targetAnimation, fadeDuration, isStuckInAnimation);
+            if(IsOwner)
+            {
+                playerManager.playerIsStuckInAnimation = isStuckInAnimation;
+                animator.CrossFade(targetAnimation, fadeDuration);
+            }
         }
 
         public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
@@ -77,6 +82,22 @@ namespace AlessioBorriello {
         public Animator GetAnimator()
         {
             return animator;
+        }
+
+        [ServerRpc]
+        private void PlayTargetAnimationServerRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
+        {
+            //Debug.Log($"Client: {playerManager.OwnerClientId}, sending animation: {targetAnimation} to server");
+            PlayTargetAnimationClientRpc(targetAnimation, fadeDuration, isStuckInAnimation);
+        }
+
+        [ClientRpc]
+        private void PlayTargetAnimationClientRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
+        {
+            //Debug.Log($"Client: {playerManager.OwnerClientId}, playing animation: {targetAnimation} to server");
+            if (IsOwner) return;
+            playerManager.playerIsStuckInAnimation = isStuckInAnimation;
+            animator.CrossFade(targetAnimation, fadeDuration);
         }
 
     }

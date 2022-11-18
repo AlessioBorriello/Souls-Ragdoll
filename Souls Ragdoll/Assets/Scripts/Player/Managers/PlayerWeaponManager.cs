@@ -21,7 +21,7 @@ namespace AlessioBorriello
         private int nextComboAttackIndex = 0;
         private bool chainedAttack = false;
 
-        private void Start()
+        private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
             inputManager = playerManager.GetInputManager();

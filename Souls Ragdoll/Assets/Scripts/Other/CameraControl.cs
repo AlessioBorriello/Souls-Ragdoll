@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.Networking.PlayerConnection;
 using UnityEngine;
 using UnityEngine.Windows;
 using static UnityEngine.GraphicsBuffer;
@@ -52,12 +53,15 @@ namespace AlessioBorriello
 
         private void Start()
         {
+            if (playerManager == null) return;
+
             inputManager = playerManager.GetInputManager();
             physicalHips = playerManager.GetPhysicalHips();
         }
 
         private void Update()
         {
+            if (playerManager == null || cameraFollowTarget == null) return;
             if (!playerManager.isClient || playerManager.isDead || playerManager.isKnockedOut) return;
 
             //Handle lock on inputs
@@ -66,6 +70,7 @@ namespace AlessioBorriello
 
         private void LateUpdate()
         {
+            if (playerManager == null || cameraFollowTarget == null) return;
             if (!playerManager.isClient) return;
 
             //Move the camera
@@ -513,6 +518,26 @@ namespace AlessioBorriello
             }
 
             return cameraDistance;
+        }
+
+        public void SetCameraPlayerManager(PlayerManager playerManager)
+        {
+            this.playerManager = playerManager;
+        }
+
+        public void SetCameraInputManager(InputManager inputManager)
+        {
+            this.inputManager = inputManager;
+        }
+
+        public void SetCameraPhysicalHips(Rigidbody hips)
+        {
+            this.physicalHips = hips;
+        }
+
+        public void SetCameraFollowTransform(Transform target)
+        {
+            this.cameraFollowTarget = target;
         }
 
     }

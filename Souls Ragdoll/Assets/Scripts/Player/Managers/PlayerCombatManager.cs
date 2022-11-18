@@ -13,8 +13,8 @@ namespace AlessioBorriello
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
-            weaponManager = GetComponent<PlayerWeaponManager>();
-            shieldManager = GetComponent<PlayerShieldManager>();
+            weaponManager = playerManager.GetWeaponManager();
+            shieldManager = playerManager.GetShieldManager();
         }
 
         public void HandleCombat()
