@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Networking;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -15,11 +16,17 @@ namespace AlessioBorriello
         private AnimationManager animationManager;
         private Animator animator;
 
-        //private NetworkVariable<Vector3> netPosition = new(writePerm: NetworkVariableWritePermission.Owner);
-        //private NetworkVariable<Quaternion> netRotation = new(writePerm: NetworkVariableWritePermission.Owner);
+        private NetworkVariable<Vector3> netPosition = new(writePerm: NetworkVariableWritePermission.Owner);
+        private NetworkVariable<Quaternion> netRotation = new(writePerm: NetworkVariableWritePermission.Owner);
 
-        private NetworkVariable<float> netNormalMovementAmount = new(writePerm: NetworkVariableWritePermission.Owner);
-        private NetworkVariable<float> netStrafeMovementAmount = new(writePerm: NetworkVariableWritePermission.Owner);
+        public NetworkVariable<float> netNormalMovementAmount = new(0, writePerm: NetworkVariableWritePermission.Owner);
+        public NetworkVariable<float> netStrafeMovementAmount = new(0, writePerm: NetworkVariableWritePermission.Owner);
+
+        public NetworkVariable<bool> netIsAttackingWithLeft = new(false, writePerm: NetworkVariableWritePermission.Owner);
+        public NetworkVariable<bool> netIsBlockingWithLeft = new(false, writePerm: NetworkVariableWritePermission.Owner);
+
+        //Stats
+        public NetworkVariable<int> netCurrentHealth = new(0, writePerm: NetworkVariableWritePermission.Owner);
 
         private void Awake()
         {
@@ -32,25 +39,29 @@ namespace AlessioBorriello
             animatedPlayer = playerManager.GetAnimatedPlayer();
         }
 
+        public override void OnNetworkSpawn()
+        {
+            netIsAttackingWithLeft.OnValueChanged += (bool previousValue, bool newValue) => animationManager.UpdateAttackingWithLeftValue(newValue);
+            netIsBlockingWithLeft.OnValueChanged += (bool previousValue, bool newValue) => animationManager.UpdateBlockingWithLeftValue(newValue);
+        }
+
         void Update()
         {
-            if(IsOwner)
-            {
-                //Read
-                //netPosition.Value = physicalHips.transform.position;
-                //netRotation.Value = animatedPlayer.transform.rotation;
+            if (playerManager.isDead) return;
 
-                netNormalMovementAmount.Value = animator.GetFloat("NormalMovementAmount");
-                netStrafeMovementAmount.Value = animator.GetFloat("StrafeMovementAmount");
+            if (IsOwner)
+            {
+                netPosition.Value = physicalHips.transform.position;
+                netRotation.Value = animatedPlayer.transform.rotation;
             }
             else
             {
-                //Write
-                //physicalHips.transform.position = netPosition.Value;
-                //animatedPlayer.transform.rotation = netRotation.Value;
-
-                animationManager.UpdateMovementAnimatorValues(netNormalMovementAmount.Value, netStrafeMovementAmount.Value, 0);
+                physicalHips.transform.position = netPosition.Value;
+                animatedPlayer.transform.rotation = netRotation.Value;
             }
+
+            animationManager.UpdateMovementAnimatorValues(netNormalMovementAmount.Value, netStrafeMovementAmount.Value, 0);
         }
+    
     }
 }

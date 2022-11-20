@@ -1980,7 +1980,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 15459b580f8f2e546892db2e9691edb4, type: 2}
   itemsInLeftSlots:
   - {fileID: 11400000, guid: 15459b580f8f2e546892db2e9691edb4, type: 2}
-  - {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
+  - {fileID: 0}
   - {fileID: 11400000, guid: 61a7f954cfdd09d4987d33b3aa9384f7, type: 2}
 --- !u!114 &8779414462503701537
 MonoBehaviour:
@@ -2043,6 +2043,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88103a65e1b3e4c49a450e1e72535300, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  netNormalMovementAmount:
+    m_InternalValue: 0
+  netStrafeMovementAmount:
+    m_InternalValue: 0
+  netIsAttackingWithLeft:
+    m_InternalValue: 0
+  netIsBlockingWithLeft:
+    m_InternalValue: 0
 --- !u!114 &7526962379060038386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2441,8 +2449,6 @@ GameObject:
   - component: {fileID: 3193748364022854776}
   - component: {fileID: 4841896455486392246}
   - component: {fileID: 63049233358653822}
-  - component: {fileID: 1052149000649079034}
-  - component: {fileID: 1016962687111642043}
   m_Layer: 7
   m_Name: Hip
   m_TagString: Player
@@ -2607,44 +2613,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   knockOutResistance: 100
   bodyPart: 0
---- !u!114 &1052149000649079034
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4841896455486392241}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df2868252ab5c4d1da357e8f11f1b524, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 0
-  SyncScaleY: 0
-  SyncScaleZ: 0
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 0
-  Interpolate: 1
---- !u!114 &1016962687111642043
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4841896455486392241}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4991602508117447578
 GameObject:
   m_ObjectHideFlags: 0

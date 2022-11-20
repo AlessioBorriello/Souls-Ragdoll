@@ -13,7 +13,6 @@ namespace AlessioBorriello
         [SerializeField] float speed = 2f;
 
         public float elapsedTime;
-        private NetworkVariable<float> netElapsedTime = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         private Vector3 startingEuler;
 
         private void Awake()
@@ -26,14 +25,19 @@ namespace AlessioBorriello
 
         public override void OnNetworkSpawn()
         {
-            if (IsOwner)
-            {
-                netElapsedTime.Value = elapsedTime;
-            }
-            else
-            {
-                elapsedTime = netElapsedTime.Value;
-            }
+            SetElapsedTimeServerRpc();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void SetElapsedTimeServerRpc()
+        {
+            SetElapsedTimeClientRpc(elapsedTime);
+        }
+
+        [ClientRpc]
+        private void SetElapsedTimeClientRpc(float time)
+        {
+            elapsedTime = time;
         }
 
         void FixedUpdate()

@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using Unity.Netcode;
 
 namespace AlessioBorriello
 {
-    public class ActiveRagdollManager : MonoBehaviour
+    public class ActiveRagdollManager : NetworkBehaviour
     {
         private PlayerManager playerManager; //Player manager
         private Animator animator; //Animator of the animated character
@@ -241,14 +242,15 @@ namespace AlessioBorriello
         /// </summary>
         public void HandleWakeUp()
         {
-            if (!playerManager.isKnockedOut) return;
+            if (!IsOwner || !playerManager.isKnockedOut) return;
 
             if (IsPlayerVelocityApproxZero(.08f)) //If the player body has stopped
             {
                 knockedOutTimer -= Time.deltaTime; //Decreases timer
                 if (knockedOutTimer <= 0) //If timer is up
                 {
-                    WakeUp(playerManager.playerData.wakeUpTime); //Wake up
+                    WakeUpServerRpc(playerManager.playerData.wakeUpTime); //Wake up
+                    WakeUp(playerManager.playerData.wakeUpTime);
                 }
             }
             else //The player's body has moved
@@ -257,7 +259,11 @@ namespace AlessioBorriello
             }
 
             safenetKnockedOutTimer -= Time.deltaTime;
-            if(safenetKnockedOutTimer <= 0) WakeUp(playerManager.playerData.wakeUpTime); //Safety net wake up
+            if (safenetKnockedOutTimer <= 0)
+            {
+                WakeUpServerRpc(playerManager.playerData.wakeUpTime); //Safety net wake up
+                WakeUp(playerManager.playerData.wakeUpTime);
+            }
 
         }
 
@@ -273,6 +279,19 @@ namespace AlessioBorriello
 
             knockedOutTimer = 0;
             safenetKnockedOutTimer = 0;
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void WakeUpServerRpc(float time)
+        {
+            WakeUpClientRpc(time);
+        }
+
+        [ClientRpc]
+        public void WakeUpClientRpc(float time)
+        {
+            if (IsOwner) return;
+            WakeUp(time);
         }
 
         /// <summary>
@@ -293,6 +312,19 @@ namespace AlessioBorriello
             playerManager.shouldSlide = false;
         }
 
+        [ServerRpc(RequireOwnership = false)]
+        public void KnockOutServerRpc(float time = 0)
+        {
+            KnockOutClientRpc(time);
+        }
+
+        [ClientRpc]
+        public void KnockOutClientRpc(float time = 0)
+        {
+            if (IsOwner) return;
+            KnockOut(time);
+        }
+
         public void Die()
         {
             playerManager.isDead = true;
@@ -301,6 +333,19 @@ namespace AlessioBorriello
 
             //Changes friction of the feet so that they don't slide around (set it to idle friction)
             playerManager.shouldSlide = false;
+        }
+        
+        [ServerRpc(RequireOwnership = false)]
+        public void DieServerRpc()
+        {
+            DieClientRpc();
+        }
+
+        [ClientRpc]
+        public void DieClientRpc()
+        {
+            if (IsOwner) return;
+            Die();
         }
 
         /// <summary>
@@ -356,6 +401,19 @@ namespace AlessioBorriello
             {
                 part.layer = (enable)? characterLayer : ignoreCharacterLayer;
             }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void ToggleCollisionOfArmsServerRpc(bool enable)
+        {
+            ToggleCollisionOfArmsClientRpc(enable);
+        }
+
+        [ClientRpc]
+        public void ToggleCollisionOfArmsClientRpc(bool enable)
+        {
+            if (IsOwner) return;
+            ToggleCollisionOfArms(enable);
         }
 
     }

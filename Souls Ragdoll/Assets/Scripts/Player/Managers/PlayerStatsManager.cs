@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace AlessioBorriello
@@ -8,6 +9,7 @@ namespace AlessioBorriello
     {
 
         private PlayerManager playerManager;
+        private PlayerNetworkManager networkManager;
         private AnimationManager animationManager;
 
         [SerializeField] private PlayerStats playerStats;
@@ -24,6 +26,7 @@ namespace AlessioBorriello
                 vigorLevel = value;
                 maxHealth = CalculateStatValue(vigorLevel, playerStats.vigorMaxLevel, playerStats.vigorDiminishingReturnCurve, playerStats.baseHealth, playerStats.baseHealthAdded);
                 currentHealth = maxHealth;
+                networkManager.netCurrentHealth.Value = currentHealth;
             }
         }
         #endregion
@@ -62,12 +65,20 @@ namespace AlessioBorriello
         {
 
             playerManager = GetComponent<PlayerManager>();
+            networkManager = playerManager.GetNetworkManager();
             animationManager = playerManager.GetAnimationManager();
 
             VigorLevel = 1;
             StrengthLevel = 1;
             EnduranceLevel = 1;
 
+        }
+
+        private void Start()
+        {
+            //VigorLevel = 1;
+            //StrengthLevel = 1;
+            //EnduranceLevel = 1;
         }
 
         public void ReduceHealth(int damage)
@@ -77,8 +88,11 @@ namespace AlessioBorriello
             {
                 currentHealth = 0;
                 playerManager.GetRagdollManager().Die();
+                playerManager.GetRagdollManager().DieServerRpc();
 
             }
+
+            networkManager.netCurrentHealth.Value = currentHealth;
         }
 
         private int CalculateStatValue(int statLevel, int maxStatLevel, AnimationCurve diminishingCurve, int baseStatValue, int baseStatValueAddition)

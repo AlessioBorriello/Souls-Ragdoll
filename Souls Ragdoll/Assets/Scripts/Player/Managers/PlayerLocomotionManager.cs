@@ -275,7 +275,11 @@ namespace AlessioBorriello
                 }
 
                 //Knock out
-                if (!playerManager.isKnockedOut && inAirTimer > playerManager.playerData.knockoutLandThreshold) ragdollManager.KnockOut();
+                if (!playerManager.isKnockedOut && inAirTimer > playerManager.playerData.knockoutLandThreshold)
+                {
+                    ragdollManager.KnockOutServerRpc();
+                    ragdollManager.KnockOut();
+                }
 
                 inAirTimer = 0;
             }

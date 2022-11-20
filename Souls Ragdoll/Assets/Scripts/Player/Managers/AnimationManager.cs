@@ -8,6 +8,7 @@ namespace AlessioBorriello {
     {
         private Animator animator;
         private PlayerManager playerManager;
+        private PlayerNetworkManager networkManager;
 
         private int normalMovementAmountHash;
         private int strafeMovementAmountHash;
@@ -15,6 +16,8 @@ namespace AlessioBorriello {
         private int attackingWithLeftHash;
         private int blockingWithLeftHash;
         private int changingLeftItemHash;
+
+
 
         private void Awake()
         {
@@ -25,6 +28,7 @@ namespace AlessioBorriello {
         public void Initialize()
         {
             playerManager = GetComponent<PlayerManager>();
+            networkManager = playerManager.GetNetworkManager();
             normalMovementAmountHash = Animator.StringToHash("NormalMovementAmount");
             strafeMovementAmountHash = Animator.StringToHash("StrafeMovementAmount");
             onGroundHash = Animator.StringToHash("OnGround");
@@ -37,6 +41,11 @@ namespace AlessioBorriello {
 
         public void UpdateMovementAnimatorValues(float normal, float strafe, float time)
         {
+            if (playerManager.IsOwner)
+            {
+                networkManager.netNormalMovementAmount.Value = normal;
+                networkManager.netStrafeMovementAmount.Value = strafe;
+            }
 
             animator.SetFloat(normalMovementAmountHash, normal, time, Time.deltaTime);
             animator.SetFloat(strafeMovementAmountHash, strafe, time, Time.deltaTime);
@@ -50,11 +59,13 @@ namespace AlessioBorriello {
 
         public void UpdateAttackingWithLeftValue(bool attackingWithLeft)
         {
+            if (playerManager.IsOwner) networkManager.netIsAttackingWithLeft.Value = attackingWithLeft;
             animator.SetBool(attackingWithLeftHash, attackingWithLeft);
         }
 
         public void UpdateBlockingWithLeftValue(bool blockingWithLeft)
         {
+            if (playerManager.IsOwner) networkManager.netIsBlockingWithLeft.Value = blockingWithLeft;
             animator.SetBool(blockingWithLeftHash, blockingWithLeft);
         }
 
@@ -66,11 +77,8 @@ namespace AlessioBorriello {
         public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
         {
             PlayTargetAnimationServerRpc(targetAnimation, fadeDuration, isStuckInAnimation);
-            if(IsOwner)
-            {
-                playerManager.playerIsStuckInAnimation = isStuckInAnimation;
-                animator.CrossFade(targetAnimation, fadeDuration);
-            }
+            playerManager.playerIsStuckInAnimation = isStuckInAnimation;
+            animator.CrossFade(targetAnimation, fadeDuration);
         }
 
         public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
@@ -84,7 +92,7 @@ namespace AlessioBorriello {
             return animator;
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         private void PlayTargetAnimationServerRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
         {
             //Debug.Log($"Client: {playerManager.OwnerClientId}, sending animation: {targetAnimation} to server");

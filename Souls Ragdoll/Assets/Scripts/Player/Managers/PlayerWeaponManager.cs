@@ -99,6 +99,7 @@ namespace AlessioBorriello
 
             //Disable arms collision
             ragdollManager.ToggleCollisionOfArms(false);
+            ragdollManager.ToggleCollisionOfArmsServerRpc(false);
         }
 
         private float GetAttackMovementSpeedMultiplier(WeaponItem weapon)
@@ -196,6 +197,7 @@ namespace AlessioBorriello
                 nextComboAttackIndex = 0;
                 //Enable arms collision
                 playerManager.GetRagdollManager().ToggleCollisionOfArms(true);
+                playerManager.GetRagdollManager().ToggleCollisionOfArmsServerRpc(true);
             }
             else
             {

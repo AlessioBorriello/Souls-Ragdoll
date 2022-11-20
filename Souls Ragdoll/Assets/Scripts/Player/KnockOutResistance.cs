@@ -11,7 +11,7 @@ namespace AlessioBorriello
         private PlayerManager playerManager;
         private ActiveRagdollManager ragdollManager;
 
-        private void Start()
+        private void Awake()
         {
             playerManager = GetComponentInParent<PlayerManager>(); //Get player manager
             ragdollManager = playerManager.GetRagdollManager();
@@ -20,12 +20,12 @@ namespace AlessioBorriello
 
         private void OnCollisionEnter(Collision collision)
         {
-
             if (collision.collider.CompareTag("Player") || playerManager.isKnockedOut) return;
 
             if (collision.impulse.magnitude > knockOutResistance)
             {
                 if(playerManager.isClient) Debug.Log($"Collision of: {this.name} with {collision.collider.name}, force {collision.impulse.magnitude} (Res: {knockOutResistance})");
+                ragdollManager.KnockOutServerRpc();
                 ragdollManager.KnockOut();
             }
         }

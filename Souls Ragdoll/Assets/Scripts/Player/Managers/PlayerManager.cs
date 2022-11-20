@@ -21,8 +21,9 @@ namespace AlessioBorriello
         private Transform animatedHips; //Player's animated hips
 
         //Components
-        private InputManager inputManager;
         private Transform cameraTransform;
+        private InputManager inputManager;
+        private PlayerNetworkManager networkManager;
         private AnimationManager animationManager;
         private PlayerLocomotionManager locomotionManager;
         private ActiveRagdollManager ragdollManager;
@@ -67,6 +68,7 @@ namespace AlessioBorriello
         private void Awake()
         {
             inputManager = GetComponent<InputManager>();
+            networkManager = GetComponent<PlayerNetworkManager>();
             animationManager = GetComponent<AnimationManager>();
             ragdollManager = GetComponent<ActiveRagdollManager>();
             collisionManager = GetComponent<PlayerCollisionManager>();
@@ -98,11 +100,16 @@ namespace AlessioBorriello
                 //Destroy(animationManager);
                 Destroy(collisionManager);
                 Destroy(locomotionManager);
-                Destroy(inventoryManager);
+                //Destroy(inventoryManager);
                 Destroy(statsManager);
                 Destroy(combatManager);
                 Destroy(weaponManager);
                 Destroy(shieldManager);
+
+                foreach(KnockOutResistance r in GetComponentsInChildren<KnockOutResistance>())
+                {
+                    Destroy(r);
+                }
             }
             else
             {
@@ -155,6 +162,11 @@ namespace AlessioBorriello
         public InputManager GetInputManager()
         {
             return inputManager;
+        }
+
+        public PlayerNetworkManager GetNetworkManager()
+        {
+            return networkManager;
         }
 
         public AnimationManager GetAnimationManager()

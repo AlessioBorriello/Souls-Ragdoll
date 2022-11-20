@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using Unity.Netcode;
 using UnityEngine;
 using static System.TimeZoneInfo;
 
@@ -36,6 +37,8 @@ namespace AlessioBorriello
 
         public void CollisionWithDamageCollider(Collider damageCollider, Collider damagedPlayerCollider, int damage, float knockbackStrength, float flinchStrenght)
         {
+            if (!playerManager.IsOwner) return;
+
             if (CheckIfHit(damageCollider.GetInstanceID()))
             {
                 bool attackBlocked = false;
