@@ -48,7 +48,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 200}
   m_MaxSize: {x: 24288, y: 16192}
   vertical: 0
-  controlID: 19
+  controlID: 20
 --- !u!114 &3
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -224,7 +224,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 200}
   m_MaxSize: {x: 16192, y: 16192}
   vertical: 1
-  controlID: 20
+  controlID: 115
 --- !u!114 &10
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -249,7 +249,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 21
+  controlID: 116
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1422,21 +1422,21 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Data
+    - Assets/Scripts
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Data
+  - Assets/Scripts
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\TheNinjaTuna\Documents\GitHub\Souls-Ragdoll\Souls Ragdoll
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 82710000
-    m_LastClickedID: 29058
+    m_SelectedIDs: 8e710000
+    m_LastClickedID: 29070
     m_ExpandedIDs: 00000000a2700000a4700000a6700000a8700000aa700000ac700000ae700000b0700000b2700000b4700000b6700000b8700000ba700000bc700000be700000c0700000c2700000c4700000c6700000c8700000ca700000cc700000ce700000d0700000d2700000d4700000d6700000d8700000da700000dc700000de700000e0700000e2700000e4700000e6700000e8700000ea700000ec700000ee700000f0700000f2700000f4700000f6700000f8700000fa700000fc700000fe7000000071000002710000047100000671000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -1593,9 +1593,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
+      m_SelectedIDs: c2280000
       m_LastClickedID: 0
-      m_ExpandedIDs: 30fbffff
+      m_ExpandedIDs: 18f6ffff30fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1844,9 +1844,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 60.797493, y: 19.95575, z: 12.934319}
+    m_Target: {x: 67.82998, y: 18.216469, z: 12.788834}
     speed: 2
-    m_Value: {x: 60.797493, y: 19.95575, z: 12.934319}
+    m_Value: {x: 67.82998, y: 18.216469, z: 12.788834}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1893,13 +1893,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: -0.07623097, y: 0.11401025, z: -0.008773732, w: -0.9905136}
+    m_Target: {x: -0.14350322, y: 0.4378658, z: -0.07102521, w: -0.88467085}
     speed: 2
-    m_Value: {x: -0.07623084, y: 0.11401005, z: -0.008773716, w: -0.99051183}
+    m_Value: {x: -0.14350274, y: 0.43786433, z: -0.07102497, w: -0.8846679}
   m_Size:
-    m_Target: 12.3834095
+    m_Target: 2.7774267
     speed: 2
-    m_Value: 12.3834095
+    m_Value: 2.7774267
   m_Ortho:
     m_Target: 0
     speed: 2

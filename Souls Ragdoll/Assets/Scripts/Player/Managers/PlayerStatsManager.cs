@@ -25,7 +25,10 @@ namespace AlessioBorriello
                 vigorLevel = value;
                 maxHealth = CalculateStatValue(vigorLevel, playerStats.vigorMaxLevel, playerStats.vigorDiminishingReturnCurve, playerStats.baseHealth, playerStats.baseHealthAdded);
                 currentHealth = maxHealth;
+
+                //Update net vars
                 networkManager.netCurrentHealth.Value = currentHealth;
+                networkManager.netMaxHealth.Value = maxHealth;
             }
         }
         #endregion
@@ -63,10 +66,8 @@ namespace AlessioBorriello
 
         void Awake()
         {
-
             playerManager = GetComponent<PlayerManager>();
             networkManager = playerManager.GetNetworkManager();
-
         }
 
         private void Start()

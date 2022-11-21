@@ -37,7 +37,9 @@ namespace AlessioBorriello
             }
             else if (other.CompareTag("Static"))
             {
-                StaticTriggerEnter();
+                Vector3 collisionPoint = other.ClosestPoint(transform.position);
+                Vector3 collisionNormal = (transform.position - collisionPoint).normalized;
+                StaticTriggerEnter(collisionNormal);
             }
         }
 
@@ -57,9 +59,13 @@ namespace AlessioBorriello
             }
         }
 
-        private void StaticTriggerEnter()
+        private void StaticTriggerEnter(Vector3 normal)
         {
-            AnimationManager animationManager = GetComponentInParent<AnimationManager>();
+            PlayerManager playerManager = GetComponentInParent<PlayerManager>();
+            //If the static was the ground
+            if (playerManager != null && normal == playerManager.GetLocomotionManager().GetGroundNormal()) return;
+
+            AnimationManager animationManager = playerManager.GetAnimationManager();
             if (animationManager != null) animationManager.PlayTargetAnimation("AttackBounce", .1f, true);
             ToggleCollider(false);
         }

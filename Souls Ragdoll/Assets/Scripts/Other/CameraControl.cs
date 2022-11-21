@@ -40,6 +40,7 @@ namespace AlessioBorriello
         private float currentObstructedTargetTimer = 0;
 
         [HideInInspector] public Transform lockedTarget; //The target locked on to
+        private LockOnUIManager lockedTargetUI;
 
         //Camera angles
         private float cameraPitchAngle; //Up and down angle
@@ -169,8 +170,7 @@ namespace AlessioBorriello
                 //If it was found, set it as the locked target
                 if (newTarget != null && newTarget != lockedTarget)
                 {
-                    lockedTarget = newTarget;
-                    playerManager.lockedTarget = newTarget;
+                    SetLockedTarget(newTarget);
                 }
 
             }
@@ -193,8 +193,8 @@ namespace AlessioBorriello
             if (lockedTarget == null)
             {
                 //Try to get a target
-                lockedTarget = GetLockOnTarget();
-                playerManager.lockedTarget = lockedTarget;
+                Transform target = GetLockOnTarget();
+                SetLockedTarget(target);
 
                 //If target is found
                 if (lockedTarget != null) playerManager.isLockingOn = true;
@@ -219,6 +219,19 @@ namespace AlessioBorriello
             playerManager.lockedTarget = null;
             playerManager.isLockingOn = false;
             currentObstructedTargetTimer = 0;
+
+            //UI
+            lockedTargetUI.ToggleTargetUI(false);
+            lockedTargetUI = null;
+        }
+
+        private void SetLockedTarget(Transform target)
+        {
+            lockedTarget = target;
+            playerManager.lockedTarget = target;
+
+            lockedTargetUI = lockedTarget?.GetComponent<LockOnUIManager>();
+            lockedTargetUI?.ToggleTargetUI(true);
         }
 
         /// <summary>
@@ -229,8 +242,8 @@ namespace AlessioBorriello
             LoseLockedTarget();
 
             //Try to get a new target
-            lockedTarget = GetLockOnTarget();
-            playerManager.lockedTarget = lockedTarget;
+            Transform target = GetLockOnTarget();
+            SetLockedTarget(target);
 
             //If target is found
             if (lockedTarget != null) playerManager.isLockingOn = true;

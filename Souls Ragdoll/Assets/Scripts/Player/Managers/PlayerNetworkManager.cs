@@ -27,6 +27,7 @@ namespace AlessioBorriello
 
         //Stats
         public NetworkVariable<int> netCurrentHealth = new(0, writePerm: NetworkVariableWritePermission.Owner);
+        public NetworkVariable<int> netMaxHealth = new(0, writePerm: NetworkVariableWritePermission.Owner);
 
         private void Awake()
         {
