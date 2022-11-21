@@ -18,8 +18,12 @@ namespace AlessioBorriello
         [Header("Endurance")]
         public int enduranceMinLevel = 1; //Minimum of endurance stat
         public int enduranceMaxLevel = 99; //Maximum of endurance stat
-        public int baseStamina = 200; //Base stamina when at level 1
-        public int baseStaminaAdded = 6; //Stamina added per endurance level
+        public float baseStamina = 200; //Base stamina when at level 1
+        public float baseStaminaAdded = 6; //Stamina added per endurance level
+        public float staminaRecoveryRate = .6f; //Stamina recovered per frame
+        public float staminaRecoveryRateMultiplierWhenBlocking = .3f; //Stamina recovery multiplier when blocking with a shield
+        public float staminaDefaultRecoveryTime = 1.1f; //Stamina recovery timer after stamina use by default
+        public float staminaRecoveryTimerMultiplierOnStaminaDepleted = 1.4f; //Timer multiplier when all the stamina is consumed
         public AnimationCurve enduranceDiminishingReturnCurve; //Diminishing return
 
         [Header("Strength")]

@@ -7,6 +7,13 @@ namespace AlessioBorriello
     [CreateAssetMenu(fileName = "newWeaponItem", menuName = "Item/Hand Item/Weapon Item")]
     public class WeaponItem : HandEquippableItem
     {
+        [Header("Stamina use")]
+        public float lightAttackStaminaUse = 40f;
+        public float heavyAttackStaminaUse = 65f;
+        public float rollingAttackStaminaUse = 30f;
+        public float runningAttackStaminaUse = 34f;
+
+
         [Header("Movement speed multiplier")]
         public float movementSpeedMultiplier = 2.5f; //How fast the player moves forward when attacking
 

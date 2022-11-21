@@ -333,6 +333,13 @@ namespace AlessioBorriello
 
             //Changes friction of the feet so that they don't slide around (set it to idle friction)
             playerManager.shouldSlide = false;
+
+            //Remove target if it was the target of the player
+            if(!IsOwner)
+            {
+                CameraControl cameraControl = Camera.main.transform.GetComponentInParent<CameraControl>();
+                if (cameraControl?.lockedTarget.root.GetInstanceID() == transform.root.GetInstanceID()) cameraControl.TargetDied();
+            }
         }
         
         [ServerRpc(RequireOwnership = false)]

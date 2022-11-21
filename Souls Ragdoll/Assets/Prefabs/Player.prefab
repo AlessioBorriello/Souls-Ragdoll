@@ -2051,6 +2051,8 @@ MonoBehaviour:
     m_InternalValue: 0
   netIsBlockingWithLeft:
     m_InternalValue: 0
+  netCurrentHealth:
+    m_InternalValue: 0
 --- !u!114 &7526962379060038386
 MonoBehaviour:
   m_ObjectHideFlags: 0

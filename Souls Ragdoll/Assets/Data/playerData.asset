@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 535a02da224185e4cba919cb828fc6d7, type: 3}
   m_Name: playerData
   m_EditorClassIdentifier: 
+  inputQueueTime: 0.5
   hipsJointDriveForce: 1250
   jointDriveForce: 850
   maxLockOnDistance: 20
@@ -27,6 +28,7 @@ MonoBehaviour:
   runSpeedMultiplier: 1.75
   sprintSpeedMultiplier: 2.05
   sprintThreshold: 0.4
+  sprintBaseStaminaCost: 0.42
   rotationSpeed: 8.8
   inAirRotationSpeed: 3.5
   maxSlopeAngle: 35
@@ -49,10 +51,12 @@ MonoBehaviour:
   timeBeforeFalling: 0.32
   knockoutLandThreshold: 1.45
   backdashSpeedMultiplier: 3.15
+  backdashBaseStaminaCost: 25
   rollSpeedMultiplier: 2.5
-  rollRotationSpeedMultiplier: 1
-  lockedOnRollRotationSpeedMultiplier: 12
+  rollRotationSpeed: 1
+  lockedOnRollRotationSpeed: 12
   rollJumpForce: 5.22
+  rollBaseStaminaCost: 25
   KOTime: 3.2
   maxKOTime: 15
   wakeUpTime: 0.6

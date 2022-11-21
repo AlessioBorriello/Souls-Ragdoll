@@ -26,6 +26,8 @@ namespace AlessioBorriello
         public float runSpeedMultiplier = 1f; //Velocity multiplier when running
         public float sprintSpeedMultiplier = 1f; //Velocity multiplier when sprinting
         public float sprintThreshold = .2f; //The roll button has to be pressed for this amount of time to sprint
+        public float sprintBaseStaminaCost = .8f; //The stamina cost to spring
+        public float sprintStaminaNecessaryAfterStaminaDepleted = 12f; //The stamina the player must reach to sprint again after depleting all the stamina
         public float rotationSpeed = 10f; //Rotation speed
         public float inAirRotationSpeed = 4f; //Rotation speed while in air
         public float maxSlopeAngle = 30f; //Max angle of a slope before it is considered unclimbable
@@ -55,10 +57,12 @@ namespace AlessioBorriello
 
         [Header("Roll and Backdash")]
         public float backdashSpeedMultiplier = 1f; //Velocity multiplier when backdashing
+        public float backdashBaseStaminaCost = 25f; //Stamina used to backdash
         public float rollSpeedMultiplier = 1f; //Velocity multiplier when backdashing
         public float rollRotationSpeed = 1f; //Rotation speed while starting a roll
         public float lockedOnRollRotationSpeed = 12f; //Rotation speed while starting a roll and locked on
         public float rollJumpForce = 5.2f; //Force added upwards when player rolls
+        public float rollBaseStaminaCost = 25f; //Stamina used to roll
 
         [Header("KO")]
         public float KOTime = 3.6f; //The time the player will be ko for

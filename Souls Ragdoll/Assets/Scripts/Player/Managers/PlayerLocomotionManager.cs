@@ -13,6 +13,7 @@ namespace AlessioBorriello
         private InputManager inputManager;
         private AnimationManager animationManager;
         private ActiveRagdollManager ragdollManager;
+        private PlayerStatsManager statsManager;
         private Animator animator;
 
         [Header("Set up")]
@@ -44,6 +45,7 @@ namespace AlessioBorriello
             animatedPlayer = playerManager.GetAnimatedPlayer();
             physicalPlayer = playerManager.GetPhysicalPlayer();
             inputManager = playerManager.GetInputManager();
+            statsManager = playerManager.GetStatsManager();
             animationManager = playerManager.GetAnimationManager();
             animator = animationManager.GetAnimator();
             ragdollManager = playerManager.GetRagdollManager();
@@ -290,10 +292,12 @@ namespace AlessioBorriello
         /// </summary>
         private void Roll()
         {
-            if (playerManager.disableActions) return;
+            if (playerManager.disableActions || statsManager.currentStamina < 1) return;
 
             currentSpeedMultiplier = playerManager.playerData.rollSpeedMultiplier;
             animationManager.PlayTargetAnimation("Roll", .15f, true);
+
+            statsManager.ConsumeStamina(playerManager.playerData.rollBaseStaminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
         }
 
         /// <summary>
@@ -301,10 +305,12 @@ namespace AlessioBorriello
         /// </summary>
         private void Backdash()
         {
-            if (playerManager.disableActions) return;
+            if (playerManager.disableActions || statsManager.currentStamina < 1) return;
 
             currentSpeedMultiplier = playerManager.playerData.backdashSpeedMultiplier;
             animationManager.PlayTargetAnimation("Backdash", .2f, true);
+
+            statsManager.ConsumeStamina(playerManager.playerData.backdashBaseStaminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
         }
 
         /// <summary>
@@ -312,14 +318,28 @@ namespace AlessioBorriello
         /// </summary>
         private void Sprint()
         {
-            if (inputManager.movementInput.magnitude == 0 || inputManager.eastInputReleased)
+            if (playerManager.disableSprint || inputManager.movementInput.magnitude == 0 || inputManager.eastInputReleased || statsManager.currentStamina < 1)
             {
                 playerManager.isSprinting = false;
+                //Reenable sprint when stamina reaches a certain value
+                if (playerManager.disableSprint && statsManager.currentStamina > playerManager.playerData.sprintStaminaNecessaryAfterStaminaDepleted) playerManager.disableSprint = false;
                 return;
             }
 
             animationManager.UpdateMovementAnimatorValues(1.8f, 0, .1f);
             currentSpeedMultiplier = playerManager.playerData.sprintSpeedMultiplier;
+
+            statsManager.ConsumeStamina(playerManager.playerData.sprintBaseStaminaCost, .05f);
+
+            //Out of stamina
+            if(statsManager.currentStamina < 1)
+            {
+                playerManager.isSprinting = false;
+
+                //Set stamina to 0
+                statsManager.ConsumeStamina(statsManager.maxStamina, statsManager.playerStats.staminaDefaultRecoveryTime);
+
+            }
         }
 
         /// <summary>

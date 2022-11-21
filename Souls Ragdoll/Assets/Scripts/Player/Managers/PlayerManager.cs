@@ -56,6 +56,7 @@ namespace AlessioBorriello
         public bool isRolling = false;
         public bool isBackdashing = false;
         public bool isSprinting = false;
+        public bool disableSprint = false; //Disables sprint when going to 0 stamina
 
         [Header("Combat flag")]
         public bool isAttacking = false;
@@ -91,7 +92,7 @@ namespace AlessioBorriello
 
         public override void OnNetworkSpawn()
         {
-            if (!IsOwner)
+            if (!IsOwner || !isClient)
             {
                 inputManager.enabled = false;
                 animationManager.GetAnimator().applyRootMotion = false;

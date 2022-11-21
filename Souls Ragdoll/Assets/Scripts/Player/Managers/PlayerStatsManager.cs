@@ -10,14 +10,13 @@ namespace AlessioBorriello
 
         private PlayerManager playerManager;
         private PlayerNetworkManager networkManager;
-        private AnimationManager animationManager;
 
-        [SerializeField] private PlayerStats playerStats;
+        public PlayerStats playerStats;
 
         #region Vigor
         private int vigorLevel;
-        public int maxHealth { get; private set; }
-        public int currentHealth { get; private set; }
+        public int maxHealth { get; private set; } = 1;
+        public int currentHealth { get; private set; } = 1;
         public int VigorLevel
         {
             get { return vigorLevel; }
@@ -33,18 +32,19 @@ namespace AlessioBorriello
 
         #region Endurance
         private int enduranceLevel;
-        public int maxStamina { get; private set; }
-        public int currentStamina { get; private set; }
+        public float maxStamina { get; private set; } = 1;
+        public float currentStamina { get; private set; } = 1;
         public int EnduranceLevel
         {
             get { return vigorLevel; }
             set
             {
                 enduranceLevel = value;
-                maxStamina = CalculateStatValue(enduranceLevel, playerStats.enduranceMaxLevel, playerStats.enduranceDiminishingReturnCurve, playerStats.baseStamina, playerStats.baseStaminaAdded);
+                maxStamina = CalculateStatValue(enduranceLevel, playerStats.enduranceMaxLevel, playerStats.enduranceDiminishingReturnCurve, (int)playerStats.baseStamina, (int)playerStats.baseStaminaAdded);
                 currentStamina = maxStamina;
             }
         }
+        private float staminaRecoveryTimer = 0;
         #endregion
 
         #region Strength
@@ -66,33 +66,56 @@ namespace AlessioBorriello
 
             playerManager = GetComponent<PlayerManager>();
             networkManager = playerManager.GetNetworkManager();
-            animationManager = playerManager.GetAnimationManager();
-
-            VigorLevel = 1;
-            StrengthLevel = 1;
-            EnduranceLevel = 1;
 
         }
 
         private void Start()
         {
-            //VigorLevel = 1;
-            //StrengthLevel = 1;
-            //EnduranceLevel = 1;
+            VigorLevel = 1;
+            StrengthLevel = 1;
+            EnduranceLevel = 1;
+        }
+
+        private void Update()
+        {
+            HandleStaminaRecovery();
         }
 
         public void ReduceHealth(int damage)
         {
-            currentHealth -= damage;
+            currentHealth = Mathf.Max(currentHealth - damage, 0);
             if(currentHealth <= 0)
             {
-                currentHealth = 0;
                 playerManager.GetRagdollManager().Die();
                 playerManager.GetRagdollManager().DieServerRpc();
 
             }
 
             networkManager.netCurrentHealth.Value = currentHealth;
+        }
+
+        public void ConsumeStamina(float staminaCost, float staminaRecoveryTime)
+        {
+            currentStamina = Mathf.Max(currentStamina - staminaCost, 0);
+            staminaRecoveryTimer = staminaRecoveryTime;
+
+            //Stamina penalty if the stamina is at 0
+            if (currentStamina <= 0)
+            {
+                staminaRecoveryTimer = playerStats.staminaDefaultRecoveryTime * playerStats.staminaRecoveryTimerMultiplierOnStaminaDepleted;
+                //Disable sprinting until stamina recovered a bit
+                playerManager.disableSprint = true;
+            }
+        }
+
+        private void HandleStaminaRecovery()
+        {
+            if (playerManager.isDead) return;
+
+            if(!playerManager.playerIsStuckInAnimation) staminaRecoveryTimer = Mathf.Max(staminaRecoveryTimer - Time.deltaTime, 0);
+
+            float staminaRecovered = playerStats.staminaRecoveryRate * ((!playerManager.isBlocking)? 1f : playerStats.staminaRecoveryRateMultiplierWhenBlocking);
+            if (staminaRecoveryTimer <= 0) currentStamina = Mathf.Min(currentStamina + staminaRecovered, maxStamina);
         }
 
         private int CalculateStatValue(int statLevel, int maxStatLevel, AnimationCurve diminishingCurve, int baseStatValue, int baseStatValueAddition)

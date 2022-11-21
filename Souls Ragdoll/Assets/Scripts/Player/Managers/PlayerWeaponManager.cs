@@ -9,6 +9,7 @@ namespace AlessioBorriello
     public class PlayerWeaponManager : MonoBehaviour
     {
         private PlayerManager playerManager;
+        private PlayerStatsManager statsManager;
         private InputManager inputManager;
         private PlayerLocomotionManager locomotionManager;
         private AnimationManager animationManager;
@@ -24,6 +25,7 @@ namespace AlessioBorriello
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
+            statsManager = playerManager.GetStatsManager();
             inputManager = playerManager.GetInputManager();
             locomotionManager = playerManager.GetLocomotionManager();
             animationManager = playerManager.GetAnimationManager();
@@ -53,6 +55,9 @@ namespace AlessioBorriello
             //If any of these is pressed
             if (rb || rt || lb || lt)
             {
+                //If no stamina
+                if (statsManager.currentStamina < 1) return;
+
                 //Check for combos
                 AttackType attackType = GetAttackType(isHeavy);
                 chainedAttack = CheckForCombo(isLeft, attackType);
@@ -80,16 +85,32 @@ namespace AlessioBorriello
             attackType = newAttackType;
             animationManager.UpdateAttackingWithLeftValue(attackingWithLeft);
 
+            if(CheckForBackstab(attackType))
+            {
+                //Do backstab
+                Debug.Log("Backstab");
+                return;
+            }
+
             //Get animation to play and movement speed multiplier
             string attackAnimation = GetAttackAnimationString((WeaponItem)item, attackType);
             float attackMovementSpeedMultiplier = GetAttackMovementSpeedMultiplier((WeaponItem)item);
+            float staminaCost = GetAttackStaminaCost(attackType, (WeaponItem)item);
 
             //Attack
-            Attack(attackAnimation, attackMovementSpeedMultiplier);
+            Attack(attackAnimation, attackMovementSpeedMultiplier, staminaCost);
+
         }
 
-        private void Attack(string attackAnimation, float attackMovementSpeedMultiplier)
+        private bool CheckForBackstab(AttackType attackType)
         {
+            if(attackType != AttackType.light) return false;
+            return false;
+        }
+
+        private void Attack(string attackAnimation, float attackMovementSpeedMultiplier, float staminaCost)
+        {
+
             //Play animation
             animationManager.PlayTargetAnimation(attackAnimation, .2f, true);
 
@@ -100,6 +121,9 @@ namespace AlessioBorriello
             //Disable arms collision
             ragdollManager.ToggleCollisionOfArms(false);
             ragdollManager.ToggleCollisionOfArmsServerRpc(false);
+
+            //Consume stamina
+            statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
         }
 
         private float GetAttackMovementSpeedMultiplier(WeaponItem weapon)
@@ -124,6 +148,19 @@ namespace AlessioBorriello
             if(backdashingAttackTimer > 0 && !isHeavy) return AttackType.running;
 
             return (isHeavy) ? AttackType.heavy : AttackType.light;
+        }
+
+        private float GetAttackStaminaCost(AttackType attackType, WeaponItem weapon)
+        {
+            switch(attackType)
+            {
+                case AttackType.light: return weapon.lightAttackStaminaUse;
+                case AttackType.heavy: return weapon.heavyAttackStaminaUse;
+                case AttackType.running: return weapon.runningAttackStaminaUse;
+                case AttackType.rolling: return weapon.rollingAttackStaminaUse;
+
+                default: return weapon.lightAttackStaminaUse;
+            }
         }
 
         #region Rolling and Backdashing attack timers handling

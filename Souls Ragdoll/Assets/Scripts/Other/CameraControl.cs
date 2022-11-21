@@ -36,6 +36,9 @@ namespace AlessioBorriello
         [SerializeField] private float lockedOnDefaultCameraDistance = 8f; //Camera distance when not obstructed and locked on
         [SerializeField] private float cameraLockOnPitchSpeed = 5f; //How fast the camera goes up and down when locked on
         [SerializeField] private float cameraLockOnPivotSpeed = 5f; //How fast the camera goes left and right when locked on
+        [SerializeField] private float obstructedTargetTimer = 1f; //How much time a target must be obstructed for before losing target
+        private float currentObstructedTargetTimer = 0;
+
         [HideInInspector] public Transform lockedTarget; //The target locked on to
 
         //Camera angles
@@ -62,7 +65,7 @@ namespace AlessioBorriello
         private void Update()
         {
             if (playerManager == null || cameraFollowTarget == null) return;
-            if (!playerManager.isClient || playerManager.isDead || playerManager.isKnockedOut) return;
+            if (!playerManager.isClient) return;
 
             //Handle lock on inputs
             HandleLockOnControls(inputManager.cameraInput, inputManager.rightStickInputPressed);
@@ -105,9 +108,9 @@ namespace AlessioBorriello
         public void HandleLockOnControls(Vector2 cameraInput, bool stickPressed)
         {
             //Find target
-            if (playerManager.canLockOn && stickPressed)
+            if (playerManager.canLockOn && stickPressed && !playerManager.isKnockedOut)
             {
-                LockOnPressed();
+                CheckForTargets();
             }
 
             //Lose and change target
@@ -123,15 +126,25 @@ namespace AlessioBorriello
         /// </summary>
         private void HandleLosingLockOnTarget()
         {
+            if (playerManager.isKnockedOut || playerManager.isDead)
+            {
+                LoseLockedTarget();
+                return;
+            }
+
             float distanceFromTarget = Vector3.Distance(physicalHips.position, lockedTarget.position);
             Vector3 directionToTarget = (lockedTarget.position - physicalHips.position).normalized;
 
             bool isObstructed = (Physics.Raycast(physicalHips.position, directionToTarget, Vector3.Distance(physicalHips.position, lockedTarget.position), playerManager.playerData.obstructionMask));
-            if (distanceFromTarget > playerManager.playerData.maxLoseTargetDistance || isObstructed)
+
+            if (isObstructed) currentObstructedTargetTimer += Time.deltaTime;
+            else currentObstructedTargetTimer = 0;
+
+
+            if ((distanceFromTarget > playerManager.playerData.maxLoseTargetDistance) || (currentObstructedTargetTimer > obstructedTargetTimer))
             {
-                lockedTarget = null;
-                playerManager.lockedTarget = null;
-                playerManager.isLockingOn = false;
+                //Debug.Log($"Target lost, obstructed: {isObstructed}, distance {distanceFromTarget}");
+                LoseLockedTarget();
             }
         }
 
@@ -174,7 +187,7 @@ namespace AlessioBorriello
         /// <summary>
         /// Tries to lock on a target if the target is null or sets it as null if it was not
         /// </summary>
-        private void LockOnPressed()
+        private void CheckForTargets()
         {
             //If not locked on
             if (lockedTarget == null)
@@ -193,10 +206,34 @@ namespace AlessioBorriello
             else //If a target was already locked on to
             {
                 //Remove lock on reference
-                lockedTarget = null;
-                playerManager.lockedTarget = null;
-                playerManager.isLockingOn = false;
+                LoseLockedTarget();
             }
+        }
+
+        /// <summary>
+        /// Lose the reference to the target and reset bools
+        /// </summary>
+        private void LoseLockedTarget()
+        {
+            lockedTarget = null;
+            playerManager.lockedTarget = null;
+            playerManager.isLockingOn = false;
+            currentObstructedTargetTimer = 0;
+        }
+
+        /// <summary>
+        /// Target locked on died, remove it and check for another one
+        /// </summary>
+        public void TargetDied()
+        {
+            LoseLockedTarget();
+
+            //Try to get a new target
+            lockedTarget = GetLockOnTarget();
+            playerManager.lockedTarget = lockedTarget;
+
+            //If target is found
+            if (lockedTarget != null) playerManager.isLockingOn = true;
         }
 
         /// <summary>
@@ -336,6 +373,9 @@ namespace AlessioBorriello
         /// <returns>If the target can be locked on to</returns>
         private bool IsLockable(Transform targetTransform, Transform hipsTransform)
         {
+            PlayerManager playerManager = targetTransform.GetComponentInParent<PlayerManager>();
+            if (playerManager == null || playerManager.isDead) return false;
+
             //Get direction to the target
             Vector3 direction = (targetTransform.position - transform.position).normalized;
 
