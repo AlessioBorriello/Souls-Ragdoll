@@ -59,11 +59,7 @@ namespace AlessioBorriello
         public void DisableDamageCollider()
         {
             DamageColliderControl colliderControl = GetDamageColliderControl();
-            if (colliderControl != null)
-            {
-                colliderControl.ToggleCollider(false);
-                colliderControl.EmptyHitList();
-            }
+            if (colliderControl != null) colliderControl.ToggleCollider(false);
         }
 
         private DamageColliderControl GetDamageColliderControl()

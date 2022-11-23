@@ -18,7 +18,11 @@ MonoBehaviour:
   modelPrefab: {fileID: 4952564604112304397, guid: bdebf87f5321f7a49a5772d92cd098fe, type: 3}
   oneHandedIdle: OneHandItemIdle
   physicalDamageAbsorption: 0
-  movementSpeedMultiplier: 4.2
+  lightAttackStaminaUse: 40
+  heavyAttackStaminaUse: 65
+  rollingAttackStaminaUse: 30
+  runningAttackStaminaUse: 34
+  movementSpeedMultiplier: 6.2
   OneHandedLightAttackCombo:
   - OneHandLightAttackOne
   - OneHandLightAttackTwo

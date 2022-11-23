@@ -1,9 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Unity.Netcode;
 using UnityEngine;
-using static System.TimeZoneInfo;
 
 namespace AlessioBorriello
 {
@@ -83,7 +83,6 @@ namespace AlessioBorriello
 
         public void ExitCollision(int colliderId)
         {
-
             if (inContact.Contains(colliderId))
             {
                 inContact.Remove(colliderId);
@@ -93,7 +92,6 @@ namespace AlessioBorriello
 
         private bool CheckIfHit(int colliderId)
         {
-
             bool firstCollision = false;
             if (!inContact.Contains(colliderId)) //If no player collider is in contact with the other collider
             {

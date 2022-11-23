@@ -1,6 +1,7 @@
 using Newtonsoft.Json.Bson;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -15,7 +16,6 @@ namespace AlessioBorriello
         private AnimationManager animationManager;
         private PlayerInventoryManager inventoryManager;
         private ActiveRagdollManager ragdollManager;
-        private PlayerCombatManager combatManager;
 
         private bool attackingWithLeft = false;
         private AttackType attackType;
@@ -31,7 +31,6 @@ namespace AlessioBorriello
             animationManager = playerManager.GetAnimationManager();
             inventoryManager = playerManager.GetInventoryManager();
             ragdollManager = playerManager.GetRagdollManager();
-            combatManager = playerManager.GetCombatManager();
         }
 
         public void HandleAttacks()
@@ -105,6 +104,7 @@ namespace AlessioBorriello
         private bool CheckForBackstab(AttackType attackType)
         {
             if(attackType != AttackType.light) return false;
+
             return false;
         }
 

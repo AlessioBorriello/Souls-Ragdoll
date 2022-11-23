@@ -15,7 +15,7 @@ namespace AlessioBorriello
         [SerializeField] private bool startEnabled = false; //If the collider is already open
 
         [SerializeField] private bool canHitMultipleTimes = false; //If it can hit multiple times
-        [SerializeField] private float hitFrequencyDelay = .3f; //How often the collider can hit the same thing (if canHitMultipleTimes)
+        [SerializeField] private float hitFrequencyDelay = .6f; //How often the collider can hit the same thing (if canHitMultipleTimes)
 
         private void Awake()
         {
@@ -88,6 +88,9 @@ namespace AlessioBorriello
         public void ToggleCollider(bool enabled)
         {
             hitbox.enabled = enabled;
+
+            //Empty hit list on close
+            if (!enabled) EmptyHitList();
         }
 
         public void EmptyHitList()

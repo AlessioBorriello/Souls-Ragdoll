@@ -2249,6 +2249,8 @@ MonoBehaviour:
     m_InternalValue: 0
   netCurrentHealth:
     m_InternalValue: 0
+  netMaxHealth:
+    m_InternalValue: 0
 --- !u!114 &7526962379060038386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4149,6 +4151,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2129317398305002564}
   - component: {fileID: 1894061935806246743}
+  - component: {fileID: 8107043955615822378}
   m_Layer: 7
   m_Name: model
   m_TagString: Player
@@ -4240,6 +4243,31 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0016179085, y: 0.29180706, z: -0.030191422}
     m_Extent: {x: 1.1320963, y: 0.8983891, z: 0.5234064}
   m_DirtyAABB: 0
+--- !u!114 &8107043955615822378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8765358998932587038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09e6b7ab59a38e446b571bd26048f65b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colors:
+  - {r: 1, g: 0, b: 0, a: 0}
+  - {r: 1, g: 0, b: 0.6753006, a: 0}
+  - {r: 0.5913272, g: 0, b: 1, a: 0}
+  - {r: 0, g: 0.014684439, b: 1, a: 0}
+  - {r: 0, g: 0.5712166, b: 1, a: 0}
+  - {r: 0, g: 1, b: 0.8828962, a: 0}
+  - {r: 0, g: 1, b: 0.10112667, a: 0}
+  - {r: 0.54285717, g: 1, b: 0, a: 0}
+  - {r: 1, g: 0.928301, b: 0, a: 0}
+  - {r: 1, g: 0.41927373, b: 0, a: 0}
+  - {r: 1, g: 1, b: 1, a: 0}
+  - {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &9112477523162769014
 GameObject:
   m_ObjectHideFlags: 0

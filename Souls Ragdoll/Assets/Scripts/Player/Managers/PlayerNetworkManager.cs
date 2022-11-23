@@ -9,12 +9,10 @@ namespace AlessioBorriello
     public class PlayerNetworkManager : NetworkBehaviour
     {
         private PlayerManager playerManager;
-        private InputManager inputManager;
 
         private Rigidbody physicalHips;
         private GameObject animatedPlayer;
         private AnimationManager animationManager;
-        private Animator animator;
 
         private NetworkVariable<Vector3> netPosition = new(writePerm: NetworkVariableWritePermission.Owner);
         private NetworkVariable<Quaternion> netRotation = new(writePerm: NetworkVariableWritePermission.Owner);
@@ -32,9 +30,7 @@ namespace AlessioBorriello
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
-            inputManager = playerManager.GetInputManager();
             animationManager = playerManager.GetAnimationManager();
-            animator = animationManager.GetAnimator();
 
             physicalHips = playerManager.GetPhysicalHips();
             animatedPlayer = playerManager.GetAnimatedPlayer();
@@ -46,6 +42,14 @@ namespace AlessioBorriello
             netIsBlockingWithLeft.OnValueChanged += (bool previousValue, bool newValue) => animationManager.UpdateBlockingWithLeftValue(newValue);
         }
 
+        public override void OnDestroy()
+        {
+            netIsAttackingWithLeft.OnValueChanged -= (bool previousValue, bool newValue) => animationManager.UpdateAttackingWithLeftValue(newValue);
+            netIsBlockingWithLeft.OnValueChanged -= (bool previousValue, bool newValue) => animationManager.UpdateBlockingWithLeftValue(newValue);
+        }
+
+        private Vector3 posVel;
+        private float rotVel = 15;
         void Update()
         {
             if (playerManager.isDead) return;
@@ -57,12 +61,15 @@ namespace AlessioBorriello
             }
             else
             {
-                physicalHips.transform.position = netPosition.Value;
-                animatedPlayer.transform.rotation = netRotation.Value;
+                //physicalHips.transform.position = netPosition.Value;
+                //animatedPlayer.transform.rotation = netRotation.Value;
+
+                physicalHips.transform.position = Vector3.SmoothDamp(physicalHips.transform.position, netPosition.Value, ref posVel, .1f);
+                animatedPlayer.transform.rotation = Quaternion.Slerp(animatedPlayer.transform.rotation, netRotation.Value, rotVel);
             }
 
             animationManager.UpdateMovementAnimatorValues(netNormalMovementAmount.Value, netStrafeMovementAmount.Value, 0);
         }
-    
+
     }
 }

@@ -1,59 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using Unity.Netcode;
 using UnityEngine;
 
-public class GameControl : MonoBehaviour
+namespace AlessioBorriello
 {
-
-
-    // Adjust via the Inspector
-    public bool showDebug = false;
-    public int maxLines = 8;
-    private Queue<string> queue = new Queue<string>();
-    private string currentText = "";
-    public float xLeftOffset = 300;
-    public float yBottomOffset = 150;
-    public float width = 240;
-    public float height = 120;
-
-    private float screenWidth = Screen.width;
-
-    private void Start()
+    public class GameControl : MonoBehaviour
     {
-        Application.targetFrameRate = 60;
-    }
+        [SerializeField] private GameObject playerPrefab;
+        private List<PlayerManager> playersConnected = new List<PlayerManager>();
 
-    void OnDisable()
-    {
-        Application.logMessageReceivedThreaded -= HandleLog;
-    }
-
-    void OnEnable()
-    {
-        Application.logMessageReceivedThreaded += HandleLog;
-    }
-
-    void HandleLog(string logString, string stackTrace, LogType type)
-    {
-        // Delete oldest message
-        if (queue.Count >= maxLines) queue.Dequeue();
-
-        queue.Enqueue(logString);
-
-        var builder = new StringBuilder();
-        foreach (string st in queue)
+        private void Start()
         {
-            builder.Append(st).Append("\n");
+            Application.targetFrameRate = 60;
         }
 
-        currentText = builder.ToString();
-    }
+        public void RespawnPlayer(ulong deadPlayerID)
+        {
+            //NetworkManager.DisconnectClient(deadPlayerID);
+            //Debug.Log("Respawn player " + deadPlayer.GetComponent<PlayerManager>().OwnerClientId);
+            //deadPlayer.GetComponent<NetworkObject>().Despawn();
+            //GameObject newPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+            //newPlayer.GetComponent<NetworkObject>().Spawn();
+        }
 
-    void OnGUI()
-    {
-        if (!showDebug) return;
-        GUI.Label(new Rect(screenWidth - xLeftOffset, Screen.height - yBottomOffset, width, height), currentText, GUI.skin.textArea);
-    }
+        public void AddPlayerToList(PlayerManager player)
+        {
+            playersConnected.Add(player);
+        }
 
+    }
 }

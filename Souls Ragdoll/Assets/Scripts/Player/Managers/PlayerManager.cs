@@ -92,6 +92,7 @@ namespace AlessioBorriello
 
         public override void OnNetworkSpawn()
         {
+            transform.position = new Vector3(58, 21f, 0);
             if (!IsOwner || !isClient)
             {
                 inputManager.enabled = false;
@@ -115,7 +116,6 @@ namespace AlessioBorriello
             else
             {
                 isClient = true;
-                transform.position = new Vector3(58, 20, 0);
 
                 cameraControl = cameraTransform.GetComponentInParent<CameraControl>();
 
@@ -129,6 +129,10 @@ namespace AlessioBorriello
             }
         }
 
+        public override void OnNetworkDespawn()
+        {
+            //If is the target of someone, remove that lock on reference
+        }
         private void FixedUpdate()
         {
             if (isDead) return;

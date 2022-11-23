@@ -10,6 +10,10 @@ namespace AlessioBorriello
         {
             PlayerManager playerManager = animator.transform.root.GetComponent<PlayerManager>();
             playerManager.GetCombatManager().GetWeaponManager().ResetCombo();
+
+            //Close hitbox to be opened again in animation
+            DamageColliderControl hitbox = playerManager.GetInventoryManager().GetCurrentItemDamageColliderControl(playerManager.GetWeaponManager().IsAttackingWithLeft());
+            hitbox.ToggleCollider(false);
         }
 
     }

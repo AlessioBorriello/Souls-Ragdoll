@@ -328,6 +328,7 @@ namespace AlessioBorriello
         public void Die()
         {
             playerManager.isDead = true;
+            if(IsOwner) playerManager.GetInputManager().enabled = false;
 
             SetJointsDriveForces(0, 0);
 
@@ -338,7 +339,14 @@ namespace AlessioBorriello
             if(!IsOwner)
             {
                 CameraControl cameraControl = Camera.main.transform.GetComponentInParent<CameraControl>();
-                if (cameraControl?.lockedTarget.root.GetInstanceID() == transform.root.GetInstanceID()) cameraControl.TargetDied();
+                if (cameraControl?.lockedTarget?.root.GetInstanceID() == transform.root.GetInstanceID()) cameraControl.TargetDied();
+            }
+
+            //Respawn
+            if(IsOwner)
+            {
+                GameControl gameControl = FindObjectOfType<GameControl>();
+                gameControl?.RespawnPlayer(this.OwnerClientId);
             }
         }
         

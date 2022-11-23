@@ -149,4 +149,4 @@ MonoBehaviour:
   flinchStrenght: 25
   startEnabled: 0
   canHitMultipleTimes: 1
-  hitFrequencyDelay: 0.25
+  hitFrequencyDelay: 0.6

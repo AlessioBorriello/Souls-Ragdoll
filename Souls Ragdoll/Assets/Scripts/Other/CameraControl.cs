@@ -127,6 +127,7 @@ namespace AlessioBorriello
         /// </summary>
         private void HandleLosingLockOnTarget()
         {
+
             if (playerManager.isKnockedOut || playerManager.isDead)
             {
                 LoseLockedTarget();
