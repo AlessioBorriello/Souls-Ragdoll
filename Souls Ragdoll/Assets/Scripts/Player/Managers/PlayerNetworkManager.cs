@@ -50,7 +50,7 @@ namespace AlessioBorriello
 
         private Vector3 posVel;
         private float rotVel = 15;
-        void Update()
+        private void Update()
         {
             if (playerManager.isDead) return;
 
@@ -61,10 +61,9 @@ namespace AlessioBorriello
             }
             else
             {
-                //physicalHips.transform.position = netPosition.Value;
-                //animatedPlayer.transform.rotation = netRotation.Value;
+                if(Vector3.Distance(physicalHips.transform.position, netPosition.Value) > 1.2f) physicalHips.transform.position = netPosition.Value;
+                else physicalHips.transform.position = Vector3.SmoothDamp(physicalHips.transform.position, netPosition.Value, ref posVel, .1f);
 
-                physicalHips.transform.position = Vector3.SmoothDamp(physicalHips.transform.position, netPosition.Value, ref posVel, .1f);
                 animatedPlayer.transform.rotation = Quaternion.Slerp(animatedPlayer.transform.rotation, netRotation.Value, rotVel);
             }
 

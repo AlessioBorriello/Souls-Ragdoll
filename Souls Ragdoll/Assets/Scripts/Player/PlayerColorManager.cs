@@ -29,7 +29,8 @@ namespace AlessioBorriello
         {
             if(IsOwner)
             {
-                Color c = colors[Random.Range(0, colors.Count)];
+                int index = Random.Range(0, colors.Count);
+                Color c = colors[index];
                 netColor.Value = c;
             }
             else
@@ -41,6 +42,11 @@ namespace AlessioBorriello
         private void SetPlayerColor(Color color)
         {
             playerRenderer.material.color = color;
+        }
+
+        public Color GetPlayerColor()
+        {
+            return netColor.Value;
         }
     }
 }

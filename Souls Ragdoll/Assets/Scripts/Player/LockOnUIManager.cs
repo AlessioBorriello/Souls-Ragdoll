@@ -44,6 +44,9 @@ namespace AlessioBorriello
             transform.rotation = cameraTransform.rotation * startRotation;
 
             if(handleHealthBar) HandleHealthBar();
+
+            //Stop handling if dead
+            if (playerManager.isDead) handleHealthBar = false;
         }
 
         private void HandleHealthBar()

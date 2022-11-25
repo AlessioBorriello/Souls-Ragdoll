@@ -1,3 +1,4 @@
+using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -14,6 +15,7 @@ namespace AlessioBorriello
         [Header("Set up")]
         public PlayerData playerData; //Player data reference
         public Transform groundCheckTransform; //Player's ground check's transform
+        public GameObject ragdoll; //Player ragdoll
 
         private GameObject animatedPlayer; //Animated player reference
         private GameObject physicalPlayer; //Physical player reference
@@ -23,7 +25,7 @@ namespace AlessioBorriello
         //Components
         private Transform cameraTransform;
         private InputManager inputManager;
-        private PlayerNetworkManager networkManager;
+        private PlayerNetworkManager playerNetworkManager;
         private AnimationManager animationManager;
         private PlayerLocomotionManager locomotionManager;
         private ActiveRagdollManager ragdollManager;
@@ -69,7 +71,7 @@ namespace AlessioBorriello
         private void Awake()
         {
             inputManager = GetComponent<InputManager>();
-            networkManager = GetComponent<PlayerNetworkManager>();
+            playerNetworkManager = GetComponent<PlayerNetworkManager>();
             animationManager = GetComponent<AnimationManager>();
             ragdollManager = GetComponent<ActiveRagdollManager>();
             collisionManager = GetComponent<PlayerCollisionManager>();
@@ -92,8 +94,7 @@ namespace AlessioBorriello
 
         public override void OnNetworkSpawn()
         {
-            transform.position = new Vector3(58, 21f, 0);
-            if (!IsOwner || !isClient)
+            if (!IsOwner)
             {
                 inputManager.enabled = false;
                 animationManager.GetAnimator().applyRootMotion = false;
@@ -115,24 +116,10 @@ namespace AlessioBorriello
             }
             else
             {
-                isClient = true;
-
-                cameraControl = cameraTransform.GetComponentInParent<CameraControl>();
-
-                cameraControl.SetCameraPlayerManager(this);
-                cameraControl.SetCameraInputManager(inputManager);
-
-                cameraControl.SetCameraPhysicalHips(physicalHips);
-                cameraControl.SetCameraFollowTransform(physicalHips.transform);
-
-                uiManager.SetPlayerStatsManager(statsManager);
+                SpawnSetup();
             }
         }
 
-        public override void OnNetworkDespawn()
-        {
-            //If is the target of someone, remove that lock on reference
-        }
         private void FixedUpdate()
         {
             if (isDead) return;
@@ -164,6 +151,108 @@ namespace AlessioBorriello
 
         }
 
+        private void SpawnSetup()
+        {
+            //Set as client
+            isClient = true;
+            //Set up camera
+            SetUpCamera();
+            //Set up UI
+            uiManager.SetPlayerStatsManager(statsManager);
+
+            //Position
+            Transform spawnPoint = FindObjectOfType<GameControl>().GetSpawnPoint();
+            physicalHips.transform.position = spawnPoint.position;
+            animatedPlayer.transform.rotation = spawnPoint.rotation;
+        }
+
+        private void SetUpCamera()
+        {
+            if (!IsOwner) return;
+
+            cameraControl = cameraTransform.GetComponentInParent<CameraControl>();
+
+            cameraControl.SetCameraPlayerManager(this);
+            cameraControl.SetCameraInputManager(inputManager);
+
+            cameraControl.SetCameraPhysicalHips(physicalHips);
+            cameraControl.SetCameraFollowTransform(physicalHips.transform);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void DieServerRpc()
+        {
+            DieClientRpc();
+        }
+
+        [ClientRpc]
+        private void DieClientRpc()
+        {
+            if (IsOwner) return;
+            Die();
+        }
+
+        public void Die()
+        {
+            isDead = true;
+            ragdollManager.SetJointsDriveForces(0, 0);
+
+            //Changes friction of the feet so that they don't slide around (set it to idle friction)
+            shouldSlide = false;
+
+            //Remove target if it was the target of the player
+            if (!IsOwner)
+            {
+                CameraControl cameraControl = Camera.main.transform.GetComponentInParent<CameraControl>();
+                if (cameraControl?.lockedTarget?.root.GetInstanceID() == transform.root.GetInstanceID()) cameraControl.TargetDied();
+            }
+
+            //Respawn
+            if (IsOwner) StartCoroutine(RespawnPlayer());
+            else RespawnPlayerServerRpc();
+
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void RespawnPlayerServerRpc(float respawnTime = 1.5f)
+        {
+            RespawnPlayerClientRpc(respawnTime);
+        }
+
+        [ClientRpc]
+        private void RespawnPlayerClientRpc(float respawnTime = 1.5f)
+        {
+            if (IsOwner) return; //Already respawned
+            StartCoroutine(RespawnPlayer(respawnTime));
+        }
+
+        private IEnumerator RespawnPlayer(float respawnTime = 1.5f)
+        {
+            yield return new WaitForSeconds(respawnTime);
+
+            isDead = false;
+            SpawnCorpse();
+
+            if (IsOwner)
+            {
+                GameControl gameControl = FindObjectOfType<GameControl>();
+                Transform spawnPoint = gameControl.GetSpawnPoint();
+
+                physicalHips.transform.position = spawnPoint.position;
+
+                statsManager.ResetStats();
+                ragdollManager.WakeUp(0);
+                ragdollManager.WakeUpServerRpc(0);
+            }
+        }
+
+        private void SpawnCorpse()
+        {
+            //Spawn corpse
+            GameObject corpse = Instantiate(ragdoll, physicalHips.transform.position, animatedPlayer.transform.rotation);
+            corpse.GetComponent<Corpse>().SetUp(GetComponentInChildren<PlayerColorManager>().GetPlayerColor(), ragdollManager.GetRigidbodies());
+        }
+
         public InputManager GetInputManager()
         {
             return inputManager;
@@ -171,7 +260,7 @@ namespace AlessioBorriello
 
         public PlayerNetworkManager GetNetworkManager()
         {
-            return networkManager;
+            return playerNetworkManager;
         }
 
         public AnimationManager GetAnimationManager()

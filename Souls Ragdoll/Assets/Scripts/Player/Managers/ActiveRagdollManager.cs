@@ -325,44 +325,6 @@ namespace AlessioBorriello
             KnockOut(time);
         }
 
-        public void Die()
-        {
-            playerManager.isDead = true;
-            if(IsOwner) playerManager.GetInputManager().enabled = false;
-
-            SetJointsDriveForces(0, 0);
-
-            //Changes friction of the feet so that they don't slide around (set it to idle friction)
-            playerManager.shouldSlide = false;
-
-            //Remove target if it was the target of the player
-            if(!IsOwner)
-            {
-                CameraControl cameraControl = Camera.main.transform.GetComponentInParent<CameraControl>();
-                if (cameraControl?.lockedTarget?.root.GetInstanceID() == transform.root.GetInstanceID()) cameraControl.TargetDied();
-            }
-
-            //Respawn
-            if(IsOwner)
-            {
-                GameControl gameControl = FindObjectOfType<GameControl>();
-                gameControl?.RespawnPlayer(this.OwnerClientId);
-            }
-        }
-        
-        [ServerRpc(RequireOwnership = false)]
-        public void DieServerRpc()
-        {
-            DieClientRpc();
-        }
-
-        [ClientRpc]
-        public void DieClientRpc()
-        {
-            if (IsOwner) return;
-            Die();
-        }
-
         /// <summary>
         /// Checks if the player's velocity is approx 0
         /// </summary>
@@ -403,6 +365,11 @@ namespace AlessioBorriello
             arms.Add(GetBodyPart(BodyParts.Arml).gameObject);
             arms.Add(GetBodyPart(BodyParts.Forearml).gameObject);
             arms.Add(GetBodyPart(BodyParts.Handl).gameObject);
+        }
+
+        public Rigidbody[] GetRigidbodies()
+        {
+            return bodies;
         }
 
         public Rigidbody GetBodyPart(BodyParts part)

@@ -240,11 +240,15 @@ namespace AlessioBorriello
         /// </summary>
         public void TargetDied()
         {
-            LoseLockedTarget();
 
             //Try to get a new target
-            Transform target = GetLockOnTarget();
-            SetLockedTarget(target);
+            Transform newTarget = GetLockOnTarget();
+
+            //Lose old one
+            LoseLockedTarget();
+
+            //Lock new one if found
+            SetLockedTarget(newTarget);
 
             //If target is found
             if (lockedTarget != null) playerManager.isLockingOn = true;

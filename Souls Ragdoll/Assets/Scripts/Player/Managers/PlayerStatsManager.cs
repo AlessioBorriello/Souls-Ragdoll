@@ -87,8 +87,8 @@ namespace AlessioBorriello
             currentHealth = Mathf.Max(currentHealth - damage, 0);
             if(currentHealth <= 0)
             {
-                playerManager.GetRagdollManager().Die();
-                playerManager.GetRagdollManager().DieServerRpc();
+                playerManager.Die();
+                playerManager.DieServerRpc();
 
             }
 
@@ -107,6 +107,15 @@ namespace AlessioBorriello
                 //Disable sprinting until stamina recovered a bit
                 playerManager.disableSprint = true;
             }
+        }
+
+        public void ResetStats()
+        {
+            currentHealth = maxHealth;
+            currentStamina = maxStamina;
+
+            //Net
+            networkManager.netCurrentHealth.Value = currentHealth;
         }
 
         private void HandleStaminaRecovery()
