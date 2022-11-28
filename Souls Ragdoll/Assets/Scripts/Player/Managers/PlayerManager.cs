@@ -99,15 +99,15 @@ namespace AlessioBorriello
                 inputManager.enabled = false;
                 animationManager.GetAnimator().applyRootMotion = false;
                 isClient = false;
-                Destroy(inputManager);
+                //Destroy(inputManager);
                 //Destroy(animationManager);
-                Destroy(collisionManager);
-                Destroy(locomotionManager);
+                //Destroy(collisionManager);
+                //Destroy(locomotionManager);
                 //Destroy(inventoryManager);
-                Destroy(statsManager);
-                Destroy(combatManager);
-                Destroy(weaponManager);
-                Destroy(shieldManager);
+                //Destroy(statsManager);
+                //Destroy(combatManager);
+                //Destroy(weaponManager);
+                //Destroy(shieldManager);
 
                 foreach(KnockOutResistance r in GetComponentsInChildren<KnockOutResistance>())
                 {
@@ -122,7 +122,7 @@ namespace AlessioBorriello
 
         private void FixedUpdate()
         {
-            if (isDead) return;
+            if (isDead || !IsOwner) return;
 
             //Move player with animation (Order is important for some reason)
             locomotionManager.ApplyGravity();
@@ -132,7 +132,7 @@ namespace AlessioBorriello
 
         private void Update()
         {
-            if (isDead) return;
+            if (isDead || !IsOwner) return;
 
             //Ragdoll
             ragdollManager.HandleWakeUp();
@@ -243,6 +243,8 @@ namespace AlessioBorriello
                 statsManager.ResetStats();
                 ragdollManager.WakeUp(0);
                 ragdollManager.WakeUpServerRpc(0);
+
+                cameraControl.SetCameraToTarget();
             }
         }
 

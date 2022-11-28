@@ -72,23 +72,40 @@ namespace AlessioBorriello
 
         private void Start()
         {
-            VigorLevel = 1;
+            if (!playerManager.IsOwner) return;
+
+            VigorLevel = 10;
             StrengthLevel = 1;
-            EnduranceLevel = 1;
+            EnduranceLevel = 10;
         }
 
         private void Update()
         {
+            if (!playerManager.IsOwner) return;
+
             HandleStaminaRecovery();
         }
 
-        public void ReduceHealth(int damage)
+        public void TakeDamage(int damage)
         {
             currentHealth = Mathf.Max(currentHealth - damage, 0);
             if(currentHealth <= 0)
             {
                 playerManager.Die();
                 playerManager.DieServerRpc();
+
+            }
+
+            networkManager.netCurrentHealth.Value = currentHealth;
+        }
+
+        public IEnumerator TakeCriticalDamage(int damage, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            currentHealth = Mathf.Max(currentHealth - damage, 0);
+            if (currentHealth <= 0)
+            {
+                playerManager.GetCombatManager().diedFromCriticalDamage = true;
 
             }
 

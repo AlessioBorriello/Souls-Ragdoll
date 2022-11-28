@@ -208,7 +208,7 @@ namespace AlessioBorriello
 
         private void Update()
         {
-            if (!playerManager.isClient) return;
+            if (!playerManager.IsOwner) return;
 
             if (actions.Count > 0 && 
                 !playerManager.playerIsStuckInAnimation && 

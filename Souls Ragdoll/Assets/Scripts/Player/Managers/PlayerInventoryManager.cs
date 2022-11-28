@@ -124,7 +124,7 @@ namespace AlessioBorriello
             DamageColliderControl collider;
             if (holder.currentItemModel == null) return null;
             collider = holder.currentItemModel.GetComponentInChildren<DamageColliderControl>();
-            return (collider != null) ? collider : null;
+            return collider;
         }
 
         public void HandleQuickSlots()
@@ -189,6 +189,17 @@ namespace AlessioBorriello
         public DamageColliderControl GetCurrentItemDamageColliderControl(bool leftHand)
         {
             return (leftHand) ? currentLeftItemDamageColliderControl : currentRightItemDamageColliderControl;
+        }
+
+        public void SetColliderValues(int damage, float knockbackStrength, float flinchStrenght, bool leftHand)
+        {
+            if(leftHand)
+            {
+                currentLeftItemDamageColliderControl.SetColliderValues(damage, knockbackStrength, flinchStrenght);
+            }else
+            {
+                currentRightItemDamageColliderControl.SetColliderValues(damage, knockbackStrength, flinchStrenght);
+            }
         }
 
         public void SetCurrentItemType(HandEquippableItem item, bool leftHand)

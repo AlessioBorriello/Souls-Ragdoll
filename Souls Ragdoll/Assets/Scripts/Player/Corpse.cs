@@ -22,6 +22,7 @@ namespace AlessioBorriello
         private void Start()
         {
             StartCoroutine(Despawn(despawnTime));
+            StartCoroutine(StartRagdollPhysics());
         }
 
         private IEnumerator Despawn(float time)
@@ -39,6 +40,15 @@ namespace AlessioBorriello
             {
                 corpseParts[i].transform.position = bodyParts[i].transform.position;
                 corpseParts[i].transform.rotation = bodyParts[i].transform.rotation;
+            }
+        }
+
+        private IEnumerator StartRagdollPhysics()
+        {
+            yield return new WaitForFixedUpdate();
+            foreach(Rigidbody part in corpseParts)
+            {
+                part.isKinematic = false;
             }
         }
     }

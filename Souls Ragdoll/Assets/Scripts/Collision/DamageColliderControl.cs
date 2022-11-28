@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace AlessioBorriello
 {
     public class DamageColliderControl : MonoBehaviour
     {
+        private PlayerManager playerManager;
         private Collider hitbox;
         private List<int> alreadyHit = new List<int>();
 
-        [SerializeField] private int damage = 30;
+        private int damage = 10;
         [SerializeField] private float knockbackStrength = 5f; //Force added to the hyps
         [SerializeField] private float flinchStrenght = 25f; //Force added to the bodypart that connects first
         [SerializeField] private bool startEnabled = false; //If the collider is already open
@@ -23,6 +25,11 @@ namespace AlessioBorriello
             hitbox.gameObject.SetActive(true);
             hitbox.isTrigger = true;
             hitbox.enabled = startEnabled;
+        }
+
+        private void Start()
+        {
+            playerManager = GetComponentInParent<PlayerManager>();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -108,6 +115,15 @@ namespace AlessioBorriello
         {
             yield return new WaitForSeconds(hitFrequencyDelay);
             if (alreadyHit.Contains(id)) alreadyHit.Remove(id);
+        }
+
+        public void SetColliderValues(int damage, float knockbackStrength, float flinchStrenght)
+        {
+            if (playerManager == null) return;
+
+            this.damage = damage;
+            this.knockbackStrength = knockbackStrength;
+            this.flinchStrenght = flinchStrenght;
         }
 
     }

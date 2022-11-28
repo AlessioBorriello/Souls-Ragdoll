@@ -36,7 +36,7 @@ namespace AlessioBorriello {
             blockingWithLeftHash = Animator.StringToHash("BlockingWithLeft");
             changingLeftItemHash = Animator.StringToHash("ChangingLeftItem");
 
-            animator.applyRootMotion = true;
+            if(playerManager.IsOwner) animator.applyRootMotion = true;
         }
 
         public void UpdateMovementAnimatorValues(float normal, float strafe, float time)
@@ -81,17 +81,6 @@ namespace AlessioBorriello {
             animator.CrossFade(targetAnimation, fadeDuration);
         }
 
-        public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
-        {
-            playerManager.playerIsStuckInAnimation = isStuckInAnimation;
-            animator.CrossFade(targetAnimation, fadeDuration, layer);
-        }
-
-        public Animator GetAnimator()
-        {
-            return animator;
-        }
-
         [ServerRpc(RequireOwnership = false)]
         private void PlayTargetAnimationServerRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
         {
@@ -106,6 +95,47 @@ namespace AlessioBorriello {
             if (IsOwner) return;
             playerManager.playerIsStuckInAnimation = isStuckInAnimation;
             animator.CrossFade(targetAnimation, fadeDuration);
+        }
+
+        public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
+        {
+            PlayTargetAnimationServerRpc(targetAnimation, fadeDuration, isStuckInAnimation, layer);
+            playerManager.playerIsStuckInAnimation = isStuckInAnimation;
+            animator.CrossFade(targetAnimation, fadeDuration, layer);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        private void PlayTargetAnimationServerRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
+        {
+            //Debug.Log($"Client: {playerManager.OwnerClientId}, sending animation: {targetAnimation} to server");
+            PlayTargetAnimationClientRpc(targetAnimation, fadeDuration, isStuckInAnimation, layer);
+        }
+
+        [ClientRpc]
+        private void PlayTargetAnimationClientRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
+        {
+            //Debug.Log($"Client: {playerManager.OwnerClientId}, playing animation: {targetAnimation} to server");
+            if (IsOwner) return;
+            playerManager.playerIsStuckInAnimation = isStuckInAnimation;
+            animator.CrossFade(targetAnimation, fadeDuration, layer);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SendAnimationServerRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation, ulong id)
+        {
+            SendAnimationClientRpc(targetAnimation, fadeDuration, isStuckInAnimation, id);
+        }
+
+        [ClientRpc]
+        private void SendAnimationClientRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation, ulong id)
+        {
+            if (playerManager.OwnerClientId != id) return;
+            PlayTargetAnimation(targetAnimation, fadeDuration, isStuckInAnimation);
+        }
+
+        public Animator GetAnimator()
+        {
+            return animator;
         }
 
     }

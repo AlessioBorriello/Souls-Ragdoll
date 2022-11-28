@@ -4158,16 +4158,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 2217555875885131135, guid: 85505ef8473b3244eaba38913ac50fe4, type: 3}
-  colors:
-  - {r: 0.15534902, g: 1, b: 0, a: 1}
-  - {r: 0, g: 0.10767174, b: 1, a: 1}
-  - {r: 0, g: 1, b: 1, a: 1}
-  - {r: 1, g: 0, b: 0, a: 1}
-  - {r: 1, g: 0.45860618, b: 0, a: 1}
-  - {r: 1, g: 0.9374088, b: 0, a: 1}
-  - {r: 0.94275045, g: 0, b: 1, a: 1}
-  - {r: 0, g: 0, b: 0, a: 1}
-  - {r: 1, g: 1, b: 1, a: 1}
   spawnPoints:
   - {fileID: 1259173782}
   - {fileID: 585946907}

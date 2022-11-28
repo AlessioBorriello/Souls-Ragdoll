@@ -17,19 +17,32 @@ MonoBehaviour:
   descriptionText: A wooden handle battle axe
   modelPrefab: {fileID: 1847906651662086122, guid: afd3f98f489c59f4f972b4fcb27d0562, type: 3}
   oneHandedIdle: OneHandItemIdle
-  physicalDamageAbsorption: 0
-  lightAttackStaminaUse: 40
-  heavyAttackStaminaUse: 65
-  rollingAttackStaminaUse: 30
-  runningAttackStaminaUse: 34
-  movementSpeedMultiplier: 6
-  OneHandedLightAttackCombo:
+  physicalDamageAbsorption: 61
+  baseDamage: 25
+  staminaBaseDamage: 35
+  poiseBaseDamage: 40
+  lightAttackStaminaUse: 45
+  heavyAttackStaminaUse: 70
+  rollingAttackStaminaUse: 35
+  runningAttackStaminaUse: 39
+  backstabAttackStaminaUse: 35
+  movementSpeedMultiplier: 4.8
+  oneHandedLightAttackCombo:
   - OneHandLightAttackOne
   - OneHandLightAttackTwo
   - 
+  oneHandedLightAttacksDamageMultiplier: 1
   OneHandedHeavyAttackCombo:
   - OneHandHeavyAttackOne
   - OneHandHeavyAttackTwo
   - 
-  OneHandedRunningAttack: OneHandRunningAttack
-  OneHandedRollingAttack: OneHandRollingAttack
+  oneHandedHeavyAttacksDamageMultiplier: 1.8
+  oneHandedRunningAttack: OneHandRunningAttack
+  oneHandedRunningAttackDamageMultiplier: 1.1
+  oneHandedRollingAttack: OneHandRollingAttack
+  oneHandedRollingAttackDamageMultiplier: 0.9
+  backstabAttack: Backstab
+  backstabVictimAnimation: Backstabbed
+  backstabtAttackDamageMultiplier: 2.2
+  knockbackStrength: 3.2
+  flinchStrength: 25

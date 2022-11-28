@@ -49,6 +49,17 @@ namespace AlessioBorriello
             playerManager.canRotate = false;
         }
 
+        public void CheckForCriticalDamageDeath()
+        {
+            if(combatManager.diedFromCriticalDamage)
+            {
+                combatManager.diedFromCriticalDamage = false;
+                playerManager.GetAnimationManager().PlayTargetAnimation("EmptyOverride", .2f, false);
+                playerManager.Die();
+                playerManager.DieServerRpc();
+            }
+        }
+
         #region Collider stuff
         public void EnableDamageCollider()
         {

@@ -171,6 +171,10 @@ namespace AlessioBorriello
                 //If it was found, set it as the locked target
                 if (newTarget != null && newTarget != lockedTarget)
                 {
+                    //Remove UI from old target
+                    lockedTargetUI = lockedTarget?.GetComponent<LockOnUIManager>();
+                    lockedTargetUI?.ToggleTargetUI(false);
+
                     SetLockedTarget(newTarget);
                 }
 
@@ -440,6 +444,11 @@ namespace AlessioBorriello
             //Get the position the camera has to move to
             Vector3 targetPosition = new Vector3(cameraFollowTarget.position.x, cameraFollowTarget.position.y - .5f, cameraFollowTarget.position.z);
             transform.position = Vector3.Lerp(transform.position, targetPosition, cameraFollowSpeed * Time.deltaTime);
+        }
+
+        public void SetCameraToTarget()
+        {
+            transform.position = cameraFollowTarget.position;
         }
 
         /// <summary>

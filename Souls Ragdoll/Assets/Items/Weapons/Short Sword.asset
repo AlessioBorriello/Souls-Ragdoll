@@ -17,19 +17,32 @@ MonoBehaviour:
   descriptionText: A simple metal short sword
   modelPrefab: {fileID: 4952564604112304397, guid: bdebf87f5321f7a49a5772d92cd098fe, type: 3}
   oneHandedIdle: OneHandItemIdle
-  physicalDamageAbsorption: 0
+  physicalDamageAbsorption: 50
+  baseDamage: 20
+  staminaBaseDamage: 30
+  poiseBaseDamage: 25
   lightAttackStaminaUse: 40
   heavyAttackStaminaUse: 65
   rollingAttackStaminaUse: 30
   runningAttackStaminaUse: 34
-  movementSpeedMultiplier: 6.2
-  OneHandedLightAttackCombo:
+  backstabAttackStaminaUse: 30
+  movementSpeedMultiplier: 5
+  oneHandedLightAttackCombo:
   - OneHandLightAttackOne
   - OneHandLightAttackTwo
   - 
+  oneHandedLightAttacksDamageMultiplier: 1
   OneHandedHeavyAttackCombo:
   - OneHandHeavyAttackOne
   - OneHandHeavyAttackTwo
   - 
-  OneHandedRunningAttack: OneHandRunningAttack
-  OneHandedRollingAttack: OneHandRollingAttack
+  oneHandedHeavyAttacksDamageMultiplier: 1.7
+  oneHandedRunningAttack: OneHandRunningAttack
+  oneHandedRunningAttackDamageMultiplier: 1.2
+  oneHandedRollingAttack: OneHandRollingAttack
+  oneHandedRollingAttackDamageMultiplier: 0.9
+  backstabAttack: Backstab
+  backstabVictimAnimation: Backstabbed
+  backstabtAttackDamageMultiplier: 2.4
+  knockbackStrength: 3.2
+  flinchStrength: 25

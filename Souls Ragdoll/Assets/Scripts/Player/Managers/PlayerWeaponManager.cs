@@ -16,6 +16,12 @@ namespace AlessioBorriello
         private AnimationManager animationManager;
         private PlayerInventoryManager inventoryManager;
         private ActiveRagdollManager ragdollManager;
+        private PlayerCombatManager combatManager;
+
+        [SerializeField] private LayerMask backstabLayer;
+
+        private Rigidbody physicalHips;
+        private GameObject animatedPlayer;
 
         private bool attackingWithLeft = false;
         private AttackType attackType;
@@ -31,6 +37,10 @@ namespace AlessioBorriello
             animationManager = playerManager.GetAnimationManager();
             inventoryManager = playerManager.GetInventoryManager();
             ragdollManager = playerManager.GetRagdollManager();
+            combatManager = playerManager.GetCombatManager();
+
+            physicalHips = playerManager.GetPhysicalHips();
+            animatedPlayer = playerManager.GetAnimatedPlayer();
         }
 
         public void HandleAttacks()
@@ -71,7 +81,7 @@ namespace AlessioBorriello
             if (playerManager.playerIsStuckInAnimation) return;
 
             //Get right or left item
-            HandEquippableItem item = (isLeft)? inventoryManager.GetCurrentItem(true) : inventoryManager.GetCurrentItem(false);
+            WeaponItem weapon = (WeaponItem)((isLeft)? inventoryManager.GetCurrentItem(true) : inventoryManager.GetCurrentItem(false));
 
             //Get this new attack's proprieties
             bool newAttackingWithLeft = isLeft;
@@ -84,32 +94,88 @@ namespace AlessioBorriello
             attackType = newAttackType;
             animationManager.UpdateAttackingWithLeftValue(attackingWithLeft);
 
-            if(CheckForBackstab(attackType))
-            {
-                //Do backstab
-                Debug.Log("Backstab");
-                return;
-            }
+            //Check for backstab, if the backstab goes through, then return
+            if(TryBackstab(attackType, weapon)) return;
 
             //Get animation to play and movement speed multiplier
-            string attackAnimation = GetAttackAnimationString((WeaponItem)item, attackType);
-            float attackMovementSpeedMultiplier = GetAttackMovementSpeedMultiplier((WeaponItem)item);
-            float staminaCost = GetAttackStaminaCost(attackType, (WeaponItem)item);
+            string attackAnimation = GetAttackAnimationString(weapon, attackType);
+            float attackMovementSpeedMultiplier = GetAttackMovementSpeedMultiplier(weapon);
+            float staminaCost = GetAttackStaminaCost(attackType, weapon);
+
+            //Set collider values
+            int damage = (int)(weapon.baseDamage * GetWeaponDamageMultiplier(weapon));
+            float knockbackStrength = weapon.knockbackStrength;
+            float flinchStrength = weapon.flinchStrength;
+            inventoryManager.SetColliderValues(damage, knockbackStrength, flinchStrength, attackingWithLeft);
+
 
             //Attack
             Attack(attackAnimation, attackMovementSpeedMultiplier, staminaCost);
 
         }
 
-        private bool CheckForBackstab(AttackType attackType)
+        private bool TryBackstab(AttackType attackType, WeaponItem weapon)
         {
             if(attackType != AttackType.light) return false;
+
+            RaycastHit hit;
+            float backstabDistance = 1.4f;
+            if(Physics.Raycast(physicalHips.transform.position, physicalHips.transform.forward, out hit, backstabDistance, backstabLayer))
+            {
+                PlayerManager victimManager = hit.collider.GetComponentInParent<PlayerManager>();
+
+                if (victimManager == null) return false;
+
+                Rigidbody victimHips = victimManager.GetPhysicalHips();
+
+                Vector3 hitDirection = (victimHips.transform.position - physicalHips.transform.position).normalized;
+                float hitAngle = Vector3.Angle(Vector3.ProjectOnPlane(hitDirection, Vector3.up), Vector3.ProjectOnPlane(victimHips.transform.forward, Vector3.up));
+
+                if (hitAngle < 25f) Backstab(victimManager, weapon);
+                else return false;
+
+                return true;
+            }
 
             return false;
         }
 
+        private void Backstab(PlayerManager victim, WeaponItem weapon)
+        {
+            //Set proprieties
+            animationManager.UpdateAttackingWithLeftValue(attackingWithLeft);
+            attackType = AttackType.backstab;
+
+            //Disable arms collision
+            ragdollManager.ToggleCollisionOfArms(false);
+            ragdollManager.ToggleCollisionOfArmsServerRpc(false);
+
+            //Play backstab animation
+            animationManager.PlayTargetAnimation(weapon.backstabAttack, .1f, true);
+
+            //Stop player
+            locomotionManager.SetMovementSpeedMultiplier(1);
+
+            //Damage
+            float damage = weapon.baseDamage;
+            damage *= GetWeaponDamageMultiplier(weapon);
+
+            //Stamina
+            float staminaCost = weapon.backstabAttackStaminaUse;
+
+            //Send backstab to victim
+            Vector3 backstabbedPosition = playerManager.backstabbedTransform.position;
+            Quaternion backstabbedRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(playerManager.backstabbedTransform.forward, Vector3.up));
+            victim.GetCombatManager().GotBackstabbedServerRpc(backstabbedPosition, backstabbedRotation, weapon.backstabVictimAnimation, damage, victim.OwnerClientId);
+
+            //Consume stamina
+            statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+
+        }
+
         private void Attack(string attackAnimation, float attackMovementSpeedMultiplier, float staminaCost)
         {
+            if (attackAnimation == "") return;
 
             //Play animation
             animationManager.PlayTargetAnimation(attackAnimation, .2f, true);
@@ -124,6 +190,20 @@ namespace AlessioBorriello
 
             //Consume stamina
             statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+        }
+
+        private float GetWeaponDamageMultiplier(WeaponItem weapon)
+        {
+
+            switch (this.attackType)
+            {
+                case AttackType.light: return weapon.oneHandedLightAttacksDamageMultiplier;
+                case AttackType.heavy: return weapon.oneHandedHeavyAttacksDamageMultiplier;
+                case AttackType.running: return weapon.oneHandedRunningAttackDamageMultiplier;
+                case AttackType.rolling: return weapon.oneHandedRollingAttackDamageMultiplier;
+                case AttackType.backstab: return weapon.backstabtAttackDamageMultiplier;
+                default: return 1f;
+            }
         }
 
         private float GetAttackMovementSpeedMultiplier(WeaponItem weapon)
@@ -193,11 +273,12 @@ namespace AlessioBorriello
 
             switch(this.attackType)
             {
-                case AttackType.light: animationArray = weapon.OneHandedLightAttackCombo; break;
+                case AttackType.light: animationArray = weapon.oneHandedLightAttackCombo; break;
                 case AttackType.heavy: animationArray = weapon.OneHandedHeavyAttackCombo; break;
-                case AttackType.running: return weapon.OneHandedRunningAttack;
-                case AttackType.rolling: return weapon.OneHandedRollingAttack;
-                default: animationArray = weapon.OneHandedLightAttackCombo; break;
+                case AttackType.running: return weapon.oneHandedRunningAttack;
+                case AttackType.rolling: return weapon.oneHandedRollingAttack;
+                case AttackType.backstab: return weapon.backstabAttack;
+                default: animationArray = weapon.oneHandedLightAttackCombo; break;
             }
 
             if (IsArrayEmpty(animationArray)) return "";
@@ -252,7 +333,8 @@ namespace AlessioBorriello
             light,
             heavy,
             running,
-            rolling
+            rolling,
+            backstab
         }
 
     }

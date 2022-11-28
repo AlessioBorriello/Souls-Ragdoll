@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.ProBuilder.Shapes;
 
@@ -49,13 +50,17 @@ namespace AlessioBorriello
             animationManager = playerManager.GetAnimationManager();
             animator = animationManager.GetAnimator();
             ragdollManager = playerManager.GetRagdollManager();
-            SetFeetMaterial(false);
 
             physicalHips = playerManager.GetPhysicalHips();
             cameraTransform = playerManager.GetCameraTransform();
 
             movementDirection = transform.forward;
 
+        }
+
+        private void Start()
+        {
+            if (playerManager.IsOwner) SetFeetMaterial(false);
         }
 
         /// <summary>
@@ -562,6 +567,25 @@ namespace AlessioBorriello
             playerManager.playerIsStuckInAnimation = true;
             yield return new WaitForSeconds(time);
             playerManager.playerIsStuckInAnimation = false;
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void SendPositionAndRotationServerRpc(Vector3 position, Quaternion rotation, ulong id)
+        {
+            SendPositionAndRotationClientRpc(position, rotation, id);
+        }
+
+        [ClientRpc]
+        private void SendPositionAndRotationClientRpc(Vector3 position, Quaternion rotation, ulong id)
+        {
+            if (playerManager.OwnerClientId != id) return;
+            SetPositionAndRotation(position, rotation);
+        }
+
+        private void SetPositionAndRotation(Vector3 position, Quaternion rotation)
+        {
+            physicalHips.transform.position = position;
+            animatedPlayer.transform.rotation = rotation;
         }
 
         /// <summary>

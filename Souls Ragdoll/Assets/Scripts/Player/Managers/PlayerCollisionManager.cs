@@ -53,7 +53,7 @@ namespace AlessioBorriello
                     }
                 }
 
-                statsManager.ReduceHealth(damage);
+                statsManager.TakeDamage(damage);
                 if(shouldStagger && !attackBlocked) animationManager.PlayTargetAnimation("Hurt", .1f, true);
                 if (attackBlocked) StartCoroutine(locomotionManager.StopMovementForTime(.22f));
 
@@ -75,7 +75,7 @@ namespace AlessioBorriello
         private bool CheckForBlock(Vector3 thisHipsPosition, Vector3 hittingHipsPosition)
         {
             Vector3 hitDirection = (thisHipsPosition - hittingHipsPosition).normalized;
-            float hitAngle = Vector3.Angle(physicalHips.transform.forward, hitDirection);
+            float hitAngle = Vector3.Angle(Vector3.ProjectOnPlane(physicalHips.transform.forward, Vector3.up), Vector3.ProjectOnPlane(hitDirection, Vector3.up));
 
             if (hitAngle > 95f) return true;
             else return false;

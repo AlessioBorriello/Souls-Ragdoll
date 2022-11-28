@@ -29,7 +29,8 @@ MonoBehaviour:
   sprintSpeedMultiplier: 2.05
   sprintThreshold: 0.4
   sprintBaseStaminaCost: 0.42
-  rotationSpeed: 8.8
+  sprintStaminaNecessaryAfterStaminaDepleted: 12
+  rotationSpeed: 9.8
   inAirRotationSpeed: 3.5
   maxSlopeAngle: 35
   movingFriction: 0
