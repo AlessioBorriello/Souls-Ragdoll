@@ -10,6 +10,7 @@ namespace AlessioBorriello
     {
 
         private PlayerManager playerManager;
+        private PlayerNetworkManager networkManager;
         private InputManager inputManager;
         private AnimationManager animationManager;
 
@@ -40,6 +41,7 @@ namespace AlessioBorriello
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
+            networkManager = playerManager.GetNetworkManager();
             inputManager = playerManager.GetInputManager();
             animationManager = playerManager.GetAnimationManager();
 
@@ -166,6 +168,7 @@ namespace AlessioBorriello
             netIsChangingWithLeft.Value = leftHand;
             animationManager.UpdateChangingLeftItemValue(leftHand);
             animationManager.PlayTargetAnimation("ChangeItem", .15f, playerManager.playerIsStuckInAnimation);
+            networkManager.PlayTargetAnimationServerRpc("ChangeItem", .15f, playerManager.playerIsStuckInAnimation);
 
             //Stop blocking
             playerManager.isBlocking = false;

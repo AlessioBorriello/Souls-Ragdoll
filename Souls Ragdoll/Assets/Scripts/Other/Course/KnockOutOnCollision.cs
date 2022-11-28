@@ -15,8 +15,8 @@ namespace AlessioBorriello
                 PlayerManager playerManager = collision.collider.GetComponentInParent<PlayerManager>(); //Get player manager
                 if (collision.impulse.magnitude > forceToKnockOut)
                 {
-                    playerManager.GetRagdollManager().KnockOutServerRpc();
                     playerManager.GetRagdollManager().KnockOut();
+                    playerManager.GetNetworkManager().KnockOutServerRpc();
                 }
             }
         }

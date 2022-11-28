@@ -44,9 +44,9 @@ namespace AlessioBorriello
             }
             else if (other.CompareTag("Static"))
             {
-                Vector3 collisionPoint = other.ClosestPoint(transform.position);
-                Vector3 collisionNormal = (transform.position - collisionPoint).normalized;
-                StaticTriggerEnter(collisionNormal);
+                //Vector3 collisionPoint = other.ClosestPoint(transform.position);
+                //Vector3 collisionNormal = (transform.position - collisionPoint).normalized;
+                //StaticTriggerEnter(collisionNormal);
             }
         }
 

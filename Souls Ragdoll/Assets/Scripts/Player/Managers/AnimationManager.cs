@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 
 namespace AlessioBorriello {
-    public class AnimationManager : NetworkBehaviour
+    public class AnimationManager : MonoBehaviour
     {
         private Animator animator;
         private PlayerManager playerManager;
@@ -16,8 +16,6 @@ namespace AlessioBorriello {
         private int attackingWithLeftHash;
         private int blockingWithLeftHash;
         private int changingLeftItemHash;
-
-
 
         private void Awake()
         {
@@ -59,13 +57,11 @@ namespace AlessioBorriello {
 
         public void UpdateAttackingWithLeftValue(bool attackingWithLeft)
         {
-            if (playerManager.IsOwner) networkManager.netIsAttackingWithLeft.Value = attackingWithLeft;
             animator.SetBool(attackingWithLeftHash, attackingWithLeft);
         }
 
         public void UpdateBlockingWithLeftValue(bool blockingWithLeft)
         {
-            if (playerManager.IsOwner) networkManager.netIsBlockingWithLeft.Value = blockingWithLeft;
             animator.SetBool(blockingWithLeftHash, blockingWithLeft);
         }
 
@@ -76,61 +72,14 @@ namespace AlessioBorriello {
 
         public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
         {
-            PlayTargetAnimationServerRpc(targetAnimation, fadeDuration, isStuckInAnimation);
-            playerManager.playerIsStuckInAnimation = isStuckInAnimation;
-            animator.CrossFade(targetAnimation, fadeDuration);
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        private void PlayTargetAnimationServerRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
-        {
-            //Debug.Log($"Client: {playerManager.OwnerClientId}, sending animation: {targetAnimation} to server");
-            PlayTargetAnimationClientRpc(targetAnimation, fadeDuration, isStuckInAnimation);
-        }
-
-        [ClientRpc]
-        private void PlayTargetAnimationClientRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
-        {
-            //Debug.Log($"Client: {playerManager.OwnerClientId}, playing animation: {targetAnimation} to server");
-            if (IsOwner) return;
             playerManager.playerIsStuckInAnimation = isStuckInAnimation;
             animator.CrossFade(targetAnimation, fadeDuration);
         }
 
         public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
         {
-            PlayTargetAnimationServerRpc(targetAnimation, fadeDuration, isStuckInAnimation, layer);
             playerManager.playerIsStuckInAnimation = isStuckInAnimation;
             animator.CrossFade(targetAnimation, fadeDuration, layer);
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        private void PlayTargetAnimationServerRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
-        {
-            //Debug.Log($"Client: {playerManager.OwnerClientId}, sending animation: {targetAnimation} to server");
-            PlayTargetAnimationClientRpc(targetAnimation, fadeDuration, isStuckInAnimation, layer);
-        }
-
-        [ClientRpc]
-        private void PlayTargetAnimationClientRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
-        {
-            //Debug.Log($"Client: {playerManager.OwnerClientId}, playing animation: {targetAnimation} to server");
-            if (IsOwner) return;
-            playerManager.playerIsStuckInAnimation = isStuckInAnimation;
-            animator.CrossFade(targetAnimation, fadeDuration, layer);
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void SendAnimationServerRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation, ulong id)
-        {
-            SendAnimationClientRpc(targetAnimation, fadeDuration, isStuckInAnimation, id);
-        }
-
-        [ClientRpc]
-        private void SendAnimationClientRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation, ulong id)
-        {
-            if (playerManager.OwnerClientId != id) return;
-            PlayTargetAnimation(targetAnimation, fadeDuration, isStuckInAnimation);
         }
 
         public Animator GetAnimator()

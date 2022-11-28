@@ -15,6 +15,7 @@ namespace AlessioBorriello
         private AnimationManager animationManager;
         private ActiveRagdollManager ragdollManager;
         private PlayerStatsManager statsManager;
+        private PlayerNetworkManager networkManager;
         private Animator animator;
 
         [Header("Set up")]
@@ -48,8 +49,9 @@ namespace AlessioBorriello
             inputManager = playerManager.GetInputManager();
             statsManager = playerManager.GetStatsManager();
             animationManager = playerManager.GetAnimationManager();
-            animator = animationManager.GetAnimator();
             ragdollManager = playerManager.GetRagdollManager();
+            networkManager = playerManager.GetNetworkManager();
+            animator = animationManager.GetAnimator();
 
             physicalHips = playerManager.GetPhysicalHips();
             cameraTransform = playerManager.GetCameraTransform();
@@ -243,8 +245,22 @@ namespace AlessioBorriello
 
             if (inputManager.eastInputReleased && rollTimer < playerManager.playerData.sprintThreshold)
             {
-                if (inputManager.movementInput.magnitude > 0) Roll();
-                else Backdash();
+                if (inputManager.movementInput.magnitude > 0)
+                {
+                    Roll();
+                    networkManager.RollServerRpc();
+
+                    //Consume stamina
+                    statsManager.ConsumeStamina(playerManager.playerData.rollBaseStaminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+                }
+                else
+                {
+                    Backdash();
+                    networkManager.BackdashServerRpc();
+
+                    //Consume stamina
+                    statsManager.ConsumeStamina(playerManager.playerData.backdashBaseStaminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+                }
             }
 
             if (playerManager.isSprinting) Sprint();
@@ -267,8 +283,8 @@ namespace AlessioBorriello
             {
                 if(animator.GetBool("OnGround"))
                 {
-                    animationManager.UpdateOnGroundValue(false);
-                    animationManager.PlayTargetAnimation("Fall", .2f, true);
+                    StartFalling();
+                    networkManager.StartFallingServerRpc();
                 }
             }
 
@@ -277,45 +293,53 @@ namespace AlessioBorriello
             {
                 if(!animator.GetBool("OnGround"))
                 {
-                    animationManager.UpdateOnGroundValue(true);
-                    animationManager.PlayTargetAnimation("EmptyOverride", .2f, false);
+                    Land();
+                    networkManager.LandServerRpc();
                 }
 
                 //Knock out
                 if (!playerManager.isKnockedOut && inAirTimer > playerManager.playerData.knockoutLandThreshold)
                 {
-                    ragdollManager.KnockOutServerRpc();
                     ragdollManager.KnockOut();
+                    networkManager.KnockOutServerRpc();
                 }
 
                 inAirTimer = 0;
             }
         }
 
+        public void StartFalling()
+        {
+            animationManager.UpdateOnGroundValue(false);
+            animationManager.PlayTargetAnimation("Fall", .2f, true);
+        }
+
+        public void Land()
+        {
+            animationManager.UpdateOnGroundValue(true);
+            animationManager.PlayTargetAnimation("EmptyOverride", .2f, false);
+        }
+
         /// <summary>
         /// Makes player roll
         /// </summary>
-        private void Roll()
+        public void Roll()
         {
             if (playerManager.disableActions || statsManager.currentStamina < 1) return;
 
             currentSpeedMultiplier = playerManager.playerData.rollSpeedMultiplier;
             animationManager.PlayTargetAnimation("Roll", .15f, true);
-
-            statsManager.ConsumeStamina(playerManager.playerData.rollBaseStaminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
         }
 
         /// <summary>
         /// Makes player backdash
         /// </summary>
-        private void Backdash()
+        public void Backdash()
         {
             if (playerManager.disableActions || statsManager.currentStamina < 1) return;
 
             currentSpeedMultiplier = playerManager.playerData.backdashSpeedMultiplier;
             animationManager.PlayTargetAnimation("Backdash", .2f, true);
-
-            statsManager.ConsumeStamina(playerManager.playerData.backdashBaseStaminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
         }
 
         /// <summary>
@@ -567,25 +591,6 @@ namespace AlessioBorriello
             playerManager.playerIsStuckInAnimation = true;
             yield return new WaitForSeconds(time);
             playerManager.playerIsStuckInAnimation = false;
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void SendPositionAndRotationServerRpc(Vector3 position, Quaternion rotation, ulong id)
-        {
-            SendPositionAndRotationClientRpc(position, rotation, id);
-        }
-
-        [ClientRpc]
-        private void SendPositionAndRotationClientRpc(Vector3 position, Quaternion rotation, ulong id)
-        {
-            if (playerManager.OwnerClientId != id) return;
-            SetPositionAndRotation(position, rotation);
-        }
-
-        private void SetPositionAndRotation(Vector3 position, Quaternion rotation)
-        {
-            physicalHips.transform.position = position;
-            animatedPlayer.transform.rotation = rotation;
         }
 
         /// <summary>

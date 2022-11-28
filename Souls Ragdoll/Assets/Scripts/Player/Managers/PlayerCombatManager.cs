@@ -6,7 +6,7 @@ using UnityEngine.UIElements;
 
 namespace AlessioBorriello
 {
-    public class PlayerCombatManager : NetworkBehaviour
+    public class PlayerCombatManager : MonoBehaviour
     {
         private PlayerManager playerManager;
         private PlayerWeaponManager weaponManager;
@@ -29,39 +29,6 @@ namespace AlessioBorriello
             weaponManager.HandleAttacks();
             //Shields
             shieldManager.HandleBlocks();
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void GotBackstabbedServerRpc(Vector3 backstabbedPosition, Quaternion backstabbedRotation, string backstabbedAnimation, float damage, ulong id)
-        {
-            GotBackstabbedClientRpc(backstabbedPosition, backstabbedRotation, backstabbedAnimation, damage, id);
-        }
-
-        [ClientRpc]
-        private void GotBackstabbedClientRpc(Vector3 backstabbedPosition, Quaternion backstabbedRotation, string backstabbedAnimation, float damage, ulong id)
-        {
-            if (playerManager.OwnerClientId != id) return;
-
-            //Check if backstab actually occurred, else return
-            GotBackstabbed(backstabbedPosition, backstabbedRotation, backstabbedAnimation, damage);
-        }
-
-        private void GotBackstabbed(Vector3 backstabbedPosition, Quaternion backstabbedRotation, string backstabbedAnimation, float damage)
-        {
-            if(!IsOwner) return;
-
-            //Play animation
-            playerManager.GetAnimationManager().PlayTargetAnimation(backstabbedAnimation, .1f, true);
-
-            //Stop player
-            playerManager.GetLocomotionManager().SetMovementSpeedMultiplier(1);
-
-            //Position player
-            playerManager.GetPhysicalHips().transform.position = backstabbedPosition;
-            playerManager.GetAnimatedPlayer().transform.rotation = backstabbedRotation;
-
-            //Take damage
-            StartCoroutine(playerManager.GetStatsManager().TakeCriticalDamage((int)damage, .5f));
         }
 
         public PlayerWeaponManager GetWeaponManager()

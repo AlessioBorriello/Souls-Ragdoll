@@ -6,15 +6,18 @@ namespace AlessioBorriello
 {
     public class KnockOutResistance : MonoBehaviour
     {
-        [HideInInspector] public float knockOutResistance = 200f; //Strenght of collision before the player is knocked out
-        public BodyParts bodyPart;
         private PlayerManager playerManager;
         private ActiveRagdollManager ragdollManager;
+        private PlayerNetworkManager networkManager;
+
+        [HideInInspector] public float knockOutResistance = 200f; //Strenght of collision before the player is knocked out
+        public BodyParts bodyPart;
 
         private void Awake()
         {
             playerManager = GetComponentInParent<PlayerManager>(); //Get player manager
             ragdollManager = playerManager.GetRagdollManager();
+            networkManager = playerManager.GetNetworkManager();
             SetResistances();
         }
 
@@ -25,8 +28,8 @@ namespace AlessioBorriello
             if (collision.impulse.magnitude > knockOutResistance)
             {
                 if(playerManager.isClient) Debug.Log($"Collision of: {this.name} with {collision.collider.name}, force {collision.impulse.magnitude} (Res: {knockOutResistance})");
-                ragdollManager.KnockOutServerRpc();
                 ragdollManager.KnockOut();
+                networkManager.KnockOutServerRpc();
             }
         }
 

@@ -10,6 +10,7 @@ namespace AlessioBorriello
     public class PlayerCollisionManager : MonoBehaviour
     {
         private PlayerManager playerManager;
+        private PlayerNetworkManager networkManager;
         private AnimationManager animationManager;
         private PlayerLocomotionManager locomotionManager;
         private ActiveRagdollManager ragdollManager;
@@ -25,6 +26,7 @@ namespace AlessioBorriello
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
+            networkManager = playerManager.GetNetworkManager();
             locomotionManager = playerManager.GetLocomotionManager();
             animationManager = playerManager.GetAnimationManager();
             ragdollManager = playerManager.GetRagdollManager();
@@ -54,7 +56,11 @@ namespace AlessioBorriello
                 }
 
                 statsManager.TakeDamage(damage);
-                if(shouldStagger && !attackBlocked) animationManager.PlayTargetAnimation("Hurt", .1f, true);
+                if (shouldStagger && !attackBlocked)
+                {
+                    animationManager.PlayTargetAnimation("Hurt", .1f, true);
+                    networkManager.PlayTargetAnimationServerRpc("Hurt", .1f, true);
+                }
                 if (attackBlocked) StartCoroutine(locomotionManager.StopMovementForTime(.22f));
 
                 //Knockback

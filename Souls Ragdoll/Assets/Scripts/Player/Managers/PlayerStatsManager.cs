@@ -74,7 +74,7 @@ namespace AlessioBorriello
         {
             if (!playerManager.IsOwner) return;
 
-            VigorLevel = 10;
+            VigorLevel = 1;
             StrengthLevel = 1;
             EnduranceLevel = 10;
         }
@@ -92,7 +92,7 @@ namespace AlessioBorriello
             if(currentHealth <= 0)
             {
                 playerManager.Die();
-                playerManager.DieServerRpc();
+                networkManager.DieServerRpc();
 
             }
 

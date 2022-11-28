@@ -1,6 +1,7 @@
 using Newtonsoft.Json.Bson;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace AlessioBorriello
         private AnimationManager animationManager;
         private PlayerInventoryManager inventoryManager;
         private ActiveRagdollManager ragdollManager;
-        private PlayerCombatManager combatManager;
+        private PlayerNetworkManager networkManager;
 
         [SerializeField] private LayerMask backstabLayer;
 
@@ -37,7 +38,7 @@ namespace AlessioBorriello
             animationManager = playerManager.GetAnimationManager();
             inventoryManager = playerManager.GetInventoryManager();
             ragdollManager = playerManager.GetRagdollManager();
-            combatManager = playerManager.GetCombatManager();
+            networkManager = playerManager.GetNetworkManager();
 
             physicalHips = playerManager.GetPhysicalHips();
             animatedPlayer = playerManager.GetAnimatedPlayer();
@@ -83,44 +84,62 @@ namespace AlessioBorriello
             //Get right or left item
             WeaponItem weapon = (WeaponItem)((isLeft)? inventoryManager.GetCurrentItem(true) : inventoryManager.GetCurrentItem(false));
 
-            //Get this new attack's proprieties
-            bool newAttackingWithLeft = isLeft;
-
             //If an attack was NOT chained and it is not the first attack
             if (!chainedAttack && nextComboAttackIndex != 0) return;
 
             //Update proprieties
-            attackingWithLeft = newAttackingWithLeft;
             attackType = newAttackType;
-            animationManager.UpdateAttackingWithLeftValue(attackingWithLeft);
 
             //Check for backstab, if the backstab goes through, then return
-            if(TryBackstab(attackType, weapon)) return;
+            if(TryBackstab(attackType, weapon, isLeft)) return;
 
             //Get animation to play and movement speed multiplier
             string attackAnimation = GetAttackAnimationString(weapon, attackType);
-            float attackMovementSpeedMultiplier = GetAttackMovementSpeedMultiplier(weapon);
-            float staminaCost = GetAttackStaminaCost(attackType, weapon);
 
-            //Set collider values
+            //Get collider values
             int damage = (int)(weapon.baseDamage * GetWeaponDamageMultiplier(weapon));
             float knockbackStrength = weapon.knockbackStrength;
             float flinchStrength = weapon.flinchStrength;
-            inventoryManager.SetColliderValues(damage, knockbackStrength, flinchStrength, attackingWithLeft);
-
 
             //Attack
-            Attack(attackAnimation, attackMovementSpeedMultiplier, staminaCost);
+            Attack(attackAnimation, damage, knockbackStrength, flinchStrength, isLeft);
+            networkManager.AttackServerRpc(attackAnimation, damage, knockbackStrength, flinchStrength, isLeft);
+
+            //Set attack speed multiplier
+            float attackMovementSpeedMultiplier = GetAttackMovementSpeedMultiplier(weapon);
+            locomotionManager.SetMovementSpeedMultiplier(attackMovementSpeedMultiplier);
+
+            //Consume stamina
+            float staminaCost = GetAttackStaminaCost(attackType, weapon);
+            statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
 
         }
 
-        private bool TryBackstab(AttackType attackType, WeaponItem weapon)
+        public void Attack(string attackAnimation, int damage, float knockbackStrength, float flinchStrength, bool attackingWithLeft)
         {
-            if(attackType != AttackType.light) return false;
+            if (attackAnimation == "") return;
+
+            //Play animation
+            animationManager.PlayTargetAnimation(attackAnimation, .2f, true);
+
+            //Disable arms collision
+            ragdollManager.ToggleCollisionOfArms(false);
+
+            //Set collider values
+            inventoryManager.SetColliderValues(damage, knockbackStrength, flinchStrength, attackingWithLeft);
+
+            //Update animator values
+            this.attackingWithLeft = attackingWithLeft;
+            animationManager.UpdateAttackingWithLeftValue(attackingWithLeft);
+        }
+
+        private bool TryBackstab(AttackType attackType, WeaponItem weapon, bool attackingWithLeft)
+        {
+            if (attackType != AttackType.light || chainedAttack) return false;
 
             RaycastHit hit;
             float backstabDistance = 1.4f;
-            if(Physics.Raycast(physicalHips.transform.position, physicalHips.transform.forward, out hit, backstabDistance, backstabLayer))
+            if (Physics.Raycast(physicalHips.transform.position, physicalHips.transform.forward, out hit, backstabDistance, backstabLayer))
             {
                 PlayerManager victimManager = hit.collider.GetComponentInParent<PlayerManager>();
 
@@ -131,7 +150,34 @@ namespace AlessioBorriello
                 Vector3 hitDirection = (victimHips.transform.position - physicalHips.transform.position).normalized;
                 float hitAngle = Vector3.Angle(Vector3.ProjectOnPlane(hitDirection, Vector3.up), Vector3.ProjectOnPlane(victimHips.transform.forward, Vector3.up));
 
-                if (hitAngle < 25f) Backstab(victimManager, weapon);
+                if (hitAngle < 25f)
+                {
+                    //Set proprieties
+                    this.attackType = AttackType.backstab;
+
+                    //Damage
+                    float damage = weapon.baseDamage;
+                    damage *= GetWeaponDamageMultiplier(weapon);
+
+                    //Animations
+                    string backstabAnimation = weapon.backstabAttack;
+                    string backstabbedAnimation = weapon.backstabVictimAnimation;
+
+                    //Consume stamina
+                    statsManager.ConsumeStamina(weapon.backstabAttackStaminaUse, statsManager.playerStats.staminaDefaultRecoveryTime);
+
+                    //Play backstab
+                    Backstab(backstabAnimation, attackingWithLeft);
+                    networkManager.BackstabServerRpc(backstabAnimation, attackingWithLeft);
+
+                    //Get position and rotation for the victim
+                    Vector3 backstabbedPosition = playerManager.backstabbedTransform.position;
+                    Quaternion backstabbedRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(playerManager.backstabbedTransform.forward, Vector3.up));
+
+                    //Position victim and play animation
+                    victimManager.GetWeaponManager().Backstabbed(backstabbedPosition, backstabbedRotation, backstabbedAnimation, damage);
+                    victimManager.GetNetworkManager().BackstabbedServerRpc(backstabbedPosition, backstabbedRotation, backstabbedAnimation, damage, victimManager.OwnerClientId);
+                }
                 else return false;
 
                 return true;
@@ -140,56 +186,40 @@ namespace AlessioBorriello
             return false;
         }
 
-        private void Backstab(PlayerManager victim, WeaponItem weapon)
+        public void Backstab(string backstabAnimation, bool attackingWithLeft)
         {
-            //Set proprieties
-            animationManager.UpdateAttackingWithLeftValue(attackingWithLeft);
-            attackType = AttackType.backstab;
-
             //Disable arms collision
             ragdollManager.ToggleCollisionOfArms(false);
-            ragdollManager.ToggleCollisionOfArmsServerRpc(false);
 
             //Play backstab animation
-            animationManager.PlayTargetAnimation(weapon.backstabAttack, .1f, true);
+            animationManager.PlayTargetAnimation(backstabAnimation, .1f, true);
 
             //Stop player
             locomotionManager.SetMovementSpeedMultiplier(1);
 
-            //Damage
-            float damage = weapon.baseDamage;
-            damage *= GetWeaponDamageMultiplier(weapon);
-
-            //Stamina
-            float staminaCost = weapon.backstabAttackStaminaUse;
-
-            //Send backstab to victim
-            Vector3 backstabbedPosition = playerManager.backstabbedTransform.position;
-            Quaternion backstabbedRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(playerManager.backstabbedTransform.forward, Vector3.up));
-            victim.GetCombatManager().GotBackstabbedServerRpc(backstabbedPosition, backstabbedRotation, weapon.backstabVictimAnimation, damage, victim.OwnerClientId);
-
-            //Consume stamina
-            statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+            //Update animator values
+            this.attackingWithLeft = attackingWithLeft;
+            animationManager.UpdateAttackingWithLeftValue(attackingWithLeft);
 
         }
 
-        private void Attack(string attackAnimation, float attackMovementSpeedMultiplier, float staminaCost)
+        public void Backstabbed(Vector3 backstabbedPosition, Quaternion backstabbedRotation, string backstabbedAnimation, float damage)
         {
-            if (attackAnimation == "") return;
-
             //Play animation
-            animationManager.PlayTargetAnimation(attackAnimation, .2f, true);
+            playerManager.GetAnimationManager().PlayTargetAnimation(backstabbedAnimation, .1f, true);
 
-            //Set speed multiplier
-            locomotionManager.SetMovementSpeedMultiplier(attackMovementSpeedMultiplier);
-            //if (chainedAttack) Debug.Log("Combo: " + attackAnimation);
+            //Stop player
+            playerManager.GetLocomotionManager().SetMovementSpeedMultiplier(1);
 
-            //Disable arms collision
-            ragdollManager.ToggleCollisionOfArms(false);
-            ragdollManager.ToggleCollisionOfArmsServerRpc(false);
+            //Don't continue if not in the client side
+            if (!playerManager.IsOwner) return;
 
-            //Consume stamina
-            statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+            //Position player
+            playerManager.GetPhysicalHips().transform.position = backstabbedPosition;
+            playerManager.GetAnimatedPlayer().transform.rotation = backstabbedRotation;
+
+            //Take damage
+            StartCoroutine(playerManager.GetStatsManager().TakeCriticalDamage((int)damage, .5f));
         }
 
         private float GetWeaponDamageMultiplier(WeaponItem weapon)
@@ -308,14 +338,19 @@ namespace AlessioBorriello
             return attackingWithLeft;
         }
 
+        public bool IsChainingAttack()
+        {
+            return chainedAttack;
+        }
+
         public void ResetCombo()
         {
             if (!chainedAttack) //Reset combo if player has not chained an attack
             {
                 nextComboAttackIndex = 0;
-                //Enable arms collision
-                playerManager.GetRagdollManager().ToggleCollisionOfArms(true);
-                playerManager.GetRagdollManager().ToggleCollisionOfArmsServerRpc(true);
+
+                //Stop attacking
+                playerManager.isAttacking = false;
             }
             else
             {

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace AlessioBorriello
@@ -10,7 +11,7 @@ namespace AlessioBorriello
         private InputManager inputManager;
         private AnimationManager animationManager;
         private PlayerInventoryManager inventoryManager;
-        private PlayerCombatManager combatManager;
+        private PlayerNetworkManager networkManager;
 
         private bool blockingWithLeft = false;
 
@@ -20,14 +21,15 @@ namespace AlessioBorriello
             inputManager = playerManager.GetInputManager();
             animationManager = playerManager.GetAnimationManager();
             inventoryManager = playerManager.GetInventoryManager();
-            combatManager = playerManager.GetCombatManager();
+            networkManager = playerManager.GetNetworkManager();
         }
 
         public void HandleBlocks()
         {
             if (playerManager.playerIsStuckInAnimation)
             {
-                StopBlock();
+                StopBlocking();
+                networkManager.StopBlockingServerRpc();
                 return;
             }
 
@@ -41,35 +43,31 @@ namespace AlessioBorriello
             {
                 //If it's not a shield
                 if (inventoryManager.GetCurrentItemType(isLeft) != PlayerInventoryManager.ItemType.shield) return;
-                TryBlock(isLeft);
+
+                Block(isLeft);
+                networkManager.BlockServerRpc(isLeft);
             }
             else
             {
-                StopBlock();
+                StopBlocking();
+                networkManager.StopBlockingServerRpc();
             }
         }
 
-        private void TryBlock(bool isLeft)
+        public void Block(bool blockingWithLeft)
         {
-
-            //Get right or left item
-            HandEquippableItem item = (isLeft) ? inventoryManager.GetCurrentItem(true) : inventoryManager.GetCurrentItem(false);
-
-            blockingWithLeft = isLeft;
-            animationManager.UpdateBlockingWithLeftValue(blockingWithLeft);
-            Block();
-        }
-
-        private void Block()
-        {
+            //Start blocking
             if(!playerManager.isBlocking)
             {
+                this.blockingWithLeft = blockingWithLeft;
+                animationManager.UpdateBlockingWithLeftValue(blockingWithLeft);
+
                 animationManager.PlayTargetAnimation("OneHandShieldBlockLoop", .1f, false);
                 playerManager.isBlocking = true;
             }
         }
 
-        private void StopBlock()
+        public void StopBlocking()
         {
             if (playerManager.isBlocking)
             {

@@ -1,6 +1,7 @@
 using AlessioBorriello;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace AlessioBorriello
@@ -8,6 +9,7 @@ namespace AlessioBorriello
     public class AnimationEventsManager : MonoBehaviour
     {
         private PlayerManager playerManager;
+        private PlayerNetworkManager networkManager;
         private PlayerLocomotionManager locomotionManager;
         private PlayerInventoryManager inventoryManager;
         private ActiveRagdollManager ragdollManager;
@@ -17,6 +19,7 @@ namespace AlessioBorriello
         private void Start()
         {
             playerManager = GetComponentInParent<PlayerManager>();
+            networkManager = playerManager.GetNetworkManager();
             locomotionManager = playerManager.GetLocomotionManager();
             inventoryManager = playerManager.GetInventoryManager();
             ragdollManager = playerManager.GetRagdollManager();
@@ -54,9 +57,8 @@ namespace AlessioBorriello
             if(combatManager.diedFromCriticalDamage)
             {
                 combatManager.diedFromCriticalDamage = false;
-                playerManager.GetAnimationManager().PlayTargetAnimation("EmptyOverride", .2f, false);
                 playerManager.Die();
-                playerManager.DieServerRpc();
+                networkManager.DieServerRpc();
             }
         }
 

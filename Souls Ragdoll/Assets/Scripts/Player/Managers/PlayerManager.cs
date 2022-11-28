@@ -25,7 +25,7 @@ namespace AlessioBorriello
         //Components
         private Transform cameraTransform;
         private InputManager inputManager;
-        private PlayerNetworkManager playerNetworkManager;
+        private PlayerNetworkManager networkManager;
         private AnimationManager animationManager;
         private PlayerLocomotionManager locomotionManager;
         private ActiveRagdollManager ragdollManager;
@@ -71,7 +71,7 @@ namespace AlessioBorriello
         private void Awake()
         {
             inputManager = GetComponent<InputManager>();
-            playerNetworkManager = GetComponent<PlayerNetworkManager>();
+            networkManager = GetComponent<PlayerNetworkManager>();
             animationManager = GetComponent<AnimationManager>();
             ragdollManager = GetComponent<ActiveRagdollManager>();
             collisionManager = GetComponent<PlayerCollisionManager>();
@@ -99,15 +99,6 @@ namespace AlessioBorriello
                 inputManager.enabled = false;
                 animationManager.GetAnimator().applyRootMotion = false;
                 isClient = false;
-                //Destroy(inputManager);
-                //Destroy(animationManager);
-                //Destroy(collisionManager);
-                //Destroy(locomotionManager);
-                //Destroy(inventoryManager);
-                //Destroy(statsManager);
-                //Destroy(combatManager);
-                //Destroy(weaponManager);
-                //Destroy(shieldManager);
 
                 foreach(KnockOutResistance r in GetComponentsInChildren<KnockOutResistance>())
                 {
@@ -179,23 +170,13 @@ namespace AlessioBorriello
             cameraControl.SetCameraFollowTransform(physicalHips.transform);
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void DieServerRpc()
-        {
-            DieClientRpc();
-        }
-
-        [ClientRpc]
-        private void DieClientRpc()
-        {
-            if (IsOwner) return;
-            Die();
-        }
-
         public void Die()
         {
             isDead = true;
             ragdollManager.SetJointsDriveForces(0, 0);
+
+            //Set override animation to empty
+            animationManager.PlayTargetAnimation("EmptyOverride", .2f, false);
 
             //Changes friction of the feet so that they don't slide around (set it to idle friction)
             shouldSlide = false;
@@ -204,29 +185,16 @@ namespace AlessioBorriello
             if (!IsOwner)
             {
                 CameraControl cameraControl = Camera.main.transform.GetComponentInParent<CameraControl>();
-                if (cameraControl?.lockedTarget?.root.GetInstanceID() == transform.root.GetInstanceID()) cameraControl.TargetDied();
+                Transform lockedTarget = cameraControl.lockedTarget;
+                if (lockedTarget != null && lockedTarget.root.GetInstanceID() == transform.root.GetInstanceID()) cameraControl.TargetDied();
             }
 
             //Respawn
             if (IsOwner) StartCoroutine(RespawnPlayer());
-            else RespawnPlayerServerRpc();
-
+            else networkManager.RespawnPlayerServerRpc();
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void RespawnPlayerServerRpc(float respawnTime = 1.5f)
-        {
-            RespawnPlayerClientRpc(respawnTime);
-        }
-
-        [ClientRpc]
-        private void RespawnPlayerClientRpc(float respawnTime = 1.5f)
-        {
-            if (IsOwner) return; //Already respawned
-            StartCoroutine(RespawnPlayer(respawnTime));
-        }
-
-        private IEnumerator RespawnPlayer(float respawnTime = 1.5f)
+        public IEnumerator RespawnPlayer(float respawnTime = 1.5f)
         {
             yield return new WaitForSeconds(respawnTime);
 
@@ -242,7 +210,7 @@ namespace AlessioBorriello
 
                 statsManager.ResetStats();
                 ragdollManager.WakeUp(0);
-                ragdollManager.WakeUpServerRpc(0);
+                networkManager.WakeUpServerRpc(0);
 
                 cameraControl.SetCameraToTarget();
             }
@@ -262,7 +230,7 @@ namespace AlessioBorriello
 
         public PlayerNetworkManager GetNetworkManager()
         {
-            return playerNetworkManager;
+            return networkManager;
         }
 
         public AnimationManager GetAnimationManager()

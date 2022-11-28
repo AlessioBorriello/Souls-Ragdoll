@@ -11,9 +11,10 @@ namespace AlessioBorriello
         {
             PlayerManager playerManager = animator.transform.root.GetComponent<PlayerManager>();
 
+            if (playerManager.GetWeaponManager().IsChainingAttack()) return;
+
             //Enable arms collision
             playerManager.GetRagdollManager().ToggleCollisionOfArms(true);
-            playerManager.GetRagdollManager().ToggleCollisionOfArmsServerRpc(true);
         }
     }
 }

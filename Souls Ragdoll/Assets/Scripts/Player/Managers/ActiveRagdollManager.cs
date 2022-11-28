@@ -6,9 +6,10 @@ using Unity.Netcode;
 
 namespace AlessioBorriello
 {
-    public class ActiveRagdollManager : NetworkBehaviour
+    public class ActiveRagdollManager : MonoBehaviour
     {
         private PlayerManager playerManager; //Player manager
+        private PlayerNetworkManager networkManager; //Network manager
         private Animator animator; //Animator of the animated character
 
         private Transform animatedHips; //Hips of the animated character
@@ -34,6 +35,7 @@ namespace AlessioBorriello
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>(); //Get player manager
+            networkManager = playerManager.GetNetworkManager();
             Initialize();
         }
 
@@ -242,15 +244,15 @@ namespace AlessioBorriello
         /// </summary>
         public void HandleWakeUp()
         {
-            if (!IsOwner || !playerManager.isKnockedOut) return;
+            if (!playerManager.IsOwner || !playerManager.isKnockedOut) return;
 
             if (IsPlayerVelocityApproxZero(.08f)) //If the player body has stopped
             {
                 knockedOutTimer -= Time.deltaTime; //Decreases timer
                 if (knockedOutTimer <= 0) //If timer is up
                 {
-                    WakeUpServerRpc(playerManager.playerData.wakeUpTime); //Wake up
-                    WakeUp(playerManager.playerData.wakeUpTime);
+                    WakeUp(playerManager.playerData.wakeUpTime); //Wake up
+                    networkManager.WakeUpServerRpc(playerManager.playerData.wakeUpTime);
                 }
             }
             else //The player's body has moved
@@ -261,8 +263,8 @@ namespace AlessioBorriello
             safenetKnockedOutTimer -= Time.deltaTime;
             if (safenetKnockedOutTimer <= 0)
             {
-                WakeUpServerRpc(playerManager.playerData.wakeUpTime); //Safety net wake up
-                WakeUp(playerManager.playerData.wakeUpTime);
+                WakeUp(playerManager.playerData.wakeUpTime); //Safety net wake up
+                networkManager.WakeUpServerRpc(playerManager.playerData.wakeUpTime);
             }
 
         }
@@ -281,19 +283,6 @@ namespace AlessioBorriello
             safenetKnockedOutTimer = 0;
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void WakeUpServerRpc(float time)
-        {
-            WakeUpClientRpc(time);
-        }
-
-        [ClientRpc]
-        public void WakeUpClientRpc(float time)
-        {
-            if (IsOwner) return;
-            WakeUp(time);
-        }
-
         /// <summary>
         /// Knockout the player, set the joint drive forces to 0
         /// </summary>
@@ -310,19 +299,6 @@ namespace AlessioBorriello
 
             //Changes friction of the feet so that they don't slide around (set it to idle friction)
             playerManager.shouldSlide = false;
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void KnockOutServerRpc(float time = 0)
-        {
-            KnockOutClientRpc(time);
-        }
-
-        [ClientRpc]
-        public void KnockOutClientRpc(float time = 0)
-        {
-            if (IsOwner) return;
-            KnockOut(time);
         }
 
         /// <summary>
@@ -383,19 +359,6 @@ namespace AlessioBorriello
             {
                 part.layer = (enable)? characterLayer : ignoreCharacterLayer;
             }
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void ToggleCollisionOfArmsServerRpc(bool enable)
-        {
-            ToggleCollisionOfArmsClientRpc(enable);
-        }
-
-        [ClientRpc]
-        public void ToggleCollisionOfArmsClientRpc(bool enable)
-        {
-            if (IsOwner) return;
-            ToggleCollisionOfArms(enable);
         }
 
     }
