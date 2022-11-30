@@ -10,21 +10,23 @@ namespace AlessioBorriello
     {
         [SerializeField] private Slider healthBarSlider;
         [SerializeField] private Image healthBarFill;
+        [SerializeField] private Slider animationHealthBarSlider;
+        [SerializeField] private Image animationHealthBarFill;
+
         [SerializeField] private Image lockOnImage;
 
         private PlayerManager playerManager;
-        private PlayerNetworkManager networkManager;
+        private PlayerStatsManager statsManager;
 
         private Transform cameraTransform;
         private Quaternion startRotation;
 
-        private bool handleHealthBar = false;
         private bool lockedOn = false;
 
         private void Awake()
         {
             playerManager = GetComponentInParent<PlayerManager>();
-            networkManager = playerManager.GetNetworkManager();
+            statsManager = playerManager.GetStatsManager();
 
             cameraTransform = Camera.main.transform;
         }
@@ -43,30 +45,24 @@ namespace AlessioBorriello
             //Keep UI facing the camera
             transform.rotation = cameraTransform.rotation * startRotation;
 
-            if(handleHealthBar) HandleHealthBar();
-
-            //Stop handling if dead
-            if (playerManager.isDead) handleHealthBar = false;
+            HandleHealthBar();
         }
 
         private void HandleHealthBar()
         {
-            if(lockedOn) healthBarSlider.value = Mathf.Lerp(healthBarSlider.value, (float)networkManager.netCurrentHealth.Value / networkManager.netMaxHealth.Value, 4 * Time.deltaTime);
-            else healthBarSlider.value = (float)networkManager.netCurrentHealth.Value / networkManager.netMaxHealth.Value;
+            healthBarSlider.value = (float)statsManager.CurrentHealth / statsManager.MaxHealth;
+
+            if (lockedOn) animationHealthBarSlider.value = Mathf.Lerp(animationHealthBarSlider.value, (float)statsManager.CurrentHealth / statsManager.MaxHealth, 4 * Time.deltaTime);
+            else animationHealthBarSlider.value = (float)statsManager.CurrentHealth / statsManager.MaxHealth;
         }
 
         public void ToggleTargetUI(bool enable)
         {
             healthBarFill.enabled = enable;
+            animationHealthBarFill.enabled = enable;
+
             lockOnImage.enabled = enable;
             lockedOn = enable;
-
-            //Enable handling only after first lock on (avoids NaN bug in the slider)
-            if (!handleHealthBar && enable)
-            {
-                healthBarSlider.value = (float)networkManager.netCurrentHealth.Value / networkManager.netMaxHealth.Value;
-                handleHealthBar = true;
-            }
         }
     }
 }

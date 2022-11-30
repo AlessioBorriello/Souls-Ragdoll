@@ -8,11 +8,14 @@ namespace AlessioBorriello
 {
     public class PlayerNetworkManager : NetworkBehaviour
     {
+        [SerializeField] private bool showClientNetworkRpcs = false;
+
         //Components
         private PlayerManager playerManager;
         private AnimationManager animationManager;
         private ActiveRagdollManager ragdollManager;
         private PlayerLocomotionManager locomotionManager;
+        private PlayerStatsManager statsManager;
         private PlayerWeaponManager weaponManager;
         private PlayerShieldManager shieldManager;
 
@@ -35,11 +38,24 @@ namespace AlessioBorriello
             animationManager = playerManager.GetAnimationManager();
             ragdollManager = playerManager.GetRagdollManager();
             locomotionManager = playerManager.GetLocomotionManager();
+            statsManager = playerManager.GetStatsManager();
             weaponManager = playerManager.GetWeaponManager();
             shieldManager = playerManager.GetShieldManager();
 
             physicalHips = playerManager.GetPhysicalHips();
             animatedPlayer = playerManager.GetAnimatedPlayer();
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            netCurrentHealth.OnValueChanged += (int oldCurrentHealth, int newCurrentHealth) => statsManager.SetCurrentHealth(newCurrentHealth);
+            netMaxHealth.OnValueChanged += (int oldMaxHealth, int newMaxHealth) => statsManager.SetMaxHealth(newMaxHealth);
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            netCurrentHealth.OnValueChanged -= (int oldCurrentHealth, int newCurrentHealth) => statsManager.SetCurrentHealth(newCurrentHealth);
+            netMaxHealth.OnValueChanged -= (int oldMaxHealth, int newMaxHealth) => statsManager.SetMaxHealth(newMaxHealth);
         }
 
         private Vector3 posVel;
@@ -80,6 +96,7 @@ namespace AlessioBorriello
         private void DieClientRpc()
         {
             if (IsOwner) return;
+            if(showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} died");
             playerManager.Die();
         }
 
@@ -94,6 +111,7 @@ namespace AlessioBorriello
         private void RespawnPlayerClientRpc(float respawnTime = 1.5f)
         {
             if (IsOwner) return; //Already respawned
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} respawned");
             StartCoroutine(playerManager.RespawnPlayer(respawnTime));
         }
 
@@ -112,6 +130,7 @@ namespace AlessioBorriello
         private void RollClientRpc()
         {
             if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} rolled");
             locomotionManager.Roll();
         }
 
@@ -126,6 +145,7 @@ namespace AlessioBorriello
         private void BackdashClientRpc()
         {
             if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} backdashed");
             locomotionManager.Backdash();
         }
 
@@ -140,6 +160,7 @@ namespace AlessioBorriello
         private void StartFallingClientRpc()
         {
             if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} started falling");
             locomotionManager.StartFalling();
         }
 
@@ -154,6 +175,7 @@ namespace AlessioBorriello
         private void LandClientRpc()
         {
             if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} landed");
             locomotionManager.Land();
         }
 
@@ -174,38 +196,56 @@ namespace AlessioBorriello
         private void AttackClientRpc(string attackAnimation, int damage, float knockbackStrength, float flinchStrength, bool attackingWithLeft)
         {
             if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} attacked ({attackAnimation}) for {damage} damage with his " + ((attackingWithLeft)? "left" : "right") + " hand");
             weaponManager.Attack(attackAnimation, damage, knockbackStrength, flinchStrength, attackingWithLeft);
         }
 
         //Backstab
         [ServerRpc(RequireOwnership = false)]
-        public void BackstabServerRpc(string backstabAnimation, bool attackingWithLeft)
+        public void RiposteServerRpc(string riposteAnimation, bool attackingWithLeft)
         {
-            BackstabClientRpc(backstabAnimation, attackingWithLeft);
+            RiposteClientRpc(riposteAnimation, attackingWithLeft);
         }
 
         [ClientRpc]
-        private void BackstabClientRpc(string backstabAnimation, bool attackingWithLeft)
+        private void RiposteClientRpc(string riposteAnimation, bool attackingWithLeft)
         {
             if (IsOwner) return;
-            weaponManager.Backstab(backstabAnimation, attackingWithLeft);
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} backstabbed with his " + ((attackingWithLeft) ? "left" : "right") + " hand");
+            weaponManager.Riposte(riposteAnimation, attackingWithLeft);
         }
 
         //Backstabbed
         [ServerRpc(RequireOwnership = false)]
-        public void BackstabbedServerRpc(Vector3 backstabbedPosition, Quaternion backstabbedRotation, string backstabbedAnimation, float damage, ulong id)
+        public void RipostedServerRpc(Vector3 riposteVictimPosition, Quaternion riposteVictimRotation, string riposteVictimAnimation, float damage, ulong id)
         {
-            BackstabbedClientRpc(backstabbedPosition, backstabbedRotation, backstabbedAnimation, damage, id);
+            RipostedClientRpc(riposteVictimPosition, riposteVictimRotation, riposteVictimAnimation, damage, id);
         }
 
         [ClientRpc]
-        private void BackstabbedClientRpc(Vector3 backstabbedPosition, Quaternion backstabbedRotation, string backstabbedAnimation, float damage, ulong id)
+        private void RipostedClientRpc(Vector3 riposteVictimPosition, Quaternion riposteVictimRotation, string riposteVictimAnimation, float damage, ulong id)
         {
             //Sent to another player, is it should not be the Owner of the object
             if (!playerManager.IsOwner || playerManager.OwnerClientId != id) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} got backstabbed");
 
             //Check if backstab actually occurred, else return
-            weaponManager.Backstabbed(backstabbedPosition, backstabbedRotation, backstabbedAnimation, damage);
+            weaponManager.Riposted(riposteVictimPosition, riposteVictimRotation, riposteVictimAnimation, damage);
+        }
+
+        //Parried
+        [ServerRpc(RequireOwnership = false)]
+        public void ParriedServerRpc()
+        {
+            ParriedClientRpc();
+        }
+
+        [ClientRpc]
+        private void ParriedClientRpc()
+        {
+            if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} got parried");
+            weaponManager.Parried();
         }
 
         #endregion
@@ -222,6 +262,7 @@ namespace AlessioBorriello
         private void BlockClientRpc(bool blockingWithLeft)
         {
             if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} started blocking with his " + ((blockingWithLeft) ? "left" : "right") + " hand");
             shieldManager.Block(blockingWithLeft);
         }
 
@@ -236,7 +277,23 @@ namespace AlessioBorriello
         private void StopBlockingClientRpc()
         {
             if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} stopped blocking");
             shieldManager.StopBlocking();
+        }
+
+        //Parry
+        [ServerRpc(RequireOwnership = false)]
+        public void ParryServerRpc(bool parryingWithLeft)
+        {
+            ParryClientRpc(parryingWithLeft);
+        }
+
+        [ClientRpc]
+        private void ParryClientRpc(bool parryingWithLeft)
+        {
+            if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} parried");
+            shieldManager.Parry(parryingWithLeft);
         }
         #endregion
 
@@ -253,6 +310,7 @@ namespace AlessioBorriello
         private void PlayTargetAnimationClientRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
         {
             if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} played the {targetAnimation} animation");
             animationManager.PlayTargetAnimation(targetAnimation, fadeDuration, isStuckInAnimation);
         }
 
@@ -266,6 +324,7 @@ namespace AlessioBorriello
         private void PlayTargetAnimationClientRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
         {
             if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} played the {targetAnimation} animation");
             animationManager.PlayTargetAnimation(targetAnimation, fadeDuration, isStuckInAnimation, layer);
         }
         #endregion
@@ -283,6 +342,7 @@ namespace AlessioBorriello
         private void KnockOutClientRpc(float time = 0)
         {
             if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} got knocked out");
             ragdollManager.KnockOut(time);
         }
 
@@ -297,6 +357,7 @@ namespace AlessioBorriello
         private void WakeUpClientRpc(float time)
         {
             if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} woke up");
             ragdollManager.WakeUp(time);
         }
 

@@ -63,7 +63,10 @@ namespace AlessioBorriello
         [Header("Combat flag")]
         public bool isAttacking = false;
         public bool isBlocking = false;
+        public bool isParrying = false;
         public bool canBlock = true;
+        public bool canBeBackstabbed = true;
+        public bool canBeRiposted = false;
         public bool isLockingOn = false;
         public bool canLockOn = true;
         #endregion

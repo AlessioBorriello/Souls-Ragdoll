@@ -21,7 +21,7 @@ namespace AlessioBorriello
         private Rigidbody physicalHips;
 
         private List<int> inContact = new List<int>();
-        public bool shouldStagger = true; //Should be private and be true if the hit breaks the poise
+        public bool shouldStagger = false; //Should be private and be true if the hit breaks the poise
 
         private void Awake()
         {

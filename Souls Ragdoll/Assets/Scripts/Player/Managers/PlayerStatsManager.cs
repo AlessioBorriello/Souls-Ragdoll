@@ -15,51 +15,98 @@ namespace AlessioBorriello
 
         #region Vigor
         private int vigorLevel;
-        public int maxHealth { get; private set; } = 1;
-        public int currentHealth { get; private set; } = 1;
         public int VigorLevel
         {
-            get { return vigorLevel; }
-            set 
-            {
-                vigorLevel = value;
-                maxHealth = CalculateStatValue(vigorLevel, playerStats.vigorMaxLevel, playerStats.vigorDiminishingReturnCurve, playerStats.baseHealth, playerStats.baseHealthAdded);
-                currentHealth = maxHealth;
-
-                //Update net vars
-                networkManager.netCurrentHealth.Value = currentHealth;
-                networkManager.netMaxHealth.Value = maxHealth;
+            get { 
+                return vigorLevel; 
             }
+            set {
+                vigorLevel = value;
+                MaxHealth = CalculateStatValue(vigorLevel, playerStats.vigorMaxLevel, playerStats.vigorDiminishingReturnCurve, playerStats.baseHealth, playerStats.baseHealthAdded);
+                CurrentHealth = MaxHealth;
+            }
+        }
+
+        private int maxHealth = 1;
+        public int MaxHealth {
+            get {
+                return maxHealth;
+            }
+            private set
+            {
+                maxHealth = value;
+                networkManager.netMaxHealth.Value = value;
+            }
+        }
+
+        private int currentHealth = 1;
+        public int CurrentHealth {
+            get { 
+                return currentHealth; 
+            } 
+            private set {
+                currentHealth = value;
+                networkManager.netCurrentHealth.Value = value;
+            } 
         }
         #endregion
 
         #region Endurance
         private int enduranceLevel;
-        public float maxStamina { get; private set; } = 1;
-        public float currentStamina { get; private set; } = 1;
         public int EnduranceLevel
         {
-            get { return vigorLevel; }
-            set
-            {
+            get {
+                return vigorLevel;
+            }
+            set {
                 enduranceLevel = value;
-                maxStamina = CalculateStatValue(enduranceLevel, playerStats.enduranceMaxLevel, playerStats.enduranceDiminishingReturnCurve, (int)playerStats.baseStamina, (int)playerStats.baseStaminaAdded);
-                currentStamina = maxStamina;
+                MaxStamina = CalculateStatValue(enduranceLevel, playerStats.enduranceMaxLevel, playerStats.enduranceDiminishingReturnCurve, (int)playerStats.baseStamina, (int)playerStats.baseStaminaAdded);
+                CurrentStamina = MaxStamina;
             }
         }
+
+        private float maxStamina = 1;
+        public float MaxStamina {
+            get {
+                return maxStamina;
+            }
+            private set {
+                maxStamina = value;
+            }
+        }
+
+        private float currentStamina = 1;
+        public float CurrentStamina {
+            get {
+                return currentStamina;
+            }
+            private set {
+                currentStamina = value;
+            }
+        }
+
         private float staminaRecoveryTimer = 0;
         #endregion
 
         #region Strength
         private int strengthLevel;
-        public int power { get; private set; }
-        public int StrengthLevel
-        {
-            get { return strengthLevel; }
-            set
-            {
+        public int StrengthLevel {
+            get { 
+                return strengthLevel; 
+            }
+            set {
                 strengthLevel = value;
-                power = CalculateStatValue(strengthLevel, playerStats.strengthMaxLevel, playerStats.strengthDiminishingReturnCurve, playerStats.basePower, playerStats.basePowerAdded);
+                Power = CalculateStatValue(strengthLevel, playerStats.strengthMaxLevel, playerStats.strengthDiminishingReturnCurve, playerStats.basePower, playerStats.basePowerAdded);
+            }
+        }
+
+        private int power = 1;
+        public int Power {
+            get {
+                return power;
+            }
+            private set {
+                power = value;
             }
         }
         #endregion
@@ -72,11 +119,17 @@ namespace AlessioBorriello
 
         private void Start()
         {
-            if (!playerManager.IsOwner) return;
-
-            VigorLevel = 1;
-            StrengthLevel = 1;
-            EnduranceLevel = 10;
+            if (playerManager.IsOwner)
+            {
+                VigorLevel = 1;
+                StrengthLevel = 1;
+                EnduranceLevel = 10;
+            }
+            else
+            {
+                CurrentHealth = networkManager.netCurrentHealth.Value;
+                MaxHealth = networkManager.netMaxHealth.Value;
+            }
         }
 
         private void Update()
@@ -88,37 +141,33 @@ namespace AlessioBorriello
 
         public void TakeDamage(int damage)
         {
-            currentHealth = Mathf.Max(currentHealth - damage, 0);
-            if(currentHealth <= 0)
+            CurrentHealth = Mathf.Max(CurrentHealth - damage, 0);
+            if(CurrentHealth <= 0)
             {
                 playerManager.Die();
                 networkManager.DieServerRpc();
 
             }
-
-            networkManager.netCurrentHealth.Value = currentHealth;
         }
 
         public IEnumerator TakeCriticalDamage(int damage, float delay)
         {
             yield return new WaitForSeconds(delay);
-            currentHealth = Mathf.Max(currentHealth - damage, 0);
-            if (currentHealth <= 0)
+            CurrentHealth = Mathf.Max(CurrentHealth - damage, 0);
+            if (CurrentHealth <= 0)
             {
                 playerManager.GetCombatManager().diedFromCriticalDamage = true;
 
             }
-
-            networkManager.netCurrentHealth.Value = currentHealth;
         }
 
         public void ConsumeStamina(float staminaCost, float staminaRecoveryTime)
         {
-            currentStamina = Mathf.Max(currentStamina - staminaCost, 0);
+            CurrentStamina = Mathf.Max(CurrentStamina - staminaCost, 0);
             staminaRecoveryTimer = staminaRecoveryTime;
 
             //Stamina penalty if the stamina is at 0
-            if (currentStamina <= 0)
+            if (CurrentStamina <= 0)
             {
                 staminaRecoveryTimer = playerStats.staminaDefaultRecoveryTime * playerStats.staminaRecoveryTimerMultiplierOnStaminaDepleted;
                 //Disable sprinting until stamina recovered a bit
@@ -128,11 +177,11 @@ namespace AlessioBorriello
 
         public void ResetStats()
         {
-            currentHealth = maxHealth;
-            currentStamina = maxStamina;
+            CurrentHealth = MaxHealth;
+            CurrentStamina = MaxStamina;
 
             //Net
-            networkManager.netCurrentHealth.Value = currentHealth;
+            networkManager.netCurrentHealth.Value = CurrentHealth;
         }
 
         private void HandleStaminaRecovery()
@@ -142,7 +191,7 @@ namespace AlessioBorriello
             if(!playerManager.playerIsStuckInAnimation) staminaRecoveryTimer = Mathf.Max(staminaRecoveryTimer - Time.deltaTime, 0);
 
             float staminaRecovered = playerStats.staminaRecoveryRate * ((!playerManager.isBlocking)? 1f : playerStats.staminaRecoveryRateMultiplierWhenBlocking);
-            if (staminaRecoveryTimer <= 0) currentStamina = Mathf.Min(currentStamina + staminaRecovered, maxStamina);
+            if (staminaRecoveryTimer <= 0) CurrentStamina = Mathf.Min(CurrentStamina + staminaRecovered, MaxStamina);
         }
 
         private int CalculateStatValue(int statLevel, int maxStatLevel, AnimationCurve diminishingCurve, int baseStatValue, int baseStatValueAddition)
@@ -159,5 +208,15 @@ namespace AlessioBorriello
             return statValue;
         }
     
+        public void SetCurrentHealth(int newCurrentHealth)
+        {
+            CurrentHealth = newCurrentHealth;
+        }
+
+        public void SetMaxHealth(int newMaxHealth)
+        {
+            MaxHealth = newMaxHealth;
+        }
+
     }
 }

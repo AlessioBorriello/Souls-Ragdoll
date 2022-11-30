@@ -19,6 +19,7 @@ namespace AlessioBorriello
         public float rollingAttackStaminaUse = 30f;
         public float runningAttackStaminaUse = 34f;
         public float backstabAttackStaminaUse = 30f;
+        public float riposteAttackStaminaUse = 36f;
 
 
         [Header("Movement speed multiplier")]
@@ -44,6 +45,11 @@ namespace AlessioBorriello
         public string backstabAttack;
         public string backstabVictimAnimation;
         public float backstabtAttackDamageMultiplier = 2.4f;
+
+        [Header("Riposte attack")]
+        public string riposteAttack;
+        public string riposteVictimAnimation;
+        public float ripostetAttackDamageMultiplier = 3f;
 
         [Header("Other")]
         public float knockbackStrength = 3.2f;

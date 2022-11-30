@@ -8,7 +8,7 @@ namespace AlessioBorriello
     public class CharacterManager : NetworkBehaviour
     {
         public Transform lockOnTargetTransform;
-        public Transform backstabberTransform;
         public Transform backstabbedTransform;
+        public Transform ripostedTransform;
     }
 }

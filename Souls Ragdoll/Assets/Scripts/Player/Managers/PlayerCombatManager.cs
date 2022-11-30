@@ -13,12 +13,15 @@ namespace AlessioBorriello
         private PlayerShieldManager shieldManager;
 
         public bool diedFromCriticalDamage = false;
+        public Vector3 forwardWhenParried; //Forward direction when just parried
 
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
             weaponManager = playerManager.GetWeaponManager();
             shieldManager = playerManager.GetShieldManager();
+
+            forwardWhenParried = playerManager.GetPhysicalHips().transform.forward;
         }
 
         public void HandleCombat()
@@ -27,8 +30,10 @@ namespace AlessioBorriello
 
             //Attacks
             weaponManager.HandleAttacks();
+
             //Shields
             shieldManager.HandleBlocks();
+            shieldManager.HandleParries();
         }
 
         public PlayerWeaponManager GetWeaponManager()

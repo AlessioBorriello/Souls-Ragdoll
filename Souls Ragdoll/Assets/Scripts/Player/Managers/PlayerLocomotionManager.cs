@@ -247,19 +247,25 @@ namespace AlessioBorriello
             {
                 if (inputManager.movementInput.magnitude > 0)
                 {
-                    Roll();
-                    networkManager.RollServerRpc();
+                    if (!playerManager.disableActions && !(statsManager.CurrentStamina < 1))
+                    {
+                        Roll();
+                        networkManager.RollServerRpc();
 
-                    //Consume stamina
-                    statsManager.ConsumeStamina(playerManager.playerData.rollBaseStaminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+                        //Consume stamina
+                        statsManager.ConsumeStamina(playerManager.playerData.rollBaseStaminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+                    }
                 }
                 else
                 {
-                    Backdash();
-                    networkManager.BackdashServerRpc();
+                    if (!playerManager.disableActions && !(statsManager.CurrentStamina < 1))
+                    {
+                        Backdash();
+                        networkManager.BackdashServerRpc();
 
-                    //Consume stamina
-                    statsManager.ConsumeStamina(playerManager.playerData.backdashBaseStaminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+                        //Consume stamina
+                        statsManager.ConsumeStamina(playerManager.playerData.backdashBaseStaminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+                    }
                 }
             }
 
@@ -308,12 +314,18 @@ namespace AlessioBorriello
             }
         }
 
+        /// <summary>
+        /// Player started falling
+        /// </summary>
         public void StartFalling()
         {
             animationManager.UpdateOnGroundValue(false);
             animationManager.PlayTargetAnimation("Fall", .2f, true);
         }
 
+        /// <summary>
+        /// Player landed
+        /// </summary>
         public void Land()
         {
             animationManager.UpdateOnGroundValue(true);
@@ -325,8 +337,6 @@ namespace AlessioBorriello
         /// </summary>
         public void Roll()
         {
-            if (playerManager.disableActions || statsManager.currentStamina < 1) return;
-
             currentSpeedMultiplier = playerManager.playerData.rollSpeedMultiplier;
             animationManager.PlayTargetAnimation("Roll", .15f, true);
         }
@@ -336,8 +346,6 @@ namespace AlessioBorriello
         /// </summary>
         public void Backdash()
         {
-            if (playerManager.disableActions || statsManager.currentStamina < 1) return;
-
             currentSpeedMultiplier = playerManager.playerData.backdashSpeedMultiplier;
             animationManager.PlayTargetAnimation("Backdash", .2f, true);
         }
@@ -347,11 +355,11 @@ namespace AlessioBorriello
         /// </summary>
         private void Sprint()
         {
-            if (playerManager.disableSprint || inputManager.movementInput.magnitude == 0 || inputManager.eastInputReleased || statsManager.currentStamina < 1)
+            if (playerManager.disableSprint || inputManager.movementInput.magnitude == 0 || inputManager.eastInputReleased || statsManager.CurrentStamina < 1)
             {
                 playerManager.isSprinting = false;
                 //Reenable sprint when stamina reaches a certain value
-                if (playerManager.disableSprint && statsManager.currentStamina > playerManager.playerData.sprintStaminaNecessaryAfterStaminaDepleted) playerManager.disableSprint = false;
+                if (playerManager.disableSprint && statsManager.CurrentStamina > playerManager.playerData.sprintStaminaNecessaryAfterStaminaDepleted) playerManager.disableSprint = false;
                 return;
             }
 
@@ -361,12 +369,12 @@ namespace AlessioBorriello
             statsManager.ConsumeStamina(playerManager.playerData.sprintBaseStaminaCost, .05f);
 
             //Out of stamina
-            if(statsManager.currentStamina < 1)
+            if(statsManager.CurrentStamina < 1)
             {
                 playerManager.isSprinting = false;
 
                 //Set stamina to 0
-                statsManager.ConsumeStamina(statsManager.maxStamina, statsManager.playerStats.staminaDefaultRecoveryTime);
+                statsManager.ConsumeStamina(statsManager.MaxStamina, statsManager.playerStats.staminaDefaultRecoveryTime);
 
             }
         }

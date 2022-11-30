@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace AlessioBorriello
@@ -12,6 +13,7 @@ namespace AlessioBorriello
         private List<int> alreadyHit = new List<int>();
 
         private int damage = 10;
+        [SerializeField] private LayerMask parryLayer;
         [SerializeField] private float knockbackStrength = 5f; //Force added to the hyps
         [SerializeField] private float flinchStrenght = 25f; //Force added to the bodypart that connects first
         [SerializeField] private bool startEnabled = false; //If the collider is already open
@@ -79,16 +81,33 @@ namespace AlessioBorriello
 
         private void PlayerTriggerEnter(Collider other)
         {
+            PlayerManager hitPlayerManager = other.GetComponentInParent<PlayerManager>();
+            if(hitPlayerManager.isParrying)
+            {
+                //Check angle
+                Vector3 hitDirection = (hitPlayerManager.GetPhysicalHips().transform.position - playerManager.GetPhysicalHips().transform.position).normalized;
+                float hitAngle = Vector3.Angle(Vector3.ProjectOnPlane(hitPlayerManager.GetPhysicalHips().transform.forward, Vector3.up), Vector3.ProjectOnPlane(hitDirection, Vector3.up));
+
+                if (hitAngle > 95f)
+                {
+                    //Got parried
+                    playerManager.GetWeaponManager().Parried();
+                    playerManager.GetNetworkManager().ParriedServerRpc();
+
+                    return;
+                }
+            }
+
             int otherId = other.transform.root.GetInstanceID();
             if (!CanHit(otherId) || this.transform.root.GetInstanceID() == otherId) return;
 
             alreadyHit.Add(otherId);
             if (canHitMultipleTimes) StartCoroutine(RemoveHitId(otherId));
 
-            PlayerCollisionManager playerCollisionManager = other.GetComponentInParent<PlayerCollisionManager>();
-            if (playerCollisionManager != null)
+            PlayerCollisionManager hitPlayerCollisionManager = hitPlayerManager.GetCollisionManager();
+            if (hitPlayerCollisionManager != null)
             {
-                playerCollisionManager.CollisionWithDamageCollider(hitbox, other, damage, knockbackStrength, flinchStrenght);
+                hitPlayerCollisionManager.CollisionWithDamageCollider(hitbox, other, damage, knockbackStrength, flinchStrenght);
             }
         }
 

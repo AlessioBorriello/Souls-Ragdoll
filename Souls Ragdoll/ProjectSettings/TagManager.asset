@@ -7,6 +7,9 @@ TagManager:
   - Obstacle
   - Enemy
   - Static
+  - ParryCollider
+  - BackstabCollider
+  - HitboxCollider
   layers:
   - Default
   - TransparentFX
@@ -20,7 +23,7 @@ TagManager:
   - Hurtbox
   - IgnoreCharacter
   - Backstab
-  - 
+  - Riposte
   - 
   - 
   - 

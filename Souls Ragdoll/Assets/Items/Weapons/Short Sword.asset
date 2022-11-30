@@ -26,7 +26,8 @@ MonoBehaviour:
   rollingAttackStaminaUse: 30
   runningAttackStaminaUse: 34
   backstabAttackStaminaUse: 30
-  movementSpeedMultiplier: 5
+  riposteAttackStaminaUse: 36
+  movementSpeedMultiplier: 2
   oneHandedLightAttackCombo:
   - OneHandLightAttackOne
   - OneHandLightAttackTwo
@@ -44,5 +45,8 @@ MonoBehaviour:
   backstabAttack: Backstab
   backstabVictimAnimation: Backstabbed
   backstabtAttackDamageMultiplier: 2.4
+  riposteAttack: Riposte
+  riposteVictimAnimation: Riposted
+  ripostetAttackDamageMultiplier: 3
   knockbackStrength: 3.2
   flinchStrength: 25

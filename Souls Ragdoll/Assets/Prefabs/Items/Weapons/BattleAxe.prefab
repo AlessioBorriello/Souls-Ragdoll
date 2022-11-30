@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 4885442601818145827}
   m_Layer: 8
   m_Name: Pivot
-  m_TagString: Untagged
+  m_TagString: HitboxCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -144,7 +144,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edca86660cbe5ba4aab4b159591492b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 30
+  parryLayer:
+    serializedVersion: 2
+    m_Bits: 0
   knockbackStrength: 2
   flinchStrenght: 25
   startEnabled: 0

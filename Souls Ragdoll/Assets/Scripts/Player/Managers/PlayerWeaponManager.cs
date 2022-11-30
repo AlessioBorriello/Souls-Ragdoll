@@ -20,9 +20,10 @@ namespace AlessioBorriello
         private PlayerNetworkManager networkManager;
 
         [SerializeField] private LayerMask backstabLayer;
+        [SerializeField] private LayerMask riposteLayer;
 
         private Rigidbody physicalHips;
-        private GameObject animatedPlayer;
+        //private GameObject animatedPlayer;
 
         private bool attackingWithLeft = false;
         private AttackType attackType;
@@ -41,7 +42,7 @@ namespace AlessioBorriello
             networkManager = playerManager.GetNetworkManager();
 
             physicalHips = playerManager.GetPhysicalHips();
-            animatedPlayer = playerManager.GetAnimatedPlayer();
+            //animatedPlayer = playerManager.GetAnimatedPlayer();
         }
 
         public void HandleAttacks()
@@ -66,7 +67,7 @@ namespace AlessioBorriello
             if (rb || rt || lb || lt)
             {
                 //If no stamina
-                if (statsManager.currentStamina < 1) return;
+                if (statsManager.CurrentStamina < 1) return;
 
                 //Check for combos
                 AttackType attackType = GetAttackType(isHeavy);
@@ -90,8 +91,11 @@ namespace AlessioBorriello
             //Update proprieties
             attackType = newAttackType;
 
-            //Check for backstab, if the backstab goes through, then return
+            //Check for backstab, if a backstab goes through, then return
             if(TryBackstab(attackType, weapon, isLeft)) return;
+
+            //Check for riposte, if a riposte goes through, then return
+            if (TryRiposte(attackType, weapon, isLeft)) return;
 
             //Get animation to play and movement speed multiplier
             string attackAnimation = GetAttackAnimationString(weapon, attackType);
@@ -122,9 +126,6 @@ namespace AlessioBorriello
             //Play animation
             animationManager.PlayTargetAnimation(attackAnimation, .2f, true);
 
-            //Disable arms collision
-            ragdollManager.ToggleCollisionOfArms(false);
-
             //Set collider values
             inventoryManager.SetColliderValues(damage, knockbackStrength, flinchStrength, attackingWithLeft);
 
@@ -139,18 +140,23 @@ namespace AlessioBorriello
 
             RaycastHit hit;
             float backstabDistance = 1.4f;
+            float backstabAngle = 36f;
+
             if (Physics.Raycast(physicalHips.transform.position, physicalHips.transform.forward, out hit, backstabDistance, backstabLayer))
             {
                 PlayerManager victimManager = hit.collider.GetComponentInParent<PlayerManager>();
 
-                if (victimManager == null) return false;
+                //If somehow the ray hit yourself
+                if (playerManager == victimManager) return false;
+
+                if (victimManager == null || !victimManager.canBeBackstabbed) return false;
 
                 Rigidbody victimHips = victimManager.GetPhysicalHips();
 
                 Vector3 hitDirection = (victimHips.transform.position - physicalHips.transform.position).normalized;
                 float hitAngle = Vector3.Angle(Vector3.ProjectOnPlane(hitDirection, Vector3.up), Vector3.ProjectOnPlane(victimHips.transform.forward, Vector3.up));
 
-                if (hitAngle < 25f)
+                if (hitAngle < backstabAngle)
                 {
                     //Set proprieties
                     this.attackType = AttackType.backstab;
@@ -167,16 +173,16 @@ namespace AlessioBorriello
                     statsManager.ConsumeStamina(weapon.backstabAttackStaminaUse, statsManager.playerStats.staminaDefaultRecoveryTime);
 
                     //Play backstab
-                    Backstab(backstabAnimation, attackingWithLeft);
-                    networkManager.BackstabServerRpc(backstabAnimation, attackingWithLeft);
+                    Riposte(backstabAnimation, attackingWithLeft);
+                    networkManager.RiposteServerRpc(backstabAnimation, attackingWithLeft);
 
                     //Get position and rotation for the victim
                     Vector3 backstabbedPosition = playerManager.backstabbedTransform.position;
                     Quaternion backstabbedRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(playerManager.backstabbedTransform.forward, Vector3.up));
 
                     //Position victim and play animation
-                    victimManager.GetWeaponManager().Backstabbed(backstabbedPosition, backstabbedRotation, backstabbedAnimation, damage);
-                    victimManager.GetNetworkManager().BackstabbedServerRpc(backstabbedPosition, backstabbedRotation, backstabbedAnimation, damage, victimManager.OwnerClientId);
+                    victimManager.GetWeaponManager().Riposted(backstabbedPosition, backstabbedRotation, backstabbedAnimation, damage);
+                    victimManager.GetNetworkManager().RipostedServerRpc(backstabbedPosition, backstabbedRotation, backstabbedAnimation, damage, victimManager.OwnerClientId);
                 }
                 else return false;
 
@@ -186,13 +192,69 @@ namespace AlessioBorriello
             return false;
         }
 
-        public void Backstab(string backstabAnimation, bool attackingWithLeft)
+        private bool TryRiposte(AttackType attackType, WeaponItem weapon, bool attackingWithLeft)
         {
-            //Disable arms collision
-            ragdollManager.ToggleCollisionOfArms(false);
+            if (attackType != AttackType.light || chainedAttack) return false;
 
-            //Play backstab animation
-            animationManager.PlayTargetAnimation(backstabAnimation, .1f, true);
+            RaycastHit hit;
+            float riposteDistance = 1.4f;
+            float riposteAngle = 115f;
+
+            if (Physics.Raycast(physicalHips.transform.position, physicalHips.transform.forward, out hit, riposteDistance, riposteLayer))
+            {
+                PlayerManager victimManager = hit.collider.GetComponentInParent<PlayerManager>();
+
+                //If somehow the ray hit yourself
+                if (playerManager == victimManager) return false;
+
+                if (victimManager == null || !victimManager.canBeRiposted) return false;
+
+                Rigidbody victimHips = victimManager.GetPhysicalHips();
+
+                Vector3 hitDirection = (victimHips.transform.position - physicalHips.transform.position).normalized;
+                float hitAngle = Vector3.Angle(Vector3.ProjectOnPlane(hitDirection, Vector3.up), Vector3.ProjectOnPlane(victimManager.GetCombatManager().forwardWhenParried, Vector3.up));
+
+                if (hitAngle > riposteAngle)
+                {
+                    //Set proprieties
+                    this.attackType = AttackType.riposte;
+
+                    //Damage
+                    float damage = weapon.baseDamage;
+                    damage *= GetWeaponDamageMultiplier(weapon);
+
+                    //Animations
+                    string riposteAnimation = weapon.riposteAttack;
+                    string ripostedAnimation = weapon.riposteVictimAnimation;
+
+                    //Consume stamina
+                    statsManager.ConsumeStamina(weapon.riposteAttackStaminaUse, statsManager.playerStats.staminaDefaultRecoveryTime);
+
+                    //Play riposte
+                    Riposte(riposteAnimation, attackingWithLeft);
+                    networkManager.RiposteServerRpc(riposteAnimation, attackingWithLeft);
+
+                    //Get position and rotation for the victim
+                    Vector3 ripostedPosition = playerManager.ripostedTransform.position;
+                    Quaternion ripostedRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(playerManager.ripostedTransform.forward, Vector3.up));
+
+                    //Position victim and play animation
+                    victimManager.GetWeaponManager().Riposted(ripostedPosition, ripostedRotation, ripostedAnimation, damage);
+                    victimManager.GetNetworkManager().RipostedServerRpc(ripostedPosition, ripostedRotation, ripostedAnimation, damage, victimManager.OwnerClientId);
+                }
+                else return false;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Riposte(string riposteAnimation, bool attackingWithLeft)
+        {
+
+            //Play riposte animation
+            animationManager.PlayTargetAnimation(riposteAnimation, .1f, true);
 
             //Stop player
             locomotionManager.SetMovementSpeedMultiplier(1);
@@ -203,10 +265,24 @@ namespace AlessioBorriello
 
         }
 
-        public void Backstabbed(Vector3 backstabbedPosition, Quaternion backstabbedRotation, string backstabbedAnimation, float damage)
+        public void Parried()
+        {
+            animationManager.PlayTargetAnimation("Parried", .15f, true);
+
+            //Disable attack collider
+            inventoryManager.GetCurrentItemDamageColliderControl(attackingWithLeft).ToggleCollider(false);
+
+            //Allow enemy to riposte
+            playerManager.canBeRiposted = true;
+
+            //Set forward when parried
+            playerManager.GetCombatManager().forwardWhenParried = physicalHips.transform.forward;
+        }
+
+        public void Riposted(Vector3 riposteVictimPosition, Quaternion riposteVictimRotation, string riposteVictimAnimation, float damage)
         {
             //Play animation
-            playerManager.GetAnimationManager().PlayTargetAnimation(backstabbedAnimation, .1f, true);
+            playerManager.GetAnimationManager().PlayTargetAnimation(riposteVictimAnimation, .1f, true);
 
             //Stop player
             playerManager.GetLocomotionManager().SetMovementSpeedMultiplier(1);
@@ -215,11 +291,14 @@ namespace AlessioBorriello
             if (!playerManager.IsOwner) return;
 
             //Position player
-            playerManager.GetPhysicalHips().transform.position = backstabbedPosition;
-            playerManager.GetAnimatedPlayer().transform.rotation = backstabbedRotation;
+            playerManager.GetPhysicalHips().transform.position = riposteVictimPosition;
+            playerManager.GetAnimatedPlayer().transform.rotation = riposteVictimRotation;
 
             //Take damage
             StartCoroutine(playerManager.GetStatsManager().TakeCriticalDamage((int)damage, .5f));
+
+            //Disable riposte
+            playerManager.canBeRiposted = false;
         }
 
         private float GetWeaponDamageMultiplier(WeaponItem weapon)
@@ -232,6 +311,7 @@ namespace AlessioBorriello
                 case AttackType.running: return weapon.oneHandedRunningAttackDamageMultiplier;
                 case AttackType.rolling: return weapon.oneHandedRollingAttackDamageMultiplier;
                 case AttackType.backstab: return weapon.backstabtAttackDamageMultiplier;
+                case AttackType.riposte: return weapon.ripostetAttackDamageMultiplier;
                 default: return 1f;
             }
         }
@@ -308,6 +388,7 @@ namespace AlessioBorriello
                 case AttackType.running: return weapon.oneHandedRunningAttack;
                 case AttackType.rolling: return weapon.oneHandedRollingAttack;
                 case AttackType.backstab: return weapon.backstabAttack;
+                case AttackType.riposte: return weapon.riposteAttack;
                 default: animationArray = weapon.oneHandedLightAttackCombo; break;
             }
 
@@ -369,7 +450,8 @@ namespace AlessioBorriello
             heavy,
             running,
             rolling,
-            backstab
+            backstab,
+            riposte
         }
 
     }

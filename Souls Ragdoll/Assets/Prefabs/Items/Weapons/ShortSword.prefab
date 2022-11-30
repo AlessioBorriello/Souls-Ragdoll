@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 6029228598589221632}
   m_Layer: 8
   m_Name: Lame
-  m_TagString: Untagged
+  m_TagString: HitboxCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -344,7 +344,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edca86660cbe5ba4aab4b159591492b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 30
+  parryLayer:
+    serializedVersion: 2
+    m_Bits: 0
   knockbackStrength: 1.7
   flinchStrenght: 25
   startEnabled: 0

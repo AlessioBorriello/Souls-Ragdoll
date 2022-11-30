@@ -13,7 +13,6 @@ namespace AlessioBorriello
 
             if (playerManager.GetWeaponManager().IsChainingAttack()) return;
 
-            //Enable arms collision
             playerManager.GetRagdollManager().ToggleCollisionOfArms(true);
         }
     }

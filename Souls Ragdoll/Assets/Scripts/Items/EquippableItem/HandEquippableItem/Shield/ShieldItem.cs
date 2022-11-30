@@ -7,6 +7,6 @@ namespace AlessioBorriello
     [CreateAssetMenu(fileName = "newShieldItem", menuName = "Item/Hand Item/Shield Item")]
     public class ShieldItem : HandEquippableItem
     {
-        
+        public float parryStaminaCost = 35f;
     }
 }

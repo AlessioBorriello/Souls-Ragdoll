@@ -75,6 +75,16 @@ namespace AlessioBorriello
             if (colliderControl != null) colliderControl.ToggleCollider(false);
         }
 
+        public void EnableParry()
+        {
+            playerManager.isParrying = true;
+        }
+
+        public void DisableParry()
+        {
+            playerManager.isParrying = false;
+        }
+
         private DamageColliderControl GetDamageColliderControl()
         {
             if (!weaponManager.IsAttackingWithLeft()) return inventoryManager.GetCurrentItemDamageColliderControl(false);

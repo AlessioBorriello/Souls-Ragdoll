@@ -12,11 +12,13 @@ namespace AlessioBorriello
 
         [Header("Healthbar")]
         [SerializeField] private Slider healthBarSlider;
-        [SerializeField] private float healthBarLerpSpeed = 2.0f;
+        [SerializeField] private Slider animationHealthBarSlider;
+        [SerializeField] private float animationHealthBarLerpSpeed = 2.0f;
 
         [Header("Staminabar")]
         [SerializeField] private Slider staminaBarSlider;
-        [SerializeField] private float staminaBarLerpSpeed = 4.0f;
+        [SerializeField] private Slider animationStaminaBarSlider;
+        [SerializeField] private float animationStaminaBarLerpSpeed = 4.0f;
 
         [Header("Quickslots")]
         [SerializeField] private Image rightItemIcon;
@@ -32,12 +34,14 @@ namespace AlessioBorriello
 
         private void HandleHealthBar()
         {
-            healthBarSlider.value = Mathf.Lerp(healthBarSlider.value, (float)statsManager.currentHealth / statsManager.maxHealth, healthBarLerpSpeed * Time.deltaTime);
+            healthBarSlider.value = (float)statsManager.CurrentHealth / statsManager.MaxHealth;
+            animationHealthBarSlider.value = Mathf.Lerp(animationHealthBarSlider.value, (float)statsManager.CurrentHealth / statsManager.MaxHealth, animationHealthBarLerpSpeed * Time.deltaTime);
         }
 
         private void HandleStaminaBar()
         {
-            staminaBarSlider.value = Mathf.Lerp(staminaBarSlider.value, (float)statsManager.currentStamina / statsManager.maxStamina, staminaBarLerpSpeed * Time.deltaTime);
+            staminaBarSlider.value = (float)statsManager.CurrentStamina / statsManager.MaxStamina;
+            animationStaminaBarSlider.value = Mathf.Lerp(animationStaminaBarSlider.value, (float)statsManager.CurrentStamina / statsManager.MaxStamina, animationStaminaBarLerpSpeed * Time.deltaTime);
         }
 
         public void UpdateQuickSlotsUI(PlayerInventoryManager inventoryManager)
