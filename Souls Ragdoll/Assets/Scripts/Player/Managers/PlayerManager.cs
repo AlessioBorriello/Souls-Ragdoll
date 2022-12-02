@@ -61,6 +61,7 @@ namespace AlessioBorriello
         public bool disableSprint = false; //Disables sprint when going to 0 stamina
 
         [Header("Combat flag")]
+        public bool areIFramesActive = false;
         public bool isAttacking = false;
         public bool isBlocking = false;
         public bool isParrying = false;

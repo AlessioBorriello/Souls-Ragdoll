@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Catapult : MonoBehaviour
+public class Catapult : NetworkBehaviour
 {
     private Rigidbody rb;
     private Quaternion pivotStartRotation;
@@ -15,7 +16,10 @@ public class Catapult : MonoBehaviour
     private float launchSpeed;
     private float retractSpeed;
     private bool launching = true;
+    private bool retracting = false;
     private bool hasWaitedTime = false;
+
+    private float elapsedTime = 0;
 
     void Awake()
     {
@@ -26,8 +30,22 @@ public class Catapult : MonoBehaviour
         float distance = Quaternion.Angle(pivotStartRotation, pivotEndRotation);
         launchSpeed = distance / launchTime;
         retractSpeed = distance / retractTime;
+    }
 
-        StartCoroutine(WaitBeforeStarting(waitTime)); //Start coroutine to wait the time
+    public override void OnNetworkSpawn()
+    {
+        SetElapsedTimeServerRpc();
+    }
+
+    private void Update()
+    {
+        if (retracting) return;
+
+        elapsedTime += Time.deltaTime;
+        if(elapsedTime >= waitTime)
+        {
+            hasWaitedTime = true;
+        }
     }
 
     void FixedUpdate()
@@ -42,11 +60,11 @@ public class Catapult : MonoBehaviour
             if(Equals(rb.rotation, pivotEndRotation)) //When it has reached the end
             {
                 launching = false; //Not launching anymore
-                hasWaitedTime = false; //Hasn't waited the time
-                StartCoroutine(WaitBeforeStarting(waitTime)); //Start coroutine to wait the time
+                retracting = false;
             }
             else //Hasn't reached the end
             {
+                launching = true;
                 Launch();
             }
         }
@@ -55,20 +73,28 @@ public class Catapult : MonoBehaviour
             if (Equals(rb.rotation, pivotStartRotation)) //When it has reached the start
             {
                 launching = true; //Start launch
+                retracting = false;
                 hasWaitedTime = false; //Hasn't waited the time
-                StartCoroutine(WaitBeforeStarting(waitTime/3)); //Start coroutine to wait the time
+                elapsedTime = 0;
             }
             else //Hasn't reached the start
             {
+                retracting = true;
                 Retract();
             }
         }
     }
 
-    IEnumerator WaitBeforeStarting(float delay)
+    [ServerRpc(RequireOwnership = false)]
+    private void SetElapsedTimeServerRpc()
     {
-        yield return new WaitForSeconds(delay); //Wait for the delay
-        hasWaitedTime = true;
+        SetElapsedTimeClientRpc(elapsedTime);
+    }
+
+    [ClientRpc]
+    private void SetElapsedTimeClientRpc(float time)
+    {
+        elapsedTime = time;
     }
 
     private void Launch()

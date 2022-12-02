@@ -128,10 +128,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.28688002
+  m_Radius: 0.41
   m_Height: 0.65944153
   m_Direction: 0
-  m_Center: {x: 0.10722939, y: -0.0000018198291, z: 0.16218942}
+  m_Center: {x: 0.10722939, y: -0.0000018164268, z: 0.11}
 --- !u!114 &4885442601818145827
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,11 +144,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edca86660cbe5ba4aab4b159591492b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canHitMultipleTimes: 1
+  hitFrequencyDelay: 0.85
+  startEnabled: 0
   parryLayer:
     serializedVersion: 2
     m_Bits: 0
-  knockbackStrength: 2
-  flinchStrenght: 25
-  startEnabled: 0
-  canHitMultipleTimes: 1
-  hitFrequencyDelay: 0.85

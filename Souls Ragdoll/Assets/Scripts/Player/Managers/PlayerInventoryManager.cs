@@ -194,14 +194,14 @@ namespace AlessioBorriello
             return (leftHand) ? currentLeftItemDamageColliderControl : currentRightItemDamageColliderControl;
         }
 
-        public void SetColliderValues(int damage, float knockbackStrength, float flinchStrenght, bool leftHand)
+        public void SetColliderValues(bool leftHand, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
         {
             if(leftHand)
             {
-                currentLeftItemDamageColliderControl.SetColliderValues(damage, knockbackStrength, flinchStrenght);
+                currentLeftItemDamageColliderControl.SetColliderValues(damage, poiseDamage, staminaDamage, knockbackStrength);
             }else
             {
-                currentRightItemDamageColliderControl.SetColliderValues(damage, knockbackStrength, flinchStrenght);
+                currentRightItemDamageColliderControl.SetColliderValues(damage, poiseDamage, staminaDamage, knockbackStrength);
             }
         }
 

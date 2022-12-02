@@ -15,6 +15,8 @@ namespace AlessioBorriello
         private PlayerInventoryManager inventoryManager;
         private PlayerNetworkManager networkManager;
 
+        private Rigidbody physicalHips;
+
         private bool blockingWithLeft = false;
         private bool parryingWithLeft = false;
 
@@ -27,6 +29,8 @@ namespace AlessioBorriello
             animationManager = playerManager.GetAnimationManager();
             inventoryManager = playerManager.GetInventoryManager();
             networkManager = playerManager.GetNetworkManager();
+
+            physicalHips = playerManager.GetPhysicalHips();
         }
 
         public void HandleBlocks()
@@ -117,6 +121,17 @@ namespace AlessioBorriello
             //Stop blocking without changing the playerIsStuckInAnimation bool
             animationManager.PlayTargetAnimation("Upper Body Empty", .1f, playerManager.playerIsStuckInAnimation);
             playerManager.isBlocking = false;
+        }
+
+        public void ShieldBroken()
+        {
+            animationManager.PlayTargetAnimation("ShieldBroken", .15f, true);
+
+            //Allow enemy to riposte
+            playerManager.canBeRiposted = true;
+
+            //Set forward when broken
+            playerManager.GetCombatManager().forwardWhenParried = physicalHips.transform.forward;
         }
 
         public bool IsBlockingWithLeft()

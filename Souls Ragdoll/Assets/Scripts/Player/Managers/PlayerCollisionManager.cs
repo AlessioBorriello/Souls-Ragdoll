@@ -21,7 +21,7 @@ namespace AlessioBorriello
         private Rigidbody physicalHips;
 
         private List<int> inContact = new List<int>();
-        public bool shouldStagger = false; //Should be private and be true if the hit breaks the poise
+        private bool shouldStagger = false;
 
         private void Awake()
         {
@@ -37,9 +37,15 @@ namespace AlessioBorriello
             physicalHips = playerManager.GetPhysicalHips();
         }
 
-        public void CollisionWithDamageCollider(Collider damageCollider, Collider damagedPlayerCollider, int damage, float knockbackStrength, float flinchStrenght)
+        public void CollisionWithDamageCollider(Collider damageCollider, Collider damagedPlayerCollider, int damage, int poiseDamage, int staminaDamage, float knockbackStrength, float flinchStrenght)
         {
             if (!playerManager.IsOwner) return;
+
+            if (playerManager.areIFramesActive)
+            {
+                Debug.Log("Attack dodged");
+                return;
+            }
 
             if (CheckIfHit(damageCollider.GetInstanceID()))
             {
@@ -52,19 +58,40 @@ namespace AlessioBorriello
                     {
                         attackBlocked = true;
                         damage = AbsorbDamage(damage);
+
+                        //Reduce stamina
+                        //Reduce less if shield stability is higher
+                        float staminaCost = staminaDamage;
+                        statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+
+                        //Check if shield broken
+                        if(statsManager.CurrentStamina <= 0)
+                        {
+                            playerManager.GetShieldManager().ShieldBroken();
+                            networkManager.ShieldBrokenServerRpc();
+                        }
                     }
                 }
 
-                statsManager.TakeDamage(damage);
+                //Take poise damage
+                if (!attackBlocked) statsManager.TakePoiseDamage(poiseDamage);
+
+                //Check if should stagger
+                shouldStagger = statsManager.IsPoiseBroken();
+
                 if (shouldStagger && !attackBlocked)
                 {
                     animationManager.PlayTargetAnimation("Hurt", .1f, true);
                     networkManager.PlayTargetAnimationServerRpc("Hurt", .1f, true);
+                    shouldStagger = false;
                 }
                 if (attackBlocked) StartCoroutine(locomotionManager.StopMovementForTime(.22f));
 
                 //Knockback
                 Knockback(damagedPlayerCollider, damageCollider, knockbackStrength, flinchStrenght);
+
+                //Take health damage
+                statsManager.TakeDamage(damage);
             }
         }
 

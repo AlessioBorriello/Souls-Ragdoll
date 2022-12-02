@@ -328,10 +328,10 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.029777804
-  m_Height: 0.56483436
+  m_Radius: 0.08
+  m_Height: 0.5367465
   m_Direction: 1
-  m_Center: {x: -0.0015777178, y: 0.022042392, z: -0.00000007091453}
+  m_Center: {x: -0.0015776715, y: 0.03608632, z: -0.00000007648956}
 --- !u!114 &6029228598589221632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -344,14 +344,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edca86660cbe5ba4aab4b159591492b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canHitMultipleTimes: 1
+  hitFrequencyDelay: 0.85
+  startEnabled: 0
   parryLayer:
     serializedVersion: 2
     m_Bits: 0
-  knockbackStrength: 1.7
-  flinchStrenght: 25
-  startEnabled: 0
-  canHitMultipleTimes: 1
-  hitFrequencyDelay: 0.85
 --- !u!1 &8513785602460388389
 GameObject:
   m_ObjectHideFlags: 0

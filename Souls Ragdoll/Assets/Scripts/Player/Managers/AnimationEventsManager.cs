@@ -52,6 +52,16 @@ namespace AlessioBorriello
             playerManager.canRotate = false;
         }
 
+        public void ActivateIFrames()
+        {
+            playerManager.areIFramesActive = true;
+        }
+
+        public void DeactivateIFrames()
+        {
+            playerManager.areIFramesActive = false;
+        }
+
         public void CheckForCriticalDamageDeath()
         {
             if(combatManager.diedFromCriticalDamage)

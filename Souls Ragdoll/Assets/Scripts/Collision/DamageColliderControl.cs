@@ -12,14 +12,18 @@ namespace AlessioBorriello
         private Collider hitbox;
         private List<int> alreadyHit = new List<int>();
 
-        private int damage = 10;
-        [SerializeField] private LayerMask parryLayer;
-        [SerializeField] private float knockbackStrength = 5f; //Force added to the hyps
-        [SerializeField] private float flinchStrenght = 25f; //Force added to the bodypart that connects first
-        [SerializeField] private bool startEnabled = false; //If the collider is already open
 
         [SerializeField] private bool canHitMultipleTimes = false; //If it can hit multiple times
         [SerializeField] private float hitFrequencyDelay = .6f; //How often the collider can hit the same thing (if canHitMultipleTimes)
+        [SerializeField] private bool startEnabled = false; //If the collider is already open
+        [SerializeField] private LayerMask parryLayer;
+
+        private int damage = 10;
+        private int poiseDamage = 10;
+        private int staminaDamage = 10;
+
+        private float flinchStrenght = 25f; //Force added to the bodypart that connects first
+        private float knockbackStrength = 5f; //Force added to the hyps
 
         private void Awake()
         {
@@ -107,7 +111,7 @@ namespace AlessioBorriello
             PlayerCollisionManager hitPlayerCollisionManager = hitPlayerManager.GetCollisionManager();
             if (hitPlayerCollisionManager != null)
             {
-                hitPlayerCollisionManager.CollisionWithDamageCollider(hitbox, other, damage, knockbackStrength, flinchStrenght);
+                hitPlayerCollisionManager.CollisionWithDamageCollider(hitbox, other, damage, poiseDamage, staminaDamage, knockbackStrength, flinchStrenght);
             }
         }
 
@@ -136,13 +140,15 @@ namespace AlessioBorriello
             if (alreadyHit.Contains(id)) alreadyHit.Remove(id);
         }
 
-        public void SetColliderValues(int damage, float knockbackStrength, float flinchStrenght)
+        public void SetColliderValues(int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
         {
             if (playerManager == null) return;
 
             this.damage = damage;
+            this.poiseDamage = poiseDamage;
+            this.staminaDamage = staminaDamage;
             this.knockbackStrength = knockbackStrength;
-            this.flinchStrenght = flinchStrenght;
+
         }
 
     }

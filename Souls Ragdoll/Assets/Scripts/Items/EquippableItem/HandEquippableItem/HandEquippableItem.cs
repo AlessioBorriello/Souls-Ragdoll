@@ -14,5 +14,8 @@ namespace AlessioBorriello
 
         [Header("Damage absorptions %")]
         public float physicalDamageAbsorption;
+
+        [Header("Other")]
+        public float blockStability;
     }
 }

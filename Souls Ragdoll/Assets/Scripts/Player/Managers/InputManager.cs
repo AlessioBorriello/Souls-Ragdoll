@@ -108,11 +108,13 @@ namespace AlessioBorriello
                 controls.PlayerGameplay.LockOn.started += inputAction =>
                 {
                     rightStickInput = true;
-                    actions.Push(new InputAction("RightStickPressed"));
+                    rightStickInputPressed = true;
+                    //actions.Push(new InputAction("RightStickPressed"));
                 };
                 controls.PlayerGameplay.LockOn.canceled += inputAction =>
                 {
                     rightStickInput = false;
+                    rightStickInputReleased = true;
                     actions.Push(new InputAction("RightStickReleased"));
                 };
                 #endregion

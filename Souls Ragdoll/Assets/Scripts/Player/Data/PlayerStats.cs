@@ -33,5 +33,8 @@ namespace AlessioBorriello
         public int basePowerAdded = 8; //Power added per strength level
         public AnimationCurve strengthDiminishingReturnCurve; //Diminishing return
 
+        [Header("Poise")]
+        public float poiseResetTimer = 12f; //Seconds before the poise is reset
+
     }
 }

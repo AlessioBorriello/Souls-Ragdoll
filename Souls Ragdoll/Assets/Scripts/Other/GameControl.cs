@@ -23,6 +23,13 @@ namespace AlessioBorriello
             {
                 if (NetworkManager.Singleton.IsServer) Debug.Log($"Client {id} connected...");
             };
+
+            NetworkManager.Singleton.OnClientDisconnectCallback += (id) =>
+            {
+                if (NetworkManager.Singleton.IsServer) Debug.Log($"Client {id} disconnected...");
+
+
+            };
         }
 
         private void Update()

@@ -100,14 +100,19 @@ namespace AlessioBorriello
             //Get animation to play and movement speed multiplier
             string attackAnimation = GetAttackAnimationString(weapon, attackType);
 
-            //Get collider values
-            int damage = (int)(weapon.baseDamage * GetWeaponDamageMultiplier(weapon));
+            //Get weapon values
+            float damageMultiplier = GetWeaponDamageMultiplier(weapon);
+            float poiseDamageMultiplier = GetWeaponPoiseDamageMultiplier(weapon);
+
+            int damage = (int)(weapon.baseDamage * damageMultiplier);
+            int poiseDamage = (int)(weapon.poiseBaseDamage * poiseDamageMultiplier);
+            int staminaDamage = (int)(weapon.staminaBaseDamage * damageMultiplier);
+
             float knockbackStrength = weapon.knockbackStrength;
-            float flinchStrength = weapon.flinchStrength;
 
             //Attack
-            Attack(attackAnimation, damage, knockbackStrength, flinchStrength, isLeft);
-            networkManager.AttackServerRpc(attackAnimation, damage, knockbackStrength, flinchStrength, isLeft);
+            Attack(attackAnimation, isLeft, damage, poiseDamage, staminaDamage, knockbackStrength);
+            networkManager.AttackServerRpc(attackAnimation, isLeft, damage, poiseDamage, staminaDamage, knockbackStrength);
 
             //Set attack speed multiplier
             float attackMovementSpeedMultiplier = GetAttackMovementSpeedMultiplier(weapon);
@@ -119,7 +124,7 @@ namespace AlessioBorriello
 
         }
 
-        public void Attack(string attackAnimation, int damage, float knockbackStrength, float flinchStrength, bool attackingWithLeft)
+        public void Attack(string attackAnimation, bool attackingWithLeft, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
         {
             if (attackAnimation == "") return;
 
@@ -127,7 +132,7 @@ namespace AlessioBorriello
             animationManager.PlayTargetAnimation(attackAnimation, .2f, true);
 
             //Set collider values
-            inventoryManager.SetColliderValues(damage, knockbackStrength, flinchStrength, attackingWithLeft);
+            inventoryManager.SetColliderValues(attackingWithLeft, damage, poiseDamage, staminaDamage, knockbackStrength);
 
             //Update animator values
             this.attackingWithLeft = attackingWithLeft;
@@ -301,9 +306,8 @@ namespace AlessioBorriello
             playerManager.canBeRiposted = false;
         }
 
-        private float GetWeaponDamageMultiplier(WeaponItem weapon)
+        public float GetWeaponDamageMultiplier(WeaponItem weapon)
         {
-
             switch (this.attackType)
             {
                 case AttackType.light: return weapon.oneHandedLightAttacksDamageMultiplier;
@@ -312,6 +316,18 @@ namespace AlessioBorriello
                 case AttackType.rolling: return weapon.oneHandedRollingAttackDamageMultiplier;
                 case AttackType.backstab: return weapon.backstabtAttackDamageMultiplier;
                 case AttackType.riposte: return weapon.ripostetAttackDamageMultiplier;
+                default: return 1f;
+            }
+        }
+
+        public float GetWeaponPoiseDamageMultiplier(WeaponItem weapon)
+        {
+            switch (this.attackType)
+            {
+                case AttackType.light: return weapon.oneHandedLightAttacksPoiseDamageMultiplier;
+                case AttackType.heavy: return weapon.oneHandedHeavyAttacksPoiseDamageMultiplier;
+                case AttackType.running: return weapon.oneHandedRunningAttackPoiseDamageMultiplier;
+                case AttackType.rolling: return weapon.oneHandedRollingAttackPoiseDamageMultiplier;
                 default: return 1f;
             }
         }

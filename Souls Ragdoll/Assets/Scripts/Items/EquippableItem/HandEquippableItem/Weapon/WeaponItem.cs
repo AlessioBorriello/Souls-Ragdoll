@@ -28,18 +28,22 @@ namespace AlessioBorriello
         [Header("Light one hand combo")]
         public string[] oneHandedLightAttackCombo = new string[3];
         public float oneHandedLightAttacksDamageMultiplier = 1f;
+        public float oneHandedLightAttacksPoiseDamageMultiplier = 1f;
 
         [Header("Heavy one hand combo")]
         public string[] OneHandedHeavyAttackCombo = new string[3];
         public float oneHandedHeavyAttacksDamageMultiplier = 1.7f;
+        public float oneHandedHeavyAttacksPoiseDamageMultiplier = 2f;
 
         [Header("One Handed Running attack")]
         public string oneHandedRunningAttack;
         public float oneHandedRunningAttackDamageMultiplier = 1.2f;
+        public float oneHandedRunningAttackPoiseDamageMultiplier = 1.4f;
 
         [Header("One Handed Rolling attack")]
         public string oneHandedRollingAttack;
         public float oneHandedRollingAttackDamageMultiplier = .9f;
+        public float oneHandedRollingAttackPoiseDamageMultiplier = 1.2f;
 
         [Header("Backstab attack")]
         public string backstabAttack;

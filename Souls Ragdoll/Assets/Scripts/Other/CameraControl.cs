@@ -120,6 +120,8 @@ namespace AlessioBorriello
                 HandleLosingLockOnTarget(); //Check if the target is lost
                 HandleChangingTarget(cameraInput); //Check if the player changes target
             }
+
+            HandleTargetDisconnected();
         }
 
         /// <summary>
@@ -148,6 +150,11 @@ namespace AlessioBorriello
                 //Debug.Log($"Target lost, obstructed: {isObstructed}, distance {distanceFromTarget}");
                 LoseLockedTarget();
             }
+        }
+
+        private void HandleTargetDisconnected()
+        {
+            if(playerManager.lockedTarget == null) LoseLockedTarget();
         }
 
         private bool canChangeTarget = true;
@@ -226,6 +233,8 @@ namespace AlessioBorriello
             currentObstructedTargetTimer = 0;
 
             //UI
+            if (lockedTargetUI == null) return;
+
             lockedTargetUI.ToggleTargetUI(false);
             lockedTargetUI = null;
         }

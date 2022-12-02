@@ -111,6 +111,35 @@ namespace AlessioBorriello
         }
         #endregion
 
+        #region Poise
+        private float maxPoise = 1;
+        public float MaxPoise
+        {
+            get
+            {
+                return maxPoise;
+            }
+            private set
+            {
+                maxPoise = value;
+            }
+        }
+
+        private float currentPoise = 1;
+        public float CurrentPoise
+        {
+            get
+            {
+                return currentPoise;
+            }
+            private set
+            {
+                currentPoise = value;
+            }
+        }
+        private float poiseRecoveryTimer = 0;
+        #endregion
+
         void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
@@ -121,9 +150,12 @@ namespace AlessioBorriello
         {
             if (playerManager.IsOwner)
             {
-                VigorLevel = 1;
+                VigorLevel = 25;
                 StrengthLevel = 1;
                 EnduranceLevel = 10;
+
+                MaxPoise = 50;
+                CurrentPoise = MaxPoise;
             }
             else
             {
@@ -137,6 +169,7 @@ namespace AlessioBorriello
             if (!playerManager.IsOwner) return;
 
             HandleStaminaRecovery();
+            HandlePoiseRecovery();
         }
 
         public void TakeDamage(int damage)
@@ -147,6 +180,26 @@ namespace AlessioBorriello
                 playerManager.Die();
                 networkManager.DieServerRpc();
 
+            }
+        }
+
+        public void TakePoiseDamage(float damage)
+        {
+            CurrentPoise = Mathf.Max(CurrentPoise - damage, 0);
+
+            poiseRecoveryTimer = playerStats.poiseResetTimer;
+        }
+
+        public bool IsPoiseBroken()
+        {
+            if (CurrentPoise <= 0)
+            {
+                Debug.Log("Broken poise");
+                CurrentPoise = MaxPoise;
+                return true;
+            }else
+            {
+                return false;
             }
         }
 
@@ -192,6 +245,14 @@ namespace AlessioBorriello
 
             float staminaRecovered = playerStats.staminaRecoveryRate * ((!playerManager.isBlocking)? 1f : playerStats.staminaRecoveryRateMultiplierWhenBlocking);
             if (staminaRecoveryTimer <= 0) CurrentStamina = Mathf.Min(CurrentStamina + staminaRecovered, MaxStamina);
+        }
+
+        private void HandlePoiseRecovery()
+        {
+            poiseRecoveryTimer = Mathf.Max(poiseRecoveryTimer - Time.deltaTime, 0);
+
+            //Reset poise
+            if (poiseRecoveryTimer <= 0) CurrentPoise = MaxPoise;
         }
 
         private int CalculateStatValue(int statLevel, int maxStatLevel, AnimationCurve diminishingCurve, int baseStatValue, int baseStatValueAddition)

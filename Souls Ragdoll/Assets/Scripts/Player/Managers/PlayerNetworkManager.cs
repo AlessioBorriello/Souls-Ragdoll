@@ -187,17 +187,17 @@ namespace AlessioBorriello
 
         //Attack
         [ServerRpc(RequireOwnership = false)]
-        public void AttackServerRpc(string attackAnimation, int damage, float knockbackStrength, float flinchStrength, bool attackingWithLeft)
+        public void AttackServerRpc(string attackAnimation, bool attackingWithLeft, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
         {
-            AttackClientRpc(attackAnimation, damage, knockbackStrength, flinchStrength, attackingWithLeft);
+            AttackClientRpc(attackAnimation, attackingWithLeft, damage, poiseDamage, staminaDamage, knockbackStrength);
         }
 
         [ClientRpc]
-        private void AttackClientRpc(string attackAnimation, int damage, float knockbackStrength, float flinchStrength, bool attackingWithLeft)
+        private void AttackClientRpc(string attackAnimation, bool attackingWithLeft, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
         {
             if (IsOwner) return;
             if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} attacked ({attackAnimation}) for {damage} damage with his " + ((attackingWithLeft)? "left" : "right") + " hand");
-            weaponManager.Attack(attackAnimation, damage, knockbackStrength, flinchStrength, attackingWithLeft);
+            weaponManager.Attack(attackAnimation, attackingWithLeft, damage, poiseDamage, staminaDamage, knockbackStrength);
         }
 
         //Backstab
@@ -294,6 +294,21 @@ namespace AlessioBorriello
             if (IsOwner) return;
             if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} parried");
             shieldManager.Parry(parryingWithLeft);
+        }
+
+        //Shield broken
+        [ServerRpc(RequireOwnership = false)]
+        public void ShieldBrokenServerRpc()
+        {
+            ShieldBrokenClientRpc();
+        }
+
+        [ClientRpc]
+        private void ShieldBrokenClientRpc()
+        {
+            if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} shield guard has been broken");
+            shieldManager.ShieldBroken();
         }
         #endregion
 

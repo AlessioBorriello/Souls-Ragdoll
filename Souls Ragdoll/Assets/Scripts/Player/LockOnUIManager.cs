@@ -38,6 +38,9 @@ namespace AlessioBorriello
 
             //Disable UI
             ToggleTargetUI(false);
+
+            healthBarSlider.value = 1;
+            animationHealthBarSlider.value = 1;
         }
 
         private void Update()
@@ -50,6 +53,9 @@ namespace AlessioBorriello
 
         private void HandleHealthBar()
         {
+            //To avoid setting the value of the slider to a NaN value
+            if (double.IsNaN((double)statsManager.CurrentHealth / statsManager.MaxHealth)) return;
+
             healthBarSlider.value = (float)statsManager.CurrentHealth / statsManager.MaxHealth;
 
             if (lockedOn) animationHealthBarSlider.value = Mathf.Lerp(animationHealthBarSlider.value, (float)statsManager.CurrentHealth / statsManager.MaxHealth, 4 * Time.deltaTime);
