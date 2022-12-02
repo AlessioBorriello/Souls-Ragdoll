@@ -360,18 +360,6 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
---- !u!114 &-6875816471367943789
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 31a785ea53a9bf24882d0047bb042aa0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-6764073093412325803
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1765,8 +1753,8 @@ AnimatorState:
   - {fileID: -8455223065679199034}
   - {fileID: -8779780315918965077}
   - {fileID: -3751741300887106938}
+  - {fileID: 4447348249079300310}
   - {fileID: -25729746151707290}
-  - {fileID: -6875816471367943789}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -2216,6 +2204,24 @@ MonoBehaviour:
   onEnter: 1
   onEnterBoolName: canBeRiposted
   onEnterBoolValue: 1
+  onExit: 0
+  onExitBoolName: 
+  onExitBoolValue: 0
+--- !u!114 &4447348249079300310
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c7f43c687f656f448dc20d76daaebe8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  onEnter: 1
+  onEnterBoolName: areIFramesActive
+  onEnterBoolValue: 0
   onExit: 0
   onExitBoolName: 
   onExitBoolValue: 0
