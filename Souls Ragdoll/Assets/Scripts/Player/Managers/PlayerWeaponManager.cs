@@ -1,4 +1,6 @@
+using Animancer;
 using Newtonsoft.Json.Bson;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -23,12 +25,14 @@ namespace AlessioBorriello
         [SerializeField] private LayerMask riposteLayer;
 
         private Rigidbody physicalHips;
-        //private GameObject animatedPlayer;
 
-        private bool attackingWithLeft = false;
         private AttackType attackType;
         private int nextComboAttackIndex = 0;
-        private bool chainedAttack = false;
+
+        #region Rolling and Backdashing attack timers handling
+        private float rollingAttackTimer = 0; //The window to perform a rolling attack
+        private float backdashingAttackTimer = 0; //The window to perform a backdashing attack
+        #endregion
 
         private void Awake()
         {
@@ -53,52 +57,45 @@ namespace AlessioBorriello
             //Store presses
             bool rb = inputManager.rbInputPressed;
             bool rt = inputManager.rtInputPressed;
-            bool lb = inputManager.lbInputPressed;
-            bool lt = inputManager.ltInputPressed;
 
-            //Define if the attack is left handed and if its heavy
-            bool isLeft = (lb || lt);
-            bool isHeavy = (lt || rt);
+            //Define if attack is heavy
+            bool isHeavy = rt;
 
             //If it's not a weapon
-            if (inventoryManager.GetCurrentItemType(isLeft) != PlayerInventoryManager.ItemType.weapon) return;
+            if (inventoryManager.GetCurrentItemType(false) != PlayerInventoryManager.ItemType.weapon) return;
 
             //If any of these is pressed
-            if (rb || rt || lb || lt)
+            if (rb || rt)
             {
                 //If no stamina
                 if (statsManager.CurrentStamina < 1) return;
 
-                //Check for combos
-                AttackType attackType = GetAttackType(isHeavy);
-                chainedAttack = CheckForCombo(isLeft, attackType);
+                AttackType newAttackType = GetAttackType(isHeavy);
+
+                //Reset combo counter if the attack type is not the same as the old one
+                if (attackType != newAttackType) nextComboAttackIndex = 0;
+
                 //Try to attack
-                TryAttack(isLeft, attackType);
+                TryAttack(newAttackType);
             }
 
         }
 
-        private void TryAttack(bool isLeft, AttackType newAttackType)
+        private void TryAttack(AttackType newAttackType)
         {
-            if (playerManager.playerIsStuckInAnimation) return;
+            if (playerManager.isStuckInAnimation) return;
 
             //Get right or left item
-            WeaponItem weapon = (WeaponItem)((isLeft)? inventoryManager.GetCurrentItem(true) : inventoryManager.GetCurrentItem(false));
-
-            //If an attack was NOT chained and it is not the first attack
-            if (!chainedAttack && nextComboAttackIndex != 0) return;
+            WeaponItem weapon = (WeaponItem)inventoryManager.GetCurrentItem(false);
 
             //Update proprieties
             attackType = newAttackType;
 
             //Check for backstab, if a backstab goes through, then return
-            if(TryBackstab(attackType, weapon, isLeft)) return;
+            if(TryBackstab(attackType, weapon)) return;
 
             //Check for riposte, if a riposte goes through, then return
-            if (TryRiposte(attackType, weapon, isLeft)) return;
-
-            //Get animation to play and movement speed multiplier
-            string attackAnimation = GetAttackAnimationString(weapon, attackType);
+            if (TryRiposte(attackType, weapon)) return;
 
             //Get weapon values
             float damageMultiplier = GetWeaponDamageMultiplier(weapon);
@@ -110,38 +107,62 @@ namespace AlessioBorriello
 
             float knockbackStrength = weapon.knockbackStrength;
 
+            //Get animation to play and movement speed multiplier
+            string attackAnimationName = GetAttackAnimationName(weapon, attackType);
+
             //Attack
-            Attack(attackAnimation, isLeft, damage, poiseDamage, staminaDamage, knockbackStrength);
-            networkManager.AttackServerRpc(attackAnimation, isLeft, damage, poiseDamage, staminaDamage, knockbackStrength);
+            Attack(attackAnimationName, damage, poiseDamage, staminaDamage, knockbackStrength);
+            networkManager.AttackServerRpc(attackAnimationName, damage, poiseDamage, staminaDamage, knockbackStrength);
 
-            //Set attack speed multiplier
-            float attackMovementSpeedMultiplier = GetAttackMovementSpeedMultiplier(weapon);
-            locomotionManager.SetMovementSpeedMultiplier(attackMovementSpeedMultiplier);
+            //If the attack animation exists
+            if(attackAnimationName != "")
+            {
+                //Set attack speed multiplier
+                float attackMovementSpeedMultiplier = GetAttackMovementSpeedMultiplier(weapon);
+                locomotionManager.SetMovementSpeedMultiplier(attackMovementSpeedMultiplier);
 
-            //Consume stamina
-            float staminaCost = GetAttackStaminaCost(attackType, weapon);
-            statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+                //Consume stamina
+                float staminaCost = GetAttackStaminaCost(attackType, weapon);
+                statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+            }
 
         }
 
-        public void Attack(string attackAnimation, bool attackingWithLeft, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
+        public void Attack(string attackAnimationName, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
         {
-            if (attackAnimation == "") return;
+            if (attackAnimationName == "") return;
+
+            //Create enter and exit events
+            Action onAttackEnterAction = () =>
+            {
+                //Debug.Log("Attack enter");
+                playerManager.isStuckInAnimation = true;
+                playerManager.isInOverrideAnimation = true;
+                playerManager.shouldSlide = true;
+                playerManager.isAttacking = true;
+            };
+
+            Action onAttackExitAction = () =>
+            {
+                //Debug.Log("Attack exit");
+                playerManager.isStuckInAnimation = false;
+                playerManager.isInOverrideAnimation = false;
+                playerManager.canRotate = true;
+                playerManager.isAttacking = false;
+                StartCoroutine(ResetCombo());
+                animationManager.FadeOutOverrideAnimation(.15f);
+            };
 
             //Play animation
-            animationManager.PlayTargetAnimation(attackAnimation, .2f, true);
+            animationManager.PlayOverrideAnimation(attackAnimationName, onAttackEnterAction, onAttackExitAction);
 
             //Set collider values
-            inventoryManager.SetColliderValues(attackingWithLeft, damage, poiseDamage, staminaDamage, knockbackStrength);
-
-            //Update animator values
-            this.attackingWithLeft = attackingWithLeft;
-            animationManager.UpdateAttackingWithLeftValue(attackingWithLeft);
+            inventoryManager.SetDamageColliderValues(damage, poiseDamage, staminaDamage, knockbackStrength);
         }
 
-        private bool TryBackstab(AttackType attackType, WeaponItem weapon, bool attackingWithLeft)
+        private bool TryBackstab(AttackType attackType, WeaponItem weapon)
         {
-            if (attackType != AttackType.light || chainedAttack) return false;
+            if (attackType != AttackType.light || nextComboAttackIndex != 0) return false;
 
             RaycastHit hit;
             float backstabDistance = 1.4f;
@@ -171,15 +192,15 @@ namespace AlessioBorriello
                     damage *= GetWeaponDamageMultiplier(weapon);
 
                     //Animations
-                    string backstabAnimation = weapon.backstabAttack;
+                    string backstabAnimation = weapon.backstabAttackName;
                     string backstabbedAnimation = weapon.backstabVictimAnimation;
 
                     //Consume stamina
                     statsManager.ConsumeStamina(weapon.backstabAttackStaminaUse, statsManager.playerStats.staminaDefaultRecoveryTime);
 
                     //Play backstab
-                    Riposte(backstabAnimation, attackingWithLeft);
-                    networkManager.RiposteServerRpc(backstabAnimation, attackingWithLeft);
+                    Riposte(backstabAnimation);
+                    networkManager.RiposteServerRpc(backstabAnimation);
 
                     //Get position and rotation for the victim
                     Vector3 backstabbedPosition = playerManager.backstabbedTransform.position;
@@ -197,9 +218,9 @@ namespace AlessioBorriello
             return false;
         }
 
-        private bool TryRiposte(AttackType attackType, WeaponItem weapon, bool attackingWithLeft)
+        private bool TryRiposte(AttackType attackType, WeaponItem weapon)
         {
-            if (attackType != AttackType.light || chainedAttack) return false;
+            if (attackType != AttackType.light || nextComboAttackIndex != 0) return false;
 
             RaycastHit hit;
             float riposteDistance = 1.4f;
@@ -229,15 +250,15 @@ namespace AlessioBorriello
                     damage *= GetWeaponDamageMultiplier(weapon);
 
                     //Animations
-                    string riposteAnimation = weapon.riposteAttack;
+                    string riposteAnimation = weapon.riposteAttackName;
                     string ripostedAnimation = weapon.riposteVictimAnimation;
 
                     //Consume stamina
                     statsManager.ConsumeStamina(weapon.riposteAttackStaminaUse, statsManager.playerStats.staminaDefaultRecoveryTime);
 
                     //Play riposte
-                    Riposte(riposteAnimation, attackingWithLeft);
-                    networkManager.RiposteServerRpc(riposteAnimation, attackingWithLeft);
+                    Riposte(riposteAnimation);
+                    networkManager.RiposteServerRpc(riposteAnimation);
 
                     //Get position and rotation for the victim
                     Vector3 ripostedPosition = playerManager.ripostedTransform.position;
@@ -255,39 +276,93 @@ namespace AlessioBorriello
             return false;
         }
 
-        public void Riposte(string riposteAnimation, bool attackingWithLeft)
+        public void Riposte(string riposteAnimation)
         {
 
+            //Create enter and exit events
+            Action onRiposteEnterAction = () =>
+            {
+                //Debug.Log("Riposte enter");
+                playerManager.isStuckInAnimation = true;
+                playerManager.isInOverrideAnimation = true;
+                playerManager.shouldSlide = false;
+                playerManager.canRotate = false;
+                playerManager.isAttacking = true;
+            };
+
+            Action onRiposteExitAction = () =>
+            {
+                //Debug.Log("Riposte exit");
+                playerManager.isStuckInAnimation = false;
+                playerManager.isInOverrideAnimation = false;
+                playerManager.canRotate = true;
+                playerManager.isAttacking = false;
+                animationManager.FadeOutOverrideAnimation(.15f);
+            };
+
             //Play riposte animation
-            animationManager.PlayTargetAnimation(riposteAnimation, .1f, true);
+            animationManager.PlayOverrideAnimation(riposteAnimation, onRiposteEnterAction, onRiposteExitAction);
 
             //Stop player
             locomotionManager.SetMovementSpeedMultiplier(1);
-
-            //Update animator values
-            this.attackingWithLeft = attackingWithLeft;
-            animationManager.UpdateAttackingWithLeftValue(attackingWithLeft);
 
         }
 
         public void Parried()
         {
-            animationManager.PlayTargetAnimation("Parried", .15f, true);
+            //Create enter and exit events
+            Action onParriedEnterAction = () =>
+            {
+                //Debug.Log("Parried enter");
+                playerManager.isStuckInAnimation = true;
+                playerManager.isInOverrideAnimation = true;
+                playerManager.shouldSlide = false;
+                playerManager.canRotate = false;
+                playerManager.canBeRiposted = true;
 
-            //Disable attack collider
-            inventoryManager.GetCurrentItemDamageColliderControl(attackingWithLeft).ToggleCollider(false);
+                //Disable attack collider
+                inventoryManager.GetCurrentItemDamageColliderControl(false).ToggleCollider(false);
 
-            //Allow enemy to riposte
-            playerManager.canBeRiposted = true;
+                //Set forward when parried
+                playerManager.GetCombatManager().forwardWhenParried = physicalHips.transform.forward;
+            };
 
-            //Set forward when parried
-            playerManager.GetCombatManager().forwardWhenParried = physicalHips.transform.forward;
+            Action onParriedExitAction = () =>
+            {
+                //Debug.Log("Parried exit");
+                playerManager.isStuckInAnimation = false;
+                playerManager.isInOverrideAnimation = false;
+                playerManager.canRotate = true;
+                playerManager.canBeRiposted = false;
+                animationManager.FadeOutOverrideAnimation(.15f);
+            };
+
+            animationManager.PlayOverrideAnimation("Parried",onParriedEnterAction, onParriedExitAction);
         }
 
         public void Riposted(Vector3 riposteVictimPosition, Quaternion riposteVictimRotation, string riposteVictimAnimation, float damage)
         {
+            //Create enter and exit events
+            Action onRipostedEnterAction = () =>
+            {
+                //Debug.Log("Riposted enter");
+                playerManager.isStuckInAnimation = true;
+                playerManager.isInOverrideAnimation = true;
+                playerManager.shouldSlide = false;
+                playerManager.canRotate = false;
+            };
+
+            Action onRipostedExitAction = () =>
+            {
+                //Debug.Log("Riposted exit");
+                playerManager.isStuckInAnimation = false;
+                playerManager.isInOverrideAnimation = false;
+                playerManager.canRotate = true;
+                animationManager.FadeOutOverrideAnimation(.15f);
+            };
+
             //Play animation
-            playerManager.GetAnimationManager().PlayTargetAnimation(riposteVictimAnimation, .1f, true);
+            animationManager.PlayOverrideAnimation(riposteVictimAnimation, onRipostedEnterAction, onRipostedExitAction);
 
             //Stop player
             playerManager.GetLocomotionManager().SetMovementSpeedMultiplier(1);
@@ -338,20 +413,11 @@ namespace AlessioBorriello
             return multiplier;
         }
 
-        private bool CheckForCombo(bool isLeft, AttackType attackType)
-        {
-            if (nextComboAttackIndex == 0) return false;
-
-            //Cases where the combo is not performed
-            if (isLeft != attackingWithLeft || this.attackType != attackType) return false;
-            else return true;
-        }
-
         private AttackType GetAttackType(bool isHeavy)
         {
             if (playerManager.isSprinting && !isHeavy) return AttackType.running;
-            if(rollingAttackTimer > 0 && !isHeavy) return AttackType.rolling;
-            if(backdashingAttackTimer > 0 && !isHeavy) return AttackType.running;
+            if((playerManager.IsRolling || rollingAttackTimer > 0) && !isHeavy) return AttackType.rolling;
+            if((playerManager.isBackdashing || backdashingAttackTimer > 0) && !isHeavy) return AttackType.running;
 
             return (isHeavy) ? AttackType.heavy : AttackType.light;
         }
@@ -369,98 +435,67 @@ namespace AlessioBorriello
             }
         }
 
-        #region Rolling and Backdashing attack timers handling
-        private bool previousIsRolling = false; //If the player was rolling the previous frame
-        private bool previousIsBackdashing = false; //If the player was backdashing the previous frame
-        private float rollingAttackTimer = 0; //The window to perform a rolling attack
-        private float backdashingAttackTimer = 0; //The window to perform a backdashing attack
-        #endregion
         private void HandleRollAndBackdashAttackTimers()
         {
-            //Just finished rolling
-            if(!playerManager.isRolling && previousIsRolling) rollingAttackTimer = playerManager.playerData.rollingAttackWindow;
+            //Just rolled
+            if(playerManager.IsRolling) rollingAttackTimer = playerManager.playerData.rollingAttackWindow;
 
-            //Just finished backdashing
-            if (!playerManager.isBackdashing && previousIsBackdashing) backdashingAttackTimer = playerManager.playerData.backdashingAttackWindow;
+            //Just backdashed
+            if (playerManager.isBackdashing) backdashingAttackTimer = playerManager.playerData.backdashingAttackWindow;
 
             if (rollingAttackTimer > 0) rollingAttackTimer -= Time.deltaTime;
             if (backdashingAttackTimer > 0) backdashingAttackTimer -= Time.deltaTime;
-
-            //Update values
-            previousIsRolling = playerManager.isRolling;
-            previousIsBackdashing = playerManager.isBackdashing;
         }
 
-        private string GetAttackAnimationString(WeaponItem weapon, AttackType attackType)
+        private string GetAttackAnimationName(WeaponItem weapon, AttackType attackType)
         {
-            string animation;
+            string animationName;
 
-            string[] animationArray;
+            string[] comboArray;
 
             switch(this.attackType)
             {
-                case AttackType.light: animationArray = weapon.oneHandedLightAttackCombo; break;
-                case AttackType.heavy: animationArray = weapon.OneHandedHeavyAttackCombo; break;
-                case AttackType.running: return weapon.oneHandedRunningAttack;
-                case AttackType.rolling: return weapon.oneHandedRollingAttack;
-                case AttackType.backstab: return weapon.backstabAttack;
-                case AttackType.riposte: return weapon.riposteAttack;
-                default: animationArray = weapon.oneHandedLightAttackCombo; break;
+                case AttackType.light: comboArray = weapon.oneHandedLightAttackComboNames; break;
+                case AttackType.heavy: comboArray = weapon.OneHandedHeavyAttackComboNames; break;
+                case AttackType.running: return weapon.oneHandedRunningAttackName;
+                case AttackType.rolling: return weapon.oneHandedRollingAttackName;
+                case AttackType.backstab: return weapon.backstabAttackName;
+                case AttackType.riposte: return weapon.riposteAttackName;
+                default: comboArray = weapon.oneHandedLightAttackComboNames; break;
             }
 
-            if (IsArrayEmpty(animationArray)) return "";
+            if (IsArrayEmpty(comboArray)) return "";
 
-            animation = animationArray[nextComboAttackIndex++];
-            nextComboAttackIndex %= animationArray.Length;
+            animationName = comboArray[nextComboAttackIndex++];
+            nextComboAttackIndex %= comboArray.Length;
 
-            if (animation == "") animation = GetAttackAnimationString(weapon, attackType);
+            if (animationName == "") animationName = GetAttackAnimationName(weapon, attackType);
 
-            return animation;
+            return animationName;
         }
 
         private bool IsArrayEmpty(string[] array)
         {
             if(array == null || array.Length == 0) return true;
 
-            foreach(string s in array)
+            foreach(string a in array)
             {
-                if (s != "") return false;
+                if (a != "") return false;
             }
 
             return true;
         }
 
-        public bool IsAttackingWithLeft()
+        public IEnumerator ResetCombo()
         {
-            return attackingWithLeft;
+            //Wait for next frame to see if the player is attacking again (is comboing)
+            yield return new WaitForFixedUpdate();
+
+            //If it's not, reset
+            if (!playerManager.isAttacking) nextComboAttackIndex = 0;
         }
 
-        public bool IsChainingAttack()
-        {
-            return chainedAttack;
-        }
-
-        public void ResetCombo()
-        {
-            if (!chainedAttack) //Reset combo if player has not chained an attack
-            {
-                nextComboAttackIndex = 0;
-
-                //Stop attacking
-                playerManager.isAttacking = false;
-            }
-            else
-            {
-                //Continue attacking
-                playerManager.isAttacking = true;
-                playerManager.playerIsStuckInAnimation = true;
-            }
-
-            //Reset
-            chainedAttack = false; //Set chaining to false so the player has to press again
-        }
-
-        private enum AttackType
+        public enum AttackType
         {
             light,
             heavy,

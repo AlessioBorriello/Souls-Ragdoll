@@ -27,6 +27,7 @@ namespace AlessioBorriello
         private InputManager inputManager;
         private PlayerNetworkManager networkManager;
         private AnimationManager animationManager;
+        private AnimationEventsManager animationEventsManager;
         private PlayerLocomotionManager locomotionManager;
         private ActiveRagdollManager ragdollManager;
         private PlayerInventoryManager inventoryManager;
@@ -45,19 +46,24 @@ namespace AlessioBorriello
         #region Flags
         [Header("General flags")]
         public bool isClient = true;
-        public bool playerIsStuckInAnimation = false; //Disables actions like dodging, attacking... and movement
+        public bool isStuckInAnimation = false; //Disables actions like dodging, attacking... and movement
         public bool disableActions = false; //If the player can perform actions like dodging, attacking, blocking... (Indipendent from movement)
         public bool consumeInputs = true;
         public bool isOnGround = true;
         public bool isKnockedOut = false;
         public bool isDead = false;
+        public bool isInOverrideAnimation = false;
 
         [Header("Locomotion flags")]
         public bool canRotate = true;
         public bool shouldSlide = false; //If the friction should be enabled or not
-        public bool isRolling = false;
+
+        //Is rolling
+        [SerializeField] private bool isRolling = false;
+        public bool IsRolling { get { return isRolling; } set { isRolling = value; } }
         public bool isBackdashing = false;
         public bool isSprinting = false;
+        public bool isFalling = false;
         public bool disableSprint = false; //Disables sprint when going to 0 stamina
 
         [Header("Combat flag")]
@@ -77,6 +83,7 @@ namespace AlessioBorriello
             inputManager = GetComponent<InputManager>();
             networkManager = GetComponent<PlayerNetworkManager>();
             animationManager = GetComponent<AnimationManager>();
+            animationEventsManager = GetComponent<AnimationEventsManager>();
             ragdollManager = GetComponent<ActiveRagdollManager>();
             collisionManager = GetComponent<PlayerCollisionManager>();
             locomotionManager = GetComponent<PlayerLocomotionManager>();
@@ -179,8 +186,10 @@ namespace AlessioBorriello
             isDead = true;
             ragdollManager.SetJointsDriveForces(0, 0);
 
-            //Set override animation to empty
-            animationManager.PlayTargetAnimation("EmptyOverride", .2f, false);
+            //Fade animations
+            animationManager.FadeOutOverrideAnimation(.1f);
+            animationManager.FadeOutUpperBodyArmsOverrideAnimation(.1f, false);
+            animationManager.FadeOutUpperBodyArmsOverrideAnimation(.1f, true);
 
             //Changes friction of the feet so that they don't slide around (set it to idle friction)
             shouldSlide = false;
@@ -227,6 +236,7 @@ namespace AlessioBorriello
             corpse.GetComponent<Corpse>().SetUp(GetComponentInChildren<PlayerColorManager>().GetPlayerColor(), ragdollManager.GetRigidbodies());
         }
 
+        #region Getters
         public InputManager GetInputManager()
         {
             return inputManager;
@@ -240,6 +250,11 @@ namespace AlessioBorriello
         public AnimationManager GetAnimationManager()
         {
             return animationManager;
+        }
+
+        public AnimationEventsManager GetAnimationEventsManager()
+        {
+            return animationEventsManager;
         }
 
         public PlayerLocomotionManager GetLocomotionManager()
@@ -311,6 +326,7 @@ namespace AlessioBorriello
         {
             return animatedHips;
         }
+        #endregion
 
     }
 }

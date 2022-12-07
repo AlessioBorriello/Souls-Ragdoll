@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a2d01d4f425b3848938f199392c9afb, type: 3}
+  m_Name: LocomotionBlendTree
+  m_EditorClassIdentifier: 
+  _Transition:
+    rid: 2694734861434093568
+  references:
+    version: 2
+    RefIds:
+    - rid: 2694734861434093568
+      type: {class: MixerTransition2D, ns: Animancer, asm: Animancer}
+      data:
+        _FadeDuration: 0.25
+        _Events:
+          _NormalizedTimes: []
+          _Callbacks: []
+          _Names: []
+        _Speed: 1
+        _Animations:
+        - {fileID: 7400000, guid: a8c0e79387f70eb4e90b3bb145f73cda, type: 2}
+        - {fileID: 7400000, guid: 4aa0b0d77585357449a0644b84b0345d, type: 2}
+        - {fileID: 7400000, guid: 14e9fcff61736e54ab98d8a8f18cb40b, type: 2}
+        - {fileID: 7400000, guid: a1b89c42f49c42140ae1a4a436335e8d, type: 2}
+        - {fileID: 7400000, guid: e2964349318693743bab397f4ede5a0c, type: 2}
+        - {fileID: 7400000, guid: 33fa7ad378eb63046a0d7a9822213d07, type: 2}
+        - {fileID: 7400000, guid: 91b50f61887664c4fb28938905827d22, type: 2}
+        - {fileID: 7400000, guid: 591b2a88a99e8e947b6882744ddd7645, type: 2}
+        - {fileID: 7400000, guid: e3daa67f60c63c145889b2f05f821e66, type: 2}
+        - {fileID: 7400000, guid: 8e996b7b5573f1245b038d9f4a3e15f3, type: 2}
+        - {fileID: 7400000, guid: 41abb00c69e6e9a4da2c8a4c62ee71e7, type: 2}
+        - {fileID: 7400000, guid: d8f9e99819a671846b55607db233147f, type: 2}
+        - {fileID: 7400000, guid: 1c2dd1e7e0c1eca469e1a61bce1d66c9, type: 2}
+        - {fileID: 7400000, guid: 30ca2b3d87374e149a77f87618e0d05b, type: 2}
+        - {fileID: 7400000, guid: d8f9e99819a671846b55607db233147f, type: 2}
+        - {fileID: 7400000, guid: 41abb00c69e6e9a4da2c8a4c62ee71e7, type: 2}
+        _Speeds:
+        - 1
+        - 1
+        - 1.04
+        - 0.9
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1
+        - 1.15
+        - 1.1
+        - 1.1
+        - 1.12
+        - 1.12
+        - -1.15
+        - -1.15
+        _SynchronizeChildren: 
+        _Thresholds:
+        - {x: 0, y: 0}
+        - {x: 0, y: 0.5}
+        - {x: 0, y: 1}
+        - {x: 0, y: 2}
+        - {x: -0.5, y: 0}
+        - {x: 0.5, y: 0}
+        - {x: -0.5, y: 0.5}
+        - {x: 0.5, y: 0.5}
+        - {x: 0, y: -0.5}
+        - {x: 0, y: -1}
+        - {x: -1, y: -1}
+        - {x: 1, y: -1}
+        - {x: -1, y: 0}
+        - {x: 1, y: 0}
+        - {x: -1, y: 1}
+        - {x: 1, y: 1}
+        _DefaultParameter: {x: 0, y: 0}
+        _Type: 0

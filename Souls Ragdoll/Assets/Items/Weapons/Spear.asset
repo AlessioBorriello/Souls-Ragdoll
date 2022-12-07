@@ -16,16 +16,42 @@ MonoBehaviour:
   iconSprite: {fileID: 21300000, guid: 1db3e1e34e826a6468a9899735e00409, type: 3}
   descriptionText: A wooden spear
   modelPrefab: {fileID: 7847242577517675049, guid: 088e115252c9b494fb9b151c2c7dd5f7, type: 3}
-  oneHandedIdle: OneHandItemIdle
+  oneHandedIdle: OHSmallWeaponIdle
   physicalDamageAbsorption: 0
+  blockStability: 0
+  baseDamage: 0
+  staminaBaseDamage: 0
+  poiseBaseDamage: 0
+  lightAttackStaminaUse: 40
+  heavyAttackStaminaUse: 65
+  rollingAttackStaminaUse: 30
+  runningAttackStaminaUse: 34
+  backstabAttackStaminaUse: 30
+  riposteAttackStaminaUse: 36
   movementSpeedMultiplier: 2.5
-  OneHandedLightAttackCombo:
+  oneHandedLightAttackComboNames:
   - 
   - 
   - 
-  OneHandedHeavyAttackCombo:
+  oneHandedLightAttacksDamageMultiplier: 1
+  oneHandedLightAttacksPoiseDamageMultiplier: 1
+  OneHandedHeavyAttackComboNames:
   - 
   - 
   - 
-  OneHandedRunningAttack: 
-  OneHandedRollingAttack: 
+  oneHandedHeavyAttacksDamageMultiplier: 1.7
+  oneHandedHeavyAttacksPoiseDamageMultiplier: 2
+  oneHandedRunningAttackName: 
+  oneHandedRunningAttackDamageMultiplier: 1.2
+  oneHandedRunningAttackPoiseDamageMultiplier: 1.4
+  oneHandedRollingAttackName: 
+  oneHandedRollingAttackDamageMultiplier: 0.9
+  oneHandedRollingAttackPoiseDamageMultiplier: 1.2
+  backstabAttackName: 
+  backstabVictimAnimation: 
+  backstabtAttackDamageMultiplier: 2.4
+  riposteAttackName: 
+  riposteVictimAnimation: 
+  ripostetAttackDamageMultiplier: 3
+  knockbackStrength: 3.2
+  flinchStrength: 25

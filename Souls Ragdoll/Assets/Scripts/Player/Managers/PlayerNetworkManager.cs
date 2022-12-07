@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.Networking;
 using Unity.Netcode;
 using UnityEngine;
+using static AlessioBorriello.PlayerWeaponManager;
 
 namespace AlessioBorriello
 {
@@ -18,6 +19,7 @@ namespace AlessioBorriello
         private PlayerStatsManager statsManager;
         private PlayerWeaponManager weaponManager;
         private PlayerShieldManager shieldManager;
+        private PlayerCollisionManager collisionManager;
 
         private Rigidbody physicalHips;
         private GameObject animatedPlayer;
@@ -41,6 +43,7 @@ namespace AlessioBorriello
             statsManager = playerManager.GetStatsManager();
             weaponManager = playerManager.GetWeaponManager();
             shieldManager = playerManager.GetShieldManager();
+            collisionManager = playerManager.GetCollisionManager();
 
             physicalHips = playerManager.GetPhysicalHips();
             animatedPlayer = playerManager.GetAnimatedPlayer();
@@ -75,9 +78,9 @@ namespace AlessioBorriello
                 else physicalHips.transform.position = Vector3.SmoothDamp(physicalHips.transform.position, netPosition.Value, ref posVel, .1f);
 
                 animatedPlayer.transform.rotation = Quaternion.Slerp(animatedPlayer.transform.rotation, netRotation.Value, rotVel);
+                animationManager.UpdateMovementAnimatorValues(netNormalMovementAmount.Value, netStrafeMovementAmount.Value, 0);
             }
 
-            animationManager.UpdateMovementAnimatorValues(netNormalMovementAmount.Value, netStrafeMovementAmount.Value, 0);
         }
 
 
@@ -187,32 +190,32 @@ namespace AlessioBorriello
 
         //Attack
         [ServerRpc(RequireOwnership = false)]
-        public void AttackServerRpc(string attackAnimation, bool attackingWithLeft, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
+        public void AttackServerRpc(string attackAnimationName, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
         {
-            AttackClientRpc(attackAnimation, attackingWithLeft, damage, poiseDamage, staminaDamage, knockbackStrength);
+            AttackClientRpc(attackAnimationName, damage, poiseDamage, staminaDamage, knockbackStrength);
         }
 
         [ClientRpc]
-        private void AttackClientRpc(string attackAnimation, bool attackingWithLeft, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
+        private void AttackClientRpc(string attackAnimationName, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
         {
             if (IsOwner) return;
-            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} attacked ({attackAnimation}) for {damage} damage with his " + ((attackingWithLeft)? "left" : "right") + " hand");
-            weaponManager.Attack(attackAnimation, attackingWithLeft, damage, poiseDamage, staminaDamage, knockbackStrength);
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} attacked for {damage} damage");
+            weaponManager.Attack(attackAnimationName, damage, poiseDamage, staminaDamage, knockbackStrength);
         }
 
         //Backstab
         [ServerRpc(RequireOwnership = false)]
-        public void RiposteServerRpc(string riposteAnimation, bool attackingWithLeft)
+        public void RiposteServerRpc(string riposteAnimation)
         {
-            RiposteClientRpc(riposteAnimation, attackingWithLeft);
+            RiposteClientRpc(riposteAnimation);
         }
 
         [ClientRpc]
-        private void RiposteClientRpc(string riposteAnimation, bool attackingWithLeft)
+        private void RiposteClientRpc(string riposteAnimation)
         {
             if (IsOwner) return;
-            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} backstabbed with his " + ((attackingWithLeft) ? "left" : "right") + " hand");
-            weaponManager.Riposte(riposteAnimation, attackingWithLeft);
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} backstabbed");
+            weaponManager.Riposte(riposteAnimation);
         }
 
         //Backstabbed
@@ -253,17 +256,17 @@ namespace AlessioBorriello
         #region Shield
         //Block
         [ServerRpc(RequireOwnership = false)]
-        public void BlockServerRpc(bool blockingWithLeft)
+        public void BlockServerRpc()
         {
-            BlockClientRpc(blockingWithLeft);
+            BlockClientRpc();
         }
 
         [ClientRpc]
-        private void BlockClientRpc(bool blockingWithLeft)
+        private void BlockClientRpc()
         {
             if (IsOwner) return;
-            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} started blocking with his " + ((blockingWithLeft) ? "left" : "right") + " hand");
-            shieldManager.Block(blockingWithLeft);
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} started blocking");
+            shieldManager.Block();
         }
 
         //Stop blocking
@@ -283,17 +286,17 @@ namespace AlessioBorriello
 
         //Parry
         [ServerRpc(RequireOwnership = false)]
-        public void ParryServerRpc(bool parryingWithLeft)
+        public void ParryServerRpc()
         {
-            ParryClientRpc(parryingWithLeft);
+            ParryClientRpc();
         }
 
         [ClientRpc]
-        private void ParryClientRpc(bool parryingWithLeft)
+        private void ParryClientRpc()
         {
             if (IsOwner) return;
             if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} parried");
-            shieldManager.Parry(parryingWithLeft);
+            shieldManager.Parry();
         }
 
         //Shield broken
@@ -312,36 +315,23 @@ namespace AlessioBorriello
         }
         #endregion
 
+        #region Other
+        //Player got hurt
+        [ServerRpc(RequireOwnership = false)]
+        public void PlayerHurtServerRpc(string hurtAnimation)
+        {
+            PlayerHurtClientRpc(hurtAnimation);
+        }
+
+        [ClientRpc]
+        private void PlayerHurtClientRpc(string hurtAnimation)
+        {
+            if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} got hurt");
+            collisionManager.PlayerHurt(hurtAnimation);
+        }
         #endregion
 
-        #region Animation
-        [ServerRpc(RequireOwnership = false)]
-        public void PlayTargetAnimationServerRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
-        {
-            PlayTargetAnimationClientRpc(targetAnimation, fadeDuration, isStuckInAnimation);
-        }
-
-        [ClientRpc]
-        private void PlayTargetAnimationClientRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
-        {
-            if (IsOwner) return;
-            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} played the {targetAnimation} animation");
-            animationManager.PlayTargetAnimation(targetAnimation, fadeDuration, isStuckInAnimation);
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        public void PlayTargetAnimationServerRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
-        {
-            PlayTargetAnimationClientRpc(targetAnimation, fadeDuration, isStuckInAnimation, layer);
-        }
-
-        [ClientRpc]
-        private void PlayTargetAnimationClientRpc(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
-        {
-            if (IsOwner) return;
-            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} played the {targetAnimation} animation");
-            animationManager.PlayTargetAnimation(targetAnimation, fadeDuration, isStuckInAnimation, layer);
-        }
         #endregion
 
         #region Ragdoll

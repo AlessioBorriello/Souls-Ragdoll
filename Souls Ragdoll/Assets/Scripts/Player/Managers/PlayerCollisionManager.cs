@@ -81,9 +81,8 @@ namespace AlessioBorriello
 
                 if (shouldStagger && !attackBlocked)
                 {
-                    animationManager.PlayTargetAnimation("Hurt", .1f, true);
-                    networkManager.PlayTargetAnimationServerRpc("Hurt", .1f, true);
-                    shouldStagger = false;
+                    PlayerHurt("Hurt");
+                    networkManager.PlayerHurtServerRpc("Hurt");
                 }
                 if (attackBlocked) StartCoroutine(locomotionManager.StopMovementForTime(.22f));
 
@@ -95,10 +94,35 @@ namespace AlessioBorriello
             }
         }
 
+        public void PlayerHurt(string hurtAnimation)
+        {
+            //Create enter and exit events
+            Action onHurtEnterAction = () =>
+            {
+                //Debug.Log("Hurt enter");
+                playerManager.isStuckInAnimation = true;
+                playerManager.isInOverrideAnimation = true;
+                playerManager.canRotate = false;
+                playerManager.shouldSlide = false;
+            };
+
+            Action onHurtExitAction = () =>
+            {
+                //Debug.Log("Hurt exit");
+                playerManager.isStuckInAnimation = false;
+                playerManager.isInOverrideAnimation = false;
+                playerManager.canRotate = true;
+                animationManager.FadeOutOverrideAnimation(.1f);
+            };
+
+            animationManager.PlayOverrideAnimation("Hurt", onHurtEnterAction, onHurtExitAction);
+            shouldStagger = false;
+        }
+
         private int AbsorbDamage(int damage)
         {
             float absorption = 0;
-            HandEquippableItem blockingItem = (combatManager.GetShieldManager().IsBlockingWithLeft())? inventoryManager.GetCurrentItem(true) : inventoryManager.GetCurrentItem(false);
+            HandEquippableItem blockingItem = inventoryManager.GetCurrentItem(true); //If 2 handing get the right item
             if (blockingItem != null) absorption = blockingItem.physicalDamageAbsorption;
 
             damage -= Mathf.RoundToInt((damage * absorption) / 100);

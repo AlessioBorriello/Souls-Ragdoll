@@ -100,6 +100,7 @@ public class Lift : NetworkBehaviour
         }
 
         deltaPosition = liftRigidBody.position - lastPosition;
+        deltaPosition.y = 0;
         lastPosition = liftRigidBody.position;
 
         deltaRotation = liftRigidBody.rotation.eulerAngles - lastRotation;

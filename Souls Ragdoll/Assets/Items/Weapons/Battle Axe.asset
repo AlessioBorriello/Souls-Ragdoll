@@ -16,7 +16,7 @@ MonoBehaviour:
   iconSprite: {fileID: 21300000, guid: 5c958d23290fc794aaa01d5cce4232a5, type: 3}
   descriptionText: A wooden handle battle axe
   modelPrefab: {fileID: 1847906651662086122, guid: afd3f98f489c59f4f972b4fcb27d0562, type: 3}
-  oneHandedIdle: OneHandItemIdle
+  oneHandedIdle: OHSmallWeaponIdle
   physicalDamageAbsorption: 61
   blockStability: 0
   baseDamage: 25
@@ -29,25 +29,27 @@ MonoBehaviour:
   backstabAttackStaminaUse: 35
   riposteAttackStaminaUse: 36
   movementSpeedMultiplier: 3.8
-  oneHandedLightAttackCombo:
-  - OneHandLightAttackOne
-  - OneHandLightAttackTwo
-  - 
+  oneHandedLightAttackComboNames:
+  - OHUpRightToLeftDownSwipe
+  - OHLeftToRightSwing
   oneHandedLightAttacksDamageMultiplier: 1
-  OneHandedHeavyAttackCombo:
-  - OneHandHeavyAttackOne
-  - OneHandHeavyAttackTwo
-  - 
+  oneHandedLightAttacksPoiseDamageMultiplier: 1
+  OneHandedHeavyAttackComboNames:
+  - OHThrust
+  - OHForwardPirouetteSwipe
   oneHandedHeavyAttacksDamageMultiplier: 1.8
-  oneHandedRunningAttack: OneHandRunningAttack
+  oneHandedHeavyAttacksPoiseDamageMultiplier: 2
+  oneHandedRunningAttackName: OHFastForwardPirouetteSwipe
   oneHandedRunningAttackDamageMultiplier: 1.1
-  oneHandedRollingAttack: OneHandRollingAttack
+  oneHandedRunningAttackPoiseDamageMultiplier: 1.4
+  oneHandedRollingAttackName: OHThrust
   oneHandedRollingAttackDamageMultiplier: 0.9
-  backstabAttack: Backstab
-  backstabVictimAnimation: Backstabbed
+  oneHandedRollingAttackPoiseDamageMultiplier: 1.2
+  backstabAttackName: BackstabThrust
+  backstabVictimAnimation: BackstabThrustVictim
   backstabtAttackDamageMultiplier: 2.2
-  riposteAttack: Riposte
-  riposteVictimAnimation: Riposted
+  riposteAttackName: RiposteThrust
+  riposteVictimAnimation: RiposteThrustVictim
   ripostetAttackDamageMultiplier: 3
   knockbackStrength: 3.2
   flinchStrength: 25

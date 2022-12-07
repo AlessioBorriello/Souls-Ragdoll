@@ -13,8 +13,8 @@ namespace AlessioBorriello
             playerManager.GetCombatManager().GetWeaponManager().ResetCombo();
 
             //Close hitbox to be opened again in animation
-            DamageColliderControl hitbox = playerManager.GetInventoryManager().GetCurrentItemDamageColliderControl(playerManager.GetWeaponManager().IsAttackingWithLeft());
-            hitbox.ToggleCollider(false);
+            //DamageColliderControl hitbox = playerManager.GetInventoryManager().GetCurrentItemDamageColliderControl(playerManager.GetWeaponManager().IsAttackingWithLeft());
+            //hitbox.ToggleCollider(false);
         }
 
     }

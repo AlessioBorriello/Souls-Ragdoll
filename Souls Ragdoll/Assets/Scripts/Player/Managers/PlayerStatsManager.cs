@@ -150,7 +150,8 @@ namespace AlessioBorriello
         {
             if (playerManager.IsOwner)
             {
-                VigorLevel = 25;
+                //VigorLevel = 25;
+                VigorLevel = 1;
                 StrengthLevel = 1;
                 EnduranceLevel = 10;
 
@@ -241,7 +242,7 @@ namespace AlessioBorriello
         {
             if (playerManager.isDead) return;
 
-            if(!playerManager.playerIsStuckInAnimation) staminaRecoveryTimer = Mathf.Max(staminaRecoveryTimer - Time.deltaTime, 0);
+            if(!playerManager.isStuckInAnimation) staminaRecoveryTimer = Mathf.Max(staminaRecoveryTimer - Time.deltaTime, 0);
 
             float staminaRecovered = playerStats.staminaRecoveryRate * ((!playerManager.isBlocking)? 1f : playerStats.staminaRecoveryRateMultiplierWhenBlocking);
             if (staminaRecoveryTimer <= 0) CurrentStamina = Mathf.Min(CurrentStamina + staminaRecovered, MaxStamina);

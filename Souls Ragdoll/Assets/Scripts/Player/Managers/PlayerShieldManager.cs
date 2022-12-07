@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -17,9 +18,6 @@ namespace AlessioBorriello
 
         private Rigidbody physicalHips;
 
-        private bool blockingWithLeft = false;
-        private bool parryingWithLeft = false;
-
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
@@ -35,7 +33,7 @@ namespace AlessioBorriello
 
         public void HandleBlocks()
         {
-            if (playerManager.playerIsStuckInAnimation)
+            if (playerManager.isStuckInAnimation)
             {
                 if (!playerManager.isBlocking) return; //Already not blocking
 
@@ -45,21 +43,18 @@ namespace AlessioBorriello
             }
 
             //Check if pressed
-            bool rb = inputManager.rbInput;
             bool lb = inputManager.lbInput;
 
-            bool isLeft = (lb);
-
-            if (rb || lb)
+            if (lb)
             {
                 //If it's not a shield
-                if (inventoryManager.GetCurrentItemType(isLeft) != PlayerInventoryManager.ItemType.shield) return;
+                if (inventoryManager.GetCurrentItemType(true) != PlayerInventoryManager.ItemType.shield) return;
 
                 if (playerManager.isBlocking) return; //Blocking already
 
                 //Start blocking
-                Block(isLeft);
-                networkManager.BlockServerRpc(isLeft);
+                Block();
+                networkManager.BlockServerRpc();
             }
             else
             {
@@ -71,55 +66,64 @@ namespace AlessioBorriello
             }
         }
 
-        public void Block(bool blockingWithLeft)
+        public void Block()
         {
-            this.blockingWithLeft = blockingWithLeft;
-            animationManager.UpdateBlockingWithLeftValue(blockingWithLeft);
-
-            animationManager.PlayTargetAnimation("OneHandShieldBlockLoop", .1f, false);
+            animationManager.PlayUpperBodyArmsOverrideAnimation("BlockLoop", true);
             playerManager.isBlocking = true;
         }
 
         public void HandleParries()
         {
-            if (playerManager.playerIsStuckInAnimation) return;
+            if (playerManager.isStuckInAnimation) return;
 
             //Check if pressed
-            bool rt = inputManager.rtInput;
             bool lt = inputManager.ltInput;
 
-            bool isLeft = (lt);
-
-            if (rt || lt)
+            if (lt)
             {
                 //If it's not a shield
-                if (inventoryManager.GetCurrentItemType(isLeft) != PlayerInventoryManager.ItemType.shield) return;
+                if (inventoryManager.GetCurrentItemType(true) != PlayerInventoryManager.ItemType.shield) return;
 
                 //If no stamina
                 if (statsManager.CurrentStamina < 1) return;
 
                 //Parry
-                Parry(isLeft);
-                networkManager.ParryServerRpc(isLeft);
+                Parry();
+                networkManager.ParryServerRpc();
 
                 //Consume stamina
-                float staminaCost = ((ShieldItem)inventoryManager.GetCurrentItem(isLeft)).parryStaminaCost;
+                float staminaCost = ((ShieldItem)inventoryManager.GetCurrentItem(true)).parryStaminaCost;
                 statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
             }
         }
 
-        public void Parry(bool parryingWithLeft)
+        public void Parry()
         {
-            this.parryingWithLeft = parryingWithLeft;
-            animationManager.UpdateParryingWithLeftValue(parryingWithLeft);
+            //Create enter and exit events
+            Action onParryEnterAction = () =>
+            {
+                //Debug.Log("Parry enter");
+                playerManager.isStuckInAnimation = true;
+                playerManager.isInOverrideAnimation = true;
+                playerManager.canRotate = false;
+            };
 
-            animationManager.PlayTargetAnimation("Parry", .2f, true);
+            Action onParryExitAction = () =>
+            {
+                //Debug.Log("Parry exit");
+                playerManager.isStuckInAnimation = false;
+                playerManager.isInOverrideAnimation = false;
+                playerManager.canRotate = true;
+                animationManager.FadeOutOverrideAnimation(.1f);
+            };
+
+            animationManager.PlayOverrideAnimation("Parry", onParryEnterAction, onParryExitAction);
         }
 
         public void StopBlocking()
         {
             //Stop blocking without changing the playerIsStuckInAnimation bool
-            animationManager.PlayTargetAnimation("Upper Body Empty", .1f, playerManager.playerIsStuckInAnimation);
+            animationManager.FadeOutUpperBodyArmsOverrideAnimation(.1f, true);
             playerManager.isBlocking = false;
         }
 
@@ -132,11 +136,6 @@ namespace AlessioBorriello
 
             //Set forward when broken
             playerManager.GetCombatManager().forwardWhenParried = physicalHips.transform.forward;
-        }
-
-        public bool IsBlockingWithLeft()
-        {
-            return blockingWithLeft;
         }
 
     }

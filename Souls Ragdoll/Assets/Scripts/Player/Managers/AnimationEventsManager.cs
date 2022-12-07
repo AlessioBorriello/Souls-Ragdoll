@@ -18,7 +18,7 @@ namespace AlessioBorriello
 
         private void Start()
         {
-            playerManager = GetComponentInParent<PlayerManager>();
+            playerManager = GetComponent<PlayerManager>();
             networkManager = playerManager.GetNetworkManager();
             locomotionManager = playerManager.GetLocomotionManager();
             inventoryManager = playerManager.GetInventoryManager();
@@ -27,39 +27,24 @@ namespace AlessioBorriello
             weaponManager = combatManager.GetWeaponManager();
         }
 
-        public void SetPlayerStuckInAnimation()
+        public void AddJumpForceOnRoll(float force)
         {
-            playerManager.playerIsStuckInAnimation = true;
+            ragdollManager.AddForceToPlayer(locomotionManager.GetGroundNormal() * force, ForceMode.Impulse);
         }
 
-        public void SetPlayerNotStuckInAnimation()
+        public void SetPlayerStuckInAnimation(bool toggle)
         {
-            playerManager.playerIsStuckInAnimation = false;
+            playerManager.isStuckInAnimation = toggle;
         }
 
-        public void AddJumpForceOnRoll()
+        public void SetCanRotate(bool toggle)
         {
-            ragdollManager.AddForceToPlayer(locomotionManager.GetGroundNormal() * playerManager.playerData.rollJumpForce, ForceMode.Impulse);
+            playerManager.canRotate = toggle;
         }
 
-        public void EnableRotation()
+        public void ToggleIFrames(bool toggle)
         {
-            playerManager.canRotate = true;
-        }
-
-        public void DisableRotation()
-        {
-            playerManager.canRotate = false;
-        }
-
-        public void ActivateIFrames()
-        {
-            playerManager.areIFramesActive = true;
-        }
-
-        public void DeactivateIFrames()
-        {
-            playerManager.areIFramesActive = false;
+            playerManager.areIFramesActive = toggle;
         }
 
         public void CheckForCriticalDamageDeath()
@@ -73,32 +58,15 @@ namespace AlessioBorriello
         }
 
         #region Collider stuff
-        public void EnableDamageCollider()
+        public void ToggleDamageCollider(bool enable)
         {
-            DamageColliderControl colliderControl = GetDamageColliderControl();
-            if (colliderControl != null) colliderControl.ToggleCollider(true);
+            DamageColliderControl colliderControl = inventoryManager.GetCurrentItemDamageColliderControl(false);
+            if (colliderControl != null) colliderControl.ToggleCollider(enable);
         }
 
-        public void DisableDamageCollider()
+        public void ToggleParry(bool enable)
         {
-            DamageColliderControl colliderControl = GetDamageColliderControl();
-            if (colliderControl != null) colliderControl.ToggleCollider(false);
-        }
-
-        public void EnableParry()
-        {
-            playerManager.isParrying = true;
-        }
-
-        public void DisableParry()
-        {
-            playerManager.isParrying = false;
-        }
-
-        private DamageColliderControl GetDamageColliderControl()
-        {
-            if (!weaponManager.IsAttackingWithLeft()) return inventoryManager.GetCurrentItemDamageColliderControl(false);
-            else return inventoryManager.GetCurrentItemDamageColliderControl(true);
+            playerManager.isParrying = enable;
         }
         #endregion
     }

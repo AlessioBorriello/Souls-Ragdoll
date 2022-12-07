@@ -49,14 +49,13 @@ MonoBehaviour:
   baseGravityForce: 8.8
   fallingSpeed: 50
   maxFallingSpeed: 40
-  timeBeforeFalling: 0.32
+  timeBeforeFalling: 0.15
   knockoutLandThreshold: 1.45
   backdashSpeedMultiplier: 3.15
   backdashBaseStaminaCost: 25
   rollSpeedMultiplier: 2.5
   rollRotationSpeed: 1
   lockedOnRollRotationSpeed: 12
-  rollJumpForce: 5.22
   rollBaseStaminaCost: 25
   KOTime: 3.2
   maxKOTime: 15

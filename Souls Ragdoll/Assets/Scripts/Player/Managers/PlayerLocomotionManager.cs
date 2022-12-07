@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -104,7 +105,7 @@ namespace AlessioBorriello
         /// </summary>
         private void HandleMovementAnimations()
         {
-            if (playerManager.playerIsStuckInAnimation)
+            if (playerManager.isStuckInAnimation)
             {
                 animationManager.UpdateMovementAnimatorValues(0, 0, .1f); //Stop
                 return;
@@ -117,26 +118,37 @@ namespace AlessioBorriello
                 if (!playerManager.isLockingOn)
                 {
                     float moveAmount = GetClampedMovementAmount(inputManager.movementInput.magnitude);
-                    animationManager.UpdateMovementAnimatorValues(moveAmount, 0, .1f);
+                    animationManager.UpdateMovementAnimatorValues(moveAmount, 0, .15f);
                 }
                 //Locked on animations
                 else
                 {
                     Vector2 input = GetClampedLockedOnMovementAmount(inputManager.movementInput);
-                    animationManager.UpdateMovementAnimatorValues(input.y, input.x, .06f);
+                    animationManager.UpdateMovementAnimatorValues(input.y, input.x, .11f);
                 }
             }
 
-            //Allow the player to exit an override animation early if the player is moving, is not stuck in the animation and is NOT in the empty animation already
-            if (inputManager.movementInput.magnitude > 0 && !animator.GetBool("IsInEmptyOverride"))
+            //If the player is moving, is not stuck in an animation and is still in an override animation
+            if (inputManager.movementInput.magnitude > 0 && !playerManager.isStuckInAnimation && playerManager.isInOverrideAnimation)
             {
-                animationManager.PlayTargetAnimation("EmptyOverride", .2f, false);
+                StartCoroutine(CheckForOverrideAnimationEarlyExit());
             }
 
             float multiplier = CalculateMovementSpeedMultiplier();
             SetMovementSpeedMultiplier(multiplier);
             HandleMovementFootFriction();
 
+        }
+
+        private IEnumerator CheckForOverrideAnimationEarlyExit()
+        {
+            yield return new WaitForSeconds(.05f);
+            
+            //Check again to see if the player is not in another animation already (e.g. is attacking again for a combo)
+            if (inputManager.movementInput.magnitude > 0 && !playerManager.isStuckInAnimation && playerManager.isInOverrideAnimation)
+            {
+                animationManager.EarlyExitOverrideAnimation();
+            }
         }
 
         /// <summary>
@@ -162,7 +174,7 @@ namespace AlessioBorriello
 
             currentRotationSpeed = GetRotationSpeed();
 
-            if(!playerManager.isLockingOn || playerManager.isSprinting || playerManager.isRolling) movementDirection = GetMovementDirection();
+            if(!playerManager.isLockingOn || playerManager.isSprinting || playerManager.IsRolling) movementDirection = GetMovementDirection();
             else movementDirection = GetLockedOnMovementDirection();
 
             Quaternion newRotation = Quaternion.LookRotation(movementDirection);
@@ -182,7 +194,7 @@ namespace AlessioBorriello
         /// </summary>
         private void HandleTilt()
         {
-            if (playerManager.playerIsStuckInAnimation) return;
+            if (playerManager.isStuckInAnimation) return;
 
             float speed = Vector3.ProjectOnPlane((physicalHips.transform.position - currentPos), groundNormal).magnitude;
             if (speed <= playerManager.playerData.speedNeededToTilt || !playerManager.isOnGround)
@@ -221,7 +233,7 @@ namespace AlessioBorriello
         private void HandleRollingAndSprinting()
         {
 
-            if (playerManager.playerIsStuckInAnimation)
+            if (playerManager.isStuckInAnimation)
             {
                 sprintTimer = 0;
                 playerManager.isSprinting = false;
@@ -287,7 +299,7 @@ namespace AlessioBorriello
             //Fall
             if (!playerManager.isOnGround && inAirTimer > playerManager.playerData.timeBeforeFalling)
             {
-                if(animator.GetBool("OnGround"))
+                if(!playerManager.isFalling)
                 {
                     StartFalling();
                     networkManager.StartFallingServerRpc();
@@ -297,7 +309,7 @@ namespace AlessioBorriello
             //Land
             if (playerManager.isOnGround && inAirTimer > 0)
             {
-                if(!animator.GetBool("OnGround"))
+                if(playerManager.isFalling)
                 {
                     Land();
                     networkManager.LandServerRpc();
@@ -319,8 +331,30 @@ namespace AlessioBorriello
         /// </summary>
         public void StartFalling()
         {
-            animationManager.UpdateOnGroundValue(false);
-            animationManager.PlayTargetAnimation("Fall", .2f, true);
+            playerManager.isFalling = true;
+
+            //Create enter and exit events
+            Action onFallEnterAction = () =>
+            {
+                //Debug.Log("Fall enter");
+                playerManager.isStuckInAnimation = true;
+                playerManager.isInOverrideAnimation = true;
+                playerManager.canRotate = true;
+            };
+
+            Action onFallExitAction = () =>
+            {
+                //Debug.Log("Fall exit");
+                if (playerManager.isOnGround)
+                {
+                    playerManager.isStuckInAnimation = false;
+                    playerManager.isInOverrideAnimation = false;
+
+                    animationManager.FadeOutOverrideAnimation(.1f);
+                }
+            };
+
+            animationManager.PlayOverrideAnimation("Fall", onFallEnterAction, onFallExitAction);
         }
 
         /// <summary>
@@ -328,8 +362,9 @@ namespace AlessioBorriello
         /// </summary>
         public void Land()
         {
-            animationManager.UpdateOnGroundValue(true);
-            animationManager.PlayTargetAnimation("EmptyOverride", .2f, false);
+            playerManager.isFalling = false;
+            animationManager.EarlyExitOverrideAnimation();
+            //animationManager.FadeOutOverrideAnimation(.1f);
         }
 
         /// <summary>
@@ -338,7 +373,28 @@ namespace AlessioBorriello
         public void Roll()
         {
             currentSpeedMultiplier = playerManager.playerData.rollSpeedMultiplier;
-            animationManager.PlayTargetAnimation("Roll", .15f, true);
+
+            //Create enter and exit events
+            Action onRollEnterAction = () =>
+            {
+                //Debug.Log("Roll enter");
+                playerManager.isStuckInAnimation = true;
+                playerManager.isInOverrideAnimation = true;
+                playerManager.shouldSlide = true;
+                playerManager.IsRolling = true;
+            };
+
+            Action onRollExitAction = () =>
+            {
+                //Debug.Log("Roll exit");
+                playerManager.isStuckInAnimation = false;
+                playerManager.isInOverrideAnimation = false;
+                playerManager.canRotate = true;
+                playerManager.IsRolling = false;
+                animationManager.FadeOutOverrideAnimation(.15f);
+            };
+
+            animationManager.PlayOverrideAnimation("Roll", onRollEnterAction, onRollExitAction);
         }
 
         /// <summary>
@@ -347,7 +403,29 @@ namespace AlessioBorriello
         public void Backdash()
         {
             currentSpeedMultiplier = playerManager.playerData.backdashSpeedMultiplier;
-            animationManager.PlayTargetAnimation("Backdash", .2f, true);
+
+            //Create enter and exit events
+            Action onBackdashEnterAction = () =>
+            {
+                //Debug.Log("Backdash enter");
+                playerManager.isStuckInAnimation = true;
+                playerManager.isInOverrideAnimation = true;
+                playerManager.canRotate = false;
+                playerManager.shouldSlide = true;
+                playerManager.isBackdashing = true;
+            };
+
+            Action onBackdashExitAction = () =>
+            {
+                //Debug.Log("Backdash exit");
+                playerManager.isStuckInAnimation = false;
+                playerManager.isInOverrideAnimation = false;
+                playerManager.canRotate = true;
+                playerManager.isBackdashing = false;
+                animationManager.FadeOutOverrideAnimation(.15f);
+            };
+
+            animationManager.PlayOverrideAnimation("Backdash", onBackdashEnterAction, onBackdashExitAction);
         }
 
         /// <summary>
@@ -415,7 +493,7 @@ namespace AlessioBorriello
         /// </summary>
         private float CalculateMovementSpeedMultiplier()
         {
-            if (playerManager.isRolling) return playerManager.playerData.rollSpeedMultiplier;
+            if (playerManager.IsRolling) return playerManager.playerData.rollSpeedMultiplier;
             if (playerManager.isBackdashing) return playerManager.playerData.backdashSpeedMultiplier;
             if (Mathf.Abs(inputManager.movementInput.magnitude) > .55f) return playerManager.playerData.runSpeedMultiplier;
 
@@ -428,8 +506,8 @@ namespace AlessioBorriello
         /// </summary>
         private float GetRotationSpeed()
         {
-            if (playerManager.isLockingOn && playerManager.isRolling) return playerManager.playerData.lockedOnRollRotationSpeed;
-            else if(!playerManager.isLockingOn && playerManager.isRolling) return playerManager.playerData.rollRotationSpeed;
+            if (playerManager.isLockingOn && playerManager.IsRolling) return playerManager.playerData.lockedOnRollRotationSpeed;
+            else if(!playerManager.isLockingOn && playerManager.IsRolling) return playerManager.playerData.rollRotationSpeed;
 
             if (!playerManager.isOnGround) return playerManager.playerData.inAirRotationSpeed;
 
@@ -504,7 +582,7 @@ namespace AlessioBorriello
             Vector3 pos = playerManager.groundCheckTransform.position;
 
             //Cast a ray downwards from the player's hips position
-            if (Physics.SphereCast(pos, .1f, Vector3.down, out hit, Mathf.Infinity, playerManager.playerData.groundCollisionLayers))
+            if (Physics.SphereCast(pos, .3f, Vector3.down, out hit, Mathf.Infinity, playerManager.playerData.groundCollisionLayers))
             {
 
                 if (hit.distance < playerManager.playerData.minDistanceToFall && Vector3.Angle(Vector3.up, hit.normal) < playerManager.playerData.maxSlopeAngle) playerManager.isOnGround = true;
@@ -596,9 +674,9 @@ namespace AlessioBorriello
 
         public IEnumerator DisablePlayerControlForTime(float time)
         {
-            playerManager.playerIsStuckInAnimation = true;
+            playerManager.isStuckInAnimation = true;
             yield return new WaitForSeconds(time);
-            playerManager.playerIsStuckInAnimation = false;
+            playerManager.isStuckInAnimation = false;
         }
 
         /// <summary>

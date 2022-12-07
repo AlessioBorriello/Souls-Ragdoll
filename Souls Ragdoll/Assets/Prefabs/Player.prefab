@@ -1640,7 +1640,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2217555875006252242}
   - component: {fileID: 2217555875006252243}
-  - component: {fileID: 641120087}
+  - component: {fileID: 5224225829962519658}
   m_Layer: 7
   m_Name: AnimatedPlayer
   m_TagString: Player
@@ -1676,7 +1676,7 @@ Animator:
   m_GameObject: {fileID: 2217555875006252269}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 8ed57bc305377e345af3287105e80b69, type: 3}
-  m_Controller: {fileID: 9100000, guid: 43f1df30865108046b9fce45a672404c, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -1686,7 +1686,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &641120087
+--- !u!114 &5224225829962519658
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1695,9 +1695,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2217555875006252269}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4677e926da3930843b9736916ec410a0, type: 3}
+  m_Script: {fileID: 11500000, guid: 0ad50f81b1d25c441943c37a89ba23f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _Animator: {fileID: 2217555875006252243}
+  _ActionOnDisable: 0
 --- !u!1 &2217555875182455276
 GameObject:
   m_ObjectHideFlags: 0
@@ -2003,6 +2005,8 @@ GameObject:
   - component: {fileID: 623422895}
   - component: {fileID: 5964148670617802857}
   - component: {fileID: 6689907184753797086}
+  - component: {fileID: 2893640099527578288}
+  - component: {fileID: 666272453381034891}
   - component: {fileID: 6120355895486431565}
   - component: {fileID: 8178083674505769664}
   - component: {fileID: 1332648215203446742}
@@ -2057,17 +2061,19 @@ MonoBehaviour:
   ragdoll: {fileID: 2217555875885131135, guid: 1c52dabc32dc3004faae6e60d6bf6249, type: 3}
   lockedTarget: {fileID: 0}
   isClient: 1
-  playerIsStuckInAnimation: 0
+  isStuckInAnimation: 0
   disableActions: 0
   consumeInputs: 1
   isOnGround: 1
   isKnockedOut: 0
   isDead: 0
+  isInOverrideAnimation: 0
   canRotate: 1
   shouldSlide: 0
   isRolling: 0
   isBackdashing: 0
   isSprinting: 0
+  isFalling: 0
   disableSprint: 0
   areIFramesActive: 0
   isAttacking: 0
@@ -2126,6 +2132,553 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aaae387126823b4caadf3bd011f9af9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LocomotionBlendTree: {fileID: 11400000, guid: f937649f07a08714ab419f822fb38be0, type: 2}
+  upperBodyLeftArmMask: {fileID: 31900000, guid: 2058a6e17501ce84986ba3a26d01093e, type: 2}
+  upperBodyRightArmMask: {fileID: 31900000, guid: 0d29728109f147546a28fa5a8c971971, type: 2}
+  leftArmMask: {fileID: 31900000, guid: cc5c410b212d578449d0a74e335eb73f, type: 2}
+  rightArmMask: {fileID: 31900000, guid: db99d21d39abedb4c9b62fdfcad234b2, type: 2}
+  overrideLayerWeight: 1
+  upperBodyArmsLayerWeight: 0.88
+  armsLayerWeight: 0.65
+--- !u!114 &2893640099527578288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2217555875885131135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4677e926da3930843b9736916ec410a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &666272453381034891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2217555875885131135}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 267c571daefc70849a822d558fd26210, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerActionsAnimations:
+  - _FadeDuration: 0.27333334
+    _Events:
+      _NormalizedTimes:
+      - 0.22
+      - 0.25835475
+      - 0.82
+      - 0.88
+      _Callbacks:
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: SetCanRotate
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: AddJumpForceOnRoll
+            m_Mode: 4
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 5.3
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: SetPlayerStuckInAnimation
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      _Names:
+      - Disable rotation
+      - Jump
+      - Allow player to exit
+    _Clip: {fileID: 7400000, guid: 22db28ebbed04d343840023bd2fd610e, type: 2}
+    _Speed: 1.25
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.24566667
+    _Events:
+      _NormalizedTimes:
+      - 0.812
+      - 0.85
+      _Callbacks:
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: SetPlayerStuckInAnimation
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      _Names:
+      - Allow player to exit
+    _Clip: {fileID: 7400000, guid: 31462abe48e4e79458db2a5c0f86a7a4, type: 2}
+    _Speed: 1.2
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.17083335
+    _Events:
+      _NormalizedTimes: []
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 2f1dd9f45d285554193207867d6a1bdf, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.17083335
+    _Events:
+      _NormalizedTimes: []
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: b7d9c1281965caf47aa50fac4db2f816, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  playerCombatAnimations:
+  - _FadeDuration: 0.19500002
+    _Events:
+      _NormalizedTimes:
+      - 0.32860523
+      - 0.6146572
+      - 0.85
+      _Callbacks:
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: ToggleDamageCollider
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 1
+            m_CallState: 2
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: ToggleDamageCollider
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      _Names:
+      - Open damage collider
+      - Close damage collider
+    _Clip: {fileID: 7400000, guid: 9bb58d95dfb88b148a3084856ffdad2e, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.15250002
+    _Events:
+      _NormalizedTimes:
+      - 0.41371158
+      - 0.6926714
+      - 0.8136882
+      - 0.9
+      _Callbacks:
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: ToggleDamageCollider
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 1
+            m_CallState: 2
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: ToggleDamageCollider
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: SetPlayerStuckInAnimation
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      _Names:
+      - Open damage collider
+      - Close Damage collider
+      - Allow player to continue combo or exit animation
+    _Clip: {fileID: 7400000, guid: df8c569f14e22ab4c9cc35b9a0188b94, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.20250002
+    _Events:
+      _NormalizedTimes:
+      - 0.23877071
+      - 0.5011821
+      - 0.8136882
+      - 0.88
+      _Callbacks:
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: ToggleDamageCollider
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 1
+            m_CallState: 2
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: ToggleDamageCollider
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: SetPlayerStuckInAnimation
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      _Names:
+      - Open damage collider
+      - Close damage collider
+      - Allow player to continue combo or exit animation
+    _Clip: {fileID: 7400000, guid: 1d884c52adbff8f4c9a99617e099adc4, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.27250004
+    _Events:
+      _NormalizedTimes:
+      - 0.7677725
+      - 0.88
+      _Callbacks:
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: SetPlayerStuckInAnimation
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      _Names:
+      - Allow player to continue combo or exit animation
+    _Clip: {fileID: 7400000, guid: ae64edd34bfd6a14dbe949f44785c70b, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.26000005
+    _Events:
+      _NormalizedTimes:
+      - 0.7740916
+      - 0.88
+      _Callbacks:
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: SetPlayerStuckInAnimation
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      _Names:
+      - Allow player to continue combo or exit animation
+    _Clip: {fileID: 7400000, guid: 1561590f27364fd4383ef58e324083bb, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.2525
+    _Events:
+      _NormalizedTimes:
+      - 0.92
+      - 0.98
+      _Callbacks:
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: SetPlayerStuckInAnimation
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      _Names:
+      - Allow player to continue combo or exit animation
+    _Clip: {fileID: 7400000, guid: 609374f3813cded4395ab8ff451e6e7f, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0.12
+  - _FadeDuration: 0.47500002
+    _Events:
+      _NormalizedTimes:
+      - 0.9
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 87c25cd36efa94047919f1f7d9d7478b, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.6166667
+    _Events:
+      _NormalizedTimes:
+      - 0.5067797
+      - 0.7777778
+      - 0.87
+      _Callbacks:
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: CheckForCriticalDamageDeath
+            m_Mode: 1
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: SetPlayerStuckInAnimation
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      _Names:
+      - Check for death
+      - Allow early exit
+    _Clip: {fileID: 7400000, guid: 227315fd06de0bf4682f2e1a6e184d59, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.2
+    _Events:
+      _NormalizedTimes:
+      - 0.24171779
+      - 0.33374232
+      - 0.9
+      _Callbacks:
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: ToggleParry
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 1
+            m_CallState: 2
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: ToggleParry
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      _Names:
+      - Open parry
+      - Close parry
+    _Clip: {fileID: 7400000, guid: 2fdfad490a3fd1e44b37e937d2bed60d, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.26666668
+    _Events:
+      _NormalizedTimes:
+      - 0.9
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 451d38511b070f9468f16d62dfefb667, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.38333336
+    _Events:
+      _NormalizedTimes:
+      - 0.9
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 399ce4aaf70c98b43ae030b0d0b1e993, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.6833334
+    _Events:
+      _NormalizedTimes:
+      - 0.56550217
+      - 0.8296943
+      - 0.9
+      _Callbacks:
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: CheckForCriticalDamageDeath
+            m_Mode: 1
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: SetPlayerStuckInAnimation
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      _Names:
+      - Check for death
+      - Allow player to exit
+    _Clip: {fileID: 7400000, guid: c90d4bf85a3720a4191e4ff374924325, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  upperBodyLeftArmAnimations:
+  - _FadeDuration: 0.14000002
+    _Events:
+      _NormalizedTimes: []
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 71c6ac4c86fb8c641921852a8b8f8df0, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  upperBodyRightArmAnimations:
+  - _FadeDuration: 0.14000002
+    _Events:
+      _NormalizedTimes: []
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 79cecdf454d865b49926398f21031314, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  weaponIdleAnimations:
+  - _FadeDuration: 0.18333334
+    _Events:
+      _NormalizedTimes: []
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: f32afd40667182641a2b65d32857e58d, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.18333334
+    _Events:
+      _NormalizedTimes: []
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 9cedd7f9df2c8204689d002fb7e422ca, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
 --- !u!114 &6120355895486431565
 MonoBehaviour:
   m_ObjectHideFlags: 0

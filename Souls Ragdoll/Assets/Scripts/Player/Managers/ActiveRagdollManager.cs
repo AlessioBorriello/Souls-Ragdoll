@@ -276,7 +276,7 @@ namespace AlessioBorriello
         {
             //Wake up
             playerManager.isKnockedOut = false;
-            playerManager.playerIsStuckInAnimation = false;
+            playerManager.isStuckInAnimation = false;
             StartCoroutine(SetJointsDriveForcesOverTime(playerManager.playerData.hipsJointDriveForce, playerManager.playerData.jointDriveForce, time));
 
             knockedOutTimer = 0;
@@ -289,7 +289,7 @@ namespace AlessioBorriello
         public void KnockOut(float time = 0)
         {
             playerManager.isKnockedOut = true;
-            playerManager.playerIsStuckInAnimation = true;
+            playerManager.isStuckInAnimation = true;
 
             if (time == 0) SetJointsDriveForces(0, 0);
             else SetJointsDriveForcesOverTime(0, 0, time);

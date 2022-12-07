@@ -213,7 +213,7 @@ namespace AlessioBorriello
             if (!playerManager.IsOwner) return;
 
             if (actions.Count > 0 && 
-                !playerManager.playerIsStuckInAnimation && 
+                !playerManager.isStuckInAnimation && 
                 playerManager.consumeInputs &&
                 !playerManager.disableActions) ConsumeInputs(actions);
         }

@@ -16,5 +16,7 @@ MonoBehaviour:
   iconSprite: {fileID: 21300000, guid: c64841f8fa97da14f8ae7e5bd4bd3d12, type: 3}
   descriptionText: A wooden shield
   modelPrefab: {fileID: 7623076702814213189, guid: f827f104dd58aa049b6b8b27224c138b, type: 3}
-  oneHandedIdle: OneHandItemIdle
+  oneHandedIdle: OHSmallWeaponIdle
   physicalDamageAbsorption: 75
+  blockStability: 0
+  parryStaminaCost: 35

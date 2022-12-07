@@ -77,7 +77,7 @@ namespace AlessioBorriello
             };
 
             netIsChangingWithLeft.OnValueChanged += (bool previousValue, bool newValue) => animationManager.UpdateChangingLeftItemValue(newValue);
-            
+
             LoadItemInHand(false);
             LoadItemInHand(true);
         }
@@ -116,9 +116,8 @@ namespace AlessioBorriello
 
         private void LoadIdleAnimation(HandEquippableItem item, bool loadOnLeft)
         {
-            int layer = animator.GetLayerIndex((loadOnLeft) ? "Left Arm" : "Right Arm");
-            if (item != null && item.oneHandedIdle != "") animationManager.PlayTargetAnimation(item.oneHandedIdle, .1f, playerManager.playerIsStuckInAnimation, layer);
-            else animationManager.PlayTargetAnimation("Empty Hand Idle", .1f, playerManager.playerIsStuckInAnimation, layer);
+            if (item != null && item.oneHandedIdle != "") animationManager.PlayArmsOverrideAnimation(item.oneHandedIdle, loadOnLeft);
+            else animationManager.FadeOutArmsOverrideAnimation(.1f, loadOnLeft);
         }
 
         private DamageColliderControl SetItemColliderControl(HandItemHolder holder)
@@ -167,8 +166,8 @@ namespace AlessioBorriello
             //Play animation
             netIsChangingWithLeft.Value = leftHand;
             animationManager.UpdateChangingLeftItemValue(leftHand);
-            animationManager.PlayTargetAnimation("ChangeItem", .15f, playerManager.playerIsStuckInAnimation);
-            networkManager.PlayTargetAnimationServerRpc("ChangeItem", .15f, playerManager.playerIsStuckInAnimation);
+            animationManager.PlayTargetAnimation("ChangeItem", .15f, playerManager.isStuckInAnimation);
+            //networkManager.PlayTargetAnimationServerRpc("ChangeItem", .15f, playerManager.isStuckInAnimation);
 
             //Stop blocking
             playerManager.isBlocking = false;
@@ -194,15 +193,9 @@ namespace AlessioBorriello
             return (leftHand) ? currentLeftItemDamageColliderControl : currentRightItemDamageColliderControl;
         }
 
-        public void SetColliderValues(bool leftHand, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
+        public void SetDamageColliderValues(int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
         {
-            if(leftHand)
-            {
-                currentLeftItemDamageColliderControl.SetColliderValues(damage, poiseDamage, staminaDamage, knockbackStrength);
-            }else
-            {
-                currentRightItemDamageColliderControl.SetColliderValues(damage, poiseDamage, staminaDamage, knockbackStrength);
-            }
+            currentRightItemDamageColliderControl.SetColliderValues(damage, poiseDamage, staminaDamage, knockbackStrength);
         }
 
         public void SetCurrentItemType(HandEquippableItem item, bool leftHand)

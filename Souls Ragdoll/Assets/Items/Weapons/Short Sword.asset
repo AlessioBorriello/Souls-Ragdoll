@@ -16,7 +16,7 @@ MonoBehaviour:
   iconSprite: {fileID: 21300000, guid: 720b8a7f08d91b04e81c1d9d6902512d, type: 3}
   descriptionText: A simple metal short sword
   modelPrefab: {fileID: 4952564604112304397, guid: bdebf87f5321f7a49a5772d92cd098fe, type: 3}
-  oneHandedIdle: OneHandItemIdle
+  oneHandedIdle: OHSmallWeaponIdle
   physicalDamageAbsorption: 50
   blockStability: 0
   baseDamage: 20
@@ -29,25 +29,27 @@ MonoBehaviour:
   backstabAttackStaminaUse: 30
   riposteAttackStaminaUse: 36
   movementSpeedMultiplier: 3.5
-  oneHandedLightAttackCombo:
-  - OneHandLightAttackOne
-  - OneHandLightAttackTwo
-  - 
+  oneHandedLightAttackComboNames:
+  - OHUpRightToLeftDownSwipe
+  - OHLeftToRightSwing
   oneHandedLightAttacksDamageMultiplier: 1
-  OneHandedHeavyAttackCombo:
-  - OneHandHeavyAttackOne
-  - OneHandHeavyAttackTwo
-  - 
+  oneHandedLightAttacksPoiseDamageMultiplier: 1
+  OneHandedHeavyAttackComboNames:
+  - OHThrust
+  - OHForwardPirouetteSwipe
   oneHandedHeavyAttacksDamageMultiplier: 1.7
-  oneHandedRunningAttack: OneHandRunningAttack
+  oneHandedHeavyAttacksPoiseDamageMultiplier: 2
+  oneHandedRunningAttackName: OHFastForwardPirouetteSwipe
   oneHandedRunningAttackDamageMultiplier: 1.2
-  oneHandedRollingAttack: OneHandRollingAttack
+  oneHandedRunningAttackPoiseDamageMultiplier: 1.4
+  oneHandedRollingAttackName: OHUpwardsSwipe
   oneHandedRollingAttackDamageMultiplier: 0.9
-  backstabAttack: Backstab
-  backstabVictimAnimation: Backstabbed
+  oneHandedRollingAttackPoiseDamageMultiplier: 1.2
+  backstabAttackName: BackstabThrust
+  backstabVictimAnimation: BackstabThrustVictim
   backstabtAttackDamageMultiplier: 2.4
-  riposteAttack: Riposte
-  riposteVictimAnimation: Riposted
+  riposteAttackName: RiposteThrust
+  riposteVictimAnimation: RiposteThrustVictim
   ripostetAttackDamageMultiplier: 3
   knockbackStrength: 3.2
   flinchStrength: 25

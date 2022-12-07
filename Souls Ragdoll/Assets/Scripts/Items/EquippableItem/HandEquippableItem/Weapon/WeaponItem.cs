@@ -1,3 +1,4 @@
+using Animancer;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,32 +27,32 @@ namespace AlessioBorriello
         public float movementSpeedMultiplier = 2.5f; //How fast the player moves forward when attacking
 
         [Header("Light one hand combo")]
-        public string[] oneHandedLightAttackCombo = new string[3];
+        public string[] oneHandedLightAttackComboNames = new string[3];
         public float oneHandedLightAttacksDamageMultiplier = 1f;
         public float oneHandedLightAttacksPoiseDamageMultiplier = 1f;
 
         [Header("Heavy one hand combo")]
-        public string[] OneHandedHeavyAttackCombo = new string[3];
+        public string[] OneHandedHeavyAttackComboNames = new string[3];
         public float oneHandedHeavyAttacksDamageMultiplier = 1.7f;
         public float oneHandedHeavyAttacksPoiseDamageMultiplier = 2f;
 
         [Header("One Handed Running attack")]
-        public string oneHandedRunningAttack;
+        public string oneHandedRunningAttackName;
         public float oneHandedRunningAttackDamageMultiplier = 1.2f;
         public float oneHandedRunningAttackPoiseDamageMultiplier = 1.4f;
 
         [Header("One Handed Rolling attack")]
-        public string oneHandedRollingAttack;
+        public string oneHandedRollingAttackName;
         public float oneHandedRollingAttackDamageMultiplier = .9f;
         public float oneHandedRollingAttackPoiseDamageMultiplier = 1.2f;
 
         [Header("Backstab attack")]
-        public string backstabAttack;
+        public string backstabAttackName;
         public string backstabVictimAnimation;
         public float backstabtAttackDamageMultiplier = 2.4f;
 
         [Header("Riposte attack")]
-        public string riposteAttack;
+        public string riposteAttackName;
         public string riposteVictimAnimation;
         public float ripostetAttackDamageMultiplier = 3f;
 
