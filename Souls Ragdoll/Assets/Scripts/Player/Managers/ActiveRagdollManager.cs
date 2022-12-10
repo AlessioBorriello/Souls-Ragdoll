@@ -246,7 +246,7 @@ namespace AlessioBorriello
         {
             if (!playerManager.IsOwner || !playerManager.isKnockedOut) return;
 
-            if (IsPlayerVelocityApproxZero(.08f)) //If the player body has stopped
+            if (IsPlayerVelocityApproxZero(.25f)) //If the player body has stopped
             {
                 knockedOutTimer -= Time.deltaTime; //Decreases timer
                 if (knockedOutTimer <= 0) //If timer is up

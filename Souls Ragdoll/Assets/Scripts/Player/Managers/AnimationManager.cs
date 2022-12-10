@@ -94,9 +94,6 @@ namespace AlessioBorriello {
             overrideLayer.SetDebugName("Override actions layer");
             overrideLayer.SetWeight(overrideLayerWeight);
 
-
-
-
             //Play locomotion
             locomotionLayer.Play(locomotionMixer);
             locomotionMixerTween = new MixerParameterTweenVector2(locomotionMixer);
@@ -124,18 +121,7 @@ namespace AlessioBorriello {
             locomotionMixerTween.Start(parameter, duration);
         }
 
-        public void UpdateChangingLeftItemValue(bool changingLeftItem)
-        {
-            //animator.SetBool(changingLeftItemHash, changingLeftItem);
-        }
-
-        public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation)
-        {
-            //playerManager.playerIsStuckInAnimation = isStuckInAnimation;
-            //animator.CrossFade(targetAnimation, fadeDuration);
-        }
-
-        public void PlayOverrideAnimation(string animationName, Action newOnOverrideEnter, Action newOnOverrideExit)
+        public void PlayOverrideAnimation(string animationName, Action newOnOverrideEnter = null, Action newOnOverrideExit = null, int layerNumber = 5)
         {
             if (animationName == "") return;
             ClipTransition animation = animationsDatabase.GetClipTransition(animationName);
@@ -144,44 +130,20 @@ namespace AlessioBorriello {
             //Play old override exit if the player was still in an override animation (override was interrupted)
             if(onOverrideExit != null && playerManager.isInOverrideAnimation) EarlyExitOverrideAnimation();
 
-            AnimancerState state = overrideLayer.Play(animation);
+            AnimancerState state = animancer.Layers[layerNumber].Play(animation);
 
             //Play new override enter
-            newOnOverrideEnter();
+            if(newOnOverrideEnter != null) newOnOverrideEnter();
 
             //Set override exit as end event and update override exit (if it gets interrupted)
-            state.Events.OnEnd = newOnOverrideExit;
-            onOverrideExit = newOnOverrideExit;
-        }
+            if(newOnOverrideExit != null)
+            {
+                state.Events.OnEnd = newOnOverrideExit;
+                onOverrideExit = newOnOverrideExit;
+            }
 
-        public void PlayUpperBodyArmsOverrideAnimation(string animationName, bool leftHand)
-        {
-            animationName += (leftHand) ? "Left" : "Right";
-            if (animationName == "") return;
-            ClipTransition animation = animationsDatabase.GetClipTransition(animationName);
-            if (animation == null) return;
-
-            AnimancerState state;
-            if (leftHand) state = upperBodyLeftArmOverride.Play(animation);
-            else state = upperBodyRightArmOverride.Play(animation);
-
-            if (leftHand) upperBodyLeftArmOverride.StartFade(upperBodyArmsLayerWeight);
-            else upperBodyRightArmOverride.StartFade(upperBodyArmsLayerWeight);
-        }
-
-        public void PlayArmsOverrideAnimation(string animationName, bool leftHand)
-        {
-            animationName += (leftHand) ? "Left" : "Right";
-            if (animationName == "") return;
-            ClipTransition animation = animationsDatabase.GetClipTransition(animationName);
-            if (animation == null) return;
-
-            AnimancerState state;
-            if (leftHand) state = leftArmOverride.Play(animation, .1f, FadeMode.FromStart);
-            else state = rightArmOverride.Play(animation, .1f, FadeMode.FromStart);
-
-            if(leftHand) leftArmOverride.StartFade(armsLayerWeight);
-            else rightArmOverride.StartFade(armsLayerWeight);
+            //Set target weight
+            animancer.Layers[layerNumber].TargetWeight = GetDefaultLayerWeight(layerNumber);
         }
 
         public void EarlyExitOverrideAnimation()
@@ -189,36 +151,28 @@ namespace AlessioBorriello {
             if(onOverrideExit != null) onOverrideExit();
         }
 
-        public void FadeOutOverrideAnimation(float time)
+        public void FadeOutOverrideAnimation(float time, int layerNumber = 5)
         {
-            overrideLayer.StartFade(0, time);
+            animancer.Layers[layerNumber].StartFade(0, time);
         }
 
-        public void FadeOutUpperBodyArmsOverrideAnimation(float time, bool leftHand)
+        private float GetDefaultLayerWeight(int layerNumber)
         {
-            if (leftHand) upperBodyLeftArmOverride.StartFade(0, time);
-            else upperBodyRightArmOverride.StartFade(0, time);
-
-            leftArmOverride.SetWeight(armsLayerWeight);
-            rightArmOverride.SetWeight(armsLayerWeight);
-        }
-
-        public void FadeOutArmsOverrideAnimation(float time, bool leftHand)
-        {
-            if (leftHand) leftArmOverride.StartFade(0, time);
-            else rightArmOverride.StartFade(0, time);
-        }
-
-        public void PlayTargetAnimation(string targetAnimation, float fadeDuration, bool isStuckInAnimation, int layer)
-        {
-            //playerManager.playerIsStuckInAnimation = isStuckInAnimation;
-            //animator.CrossFade(targetAnimation, fadeDuration, layer);
+            switch (layerNumber)
+            {
+                case 1: return armsLayerWeight;
+                case 2: return armsLayerWeight;
+                case 3: return upperBodyArmsLayerWeight;
+                case 4: return upperBodyArmsLayerWeight;
+                case 5: return overrideLayerWeight;
+                default: return 1f;
+            }
         }
 
         public Animator GetAnimator()
         {
             return animancer.Animator;
         }
-
+    
     }
 }

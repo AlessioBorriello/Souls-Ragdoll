@@ -68,8 +68,12 @@ namespace AlessioBorriello
 
         public void Block()
         {
-            animationManager.PlayUpperBodyArmsOverrideAnimation("BlockLoop", true);
-            playerManager.isBlocking = true;
+
+            Action onBlockEnter = () => {
+                playerManager.isBlocking = true;
+            };
+
+            animationManager.PlayOverrideAnimation("BlockLoopLeft", onBlockEnter, null, 3);
         }
 
         public void HandleParries()
@@ -122,20 +126,40 @@ namespace AlessioBorriello
 
         public void StopBlocking()
         {
-            //Stop blocking without changing the playerIsStuckInAnimation bool
-            animationManager.FadeOutUpperBodyArmsOverrideAnimation(.1f, true);
+            animationManager.FadeOutOverrideAnimation(.1f, 1);
             playerManager.isBlocking = false;
         }
 
         public void ShieldBroken()
         {
-            animationManager.PlayTargetAnimation("ShieldBroken", .15f, true);
+            //Create enter and exit events
+            Action onShieldBrokenEnterAction = () =>
+            {
+                //Debug.Log("Shield broken enter");
+                playerManager.isStuckInAnimation = true;
+                playerManager.isInOverrideAnimation = true;
+                playerManager.shouldSlide = false;
+                playerManager.canRotate = false;
+                playerManager.canBeRiposted = true;
 
-            //Allow enemy to riposte
-            playerManager.canBeRiposted = true;
+                //Disable attack collider
+                inventoryManager.GetCurrentItemDamageColliderControl(false).ToggleCollider(false);
 
-            //Set forward when broken
-            playerManager.GetCombatManager().forwardWhenParried = physicalHips.transform.forward;
+                //Set forward when shield broken
+                playerManager.GetCombatManager().forwardWhenParried = physicalHips.transform.forward;
+            };
+
+            Action onShieldBrokenExitAction = () =>
+            {
+                //Debug.Log("Shield broken exit");
+                playerManager.isStuckInAnimation = false;
+                playerManager.isInOverrideAnimation = false;
+                playerManager.canRotate = true;
+                playerManager.canBeRiposted = false;
+                animationManager.FadeOutOverrideAnimation(.15f);
+            };
+
+            animationManager.PlayOverrideAnimation("ShieldBrokenLeft", onShieldBrokenEnterAction, onShieldBrokenExitAction);
         }
 
     }

@@ -2644,6 +2644,31 @@ MonoBehaviour:
     _Clip: {fileID: 7400000, guid: c90d4bf85a3720a4191e4ff374924325, type: 2}
     _Speed: 1
     _NormalizedStartTime: 0
+  - _FadeDuration: 0.26666668
+    _Events:
+      _NormalizedTimes:
+      - 0.83
+      - 0.9
+      _Callbacks:
+      - m_PersistentCalls:
+          m_Calls:
+          - m_Target: {fileID: 2893640099527578288}
+            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
+            m_MethodName: SetPlayerStuckInAnimation
+            m_Mode: 6
+            m_Arguments:
+              m_ObjectArgument: {fileID: 0}
+              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+              m_IntArgument: 0
+              m_FloatArgument: 0
+              m_StringArgument: 
+              m_BoolArgument: 0
+            m_CallState: 2
+      _Names:
+      - Allow player to exit
+    _Clip: {fileID: 7400000, guid: edd8f507d6877c645b1e34e0cff20c71, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
   upperBodyLeftArmAnimations:
   - _FadeDuration: 0.14000002
     _Events:
@@ -2653,6 +2678,15 @@ MonoBehaviour:
     _Clip: {fileID: 7400000, guid: 71c6ac4c86fb8c641921852a8b8f8df0, type: 2}
     _Speed: 1
     _NormalizedStartTime: 0
+  - _FadeDuration: 0.060000002
+    _Events:
+      _NormalizedTimes:
+      - 0.85
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 255dbd4bc80967740943dd978262267c, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
   upperBodyRightArmAnimations:
   - _FadeDuration: 0.14000002
     _Events:
@@ -2660,6 +2694,15 @@ MonoBehaviour:
       _Callbacks: []
       _Names: []
     _Clip: {fileID: 7400000, guid: 79cecdf454d865b49926398f21031314, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  - _FadeDuration: 0.060000002
+    _Events:
+      _NormalizedTimes:
+      - 0.85
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 49fd221a58c660b4c955b1b3a430a777, type: 2}
     _Speed: 1
     _NormalizedStartTime: 0
   weaponIdleAnimations:
@@ -2732,14 +2775,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c417bd3b8fddc4cabd274d720bc63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemsInRightSlots:
-  - {fileID: 11400000, guid: 47d20fcc74c7319499117cec8edcc7f6, type: 2}
-  - {fileID: 11400000, guid: 61a7f954cfdd09d4987d33b3aa9384f7, type: 2}
-  - {fileID: 11400000, guid: 15459b580f8f2e546892db2e9691edb4, type: 2}
-  itemsInLeftSlots:
-  - {fileID: 11400000, guid: 15459b580f8f2e546892db2e9691edb4, type: 2}
-  - {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
-  - {fileID: 11400000, guid: 61a7f954cfdd09d4987d33b3aa9384f7, type: 2}
+  itemsIdInRightSlots: 4d040000b104000035080000
+  itemsIdInLeftSlots: 360800003508000000000000
 --- !u!114 &8779414462503701537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2817,6 +2854,10 @@ MonoBehaviour:
   netCurrentHealth:
     m_InternalValue: 0
   netMaxHealth:
+    m_InternalValue: 0
+  netCurrentRightItemSlotIndex:
+    m_InternalValue: 0
+  netCurrentLeftItemSlotIndex:
     m_InternalValue: 0
 --- !u!114 &7526962379060038386
 MonoBehaviour:

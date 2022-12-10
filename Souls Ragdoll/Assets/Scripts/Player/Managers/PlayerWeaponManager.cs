@@ -151,6 +151,9 @@ namespace AlessioBorriello
                 playerManager.isAttacking = false;
                 StartCoroutine(ResetCombo());
                 animationManager.FadeOutOverrideAnimation(.15f);
+
+                //Close weapon collider if the animation was interrupted mid attack
+                inventoryManager.GetCurrentItemDamageColliderControl(false).ToggleCollider(false);
             };
 
             //Play animation

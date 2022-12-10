@@ -188,8 +188,10 @@ namespace AlessioBorriello
 
             //Fade animations
             animationManager.FadeOutOverrideAnimation(.1f);
-            animationManager.FadeOutUpperBodyArmsOverrideAnimation(.1f, false);
-            animationManager.FadeOutUpperBodyArmsOverrideAnimation(.1f, true);
+            animationManager.FadeOutOverrideAnimation(.1f, 1);
+            animationManager.FadeOutOverrideAnimation(.1f, 2);
+            animationManager.FadeOutOverrideAnimation(.1f, 3);
+            animationManager.FadeOutOverrideAnimation(.1f, 4);
 
             //Changes friction of the feet so that they don't slide around (set it to idle friction)
             shouldSlide = false;

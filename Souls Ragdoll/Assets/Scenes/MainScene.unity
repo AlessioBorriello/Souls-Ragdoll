@@ -1975,7 +1975,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8949324780708718404, guid: 78a63dd33363d314989f79a7ad21e549, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 18.5
+      value: 18.39
       objectReference: {fileID: 0}
     - target: {fileID: 8949324780708718404, guid: 78a63dd33363d314989f79a7ad21e549, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4557,6 +4557,7 @@ GameObject:
   - component: {fileID: 1600559176}
   - component: {fileID: 1600559175}
   - component: {fileID: 1600559177}
+  - component: {fileID: 1600559178}
   m_Layer: 0
   m_Name: GameControl
   m_TagString: Untagged
@@ -4617,6 +4618,30 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &1600559178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600559174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4753dd2b72ec1949b978bc19fd34131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weapons:
+  - id: 1101
+    item: {fileID: 11400000, guid: 47d20fcc74c7319499117cec8edcc7f6, type: 2}
+  - id: 1201
+    item: {fileID: 11400000, guid: 61a7f954cfdd09d4987d33b3aa9384f7, type: 2}
+  - id: 1301
+    item: {fileID: 11400000, guid: 074ad381194f7df41860452f90306758, type: 2}
+  shields:
+  - id: 2101
+    item: {fileID: 11400000, guid: e14d0a29e969f8947b7a0e395eddfb61, type: 2}
+  - id: 2102
+    item: {fileID: 11400000, guid: 15459b580f8f2e546892db2e9691edb4, type: 2}
 --- !u!1 &1614016243
 GameObject:
   m_ObjectHideFlags: 0

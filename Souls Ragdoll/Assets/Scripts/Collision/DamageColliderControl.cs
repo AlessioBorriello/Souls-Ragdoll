@@ -79,7 +79,7 @@ namespace AlessioBorriello
             if (playerManager != null && normal == playerManager.GetLocomotionManager().GetGroundNormal()) return;
 
             AnimationManager animationManager = playerManager.GetAnimationManager();
-            if (animationManager != null) animationManager.PlayTargetAnimation("AttackBounce", .1f, true);
+            //if (animationManager != null) animationManager.PlayOverrideAnimation("AttackBounce");
             ToggleCollider(false);
         }
 

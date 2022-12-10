@@ -20,6 +20,7 @@ namespace AlessioBorriello
         private PlayerWeaponManager weaponManager;
         private PlayerShieldManager shieldManager;
         private PlayerCollisionManager collisionManager;
+        private PlayerInventoryManager inventoryManager;
 
         private Rigidbody physicalHips;
         private GameObject animatedPlayer;
@@ -34,6 +35,10 @@ namespace AlessioBorriello
         public NetworkVariable<int> netCurrentHealth = new(0, writePerm: NetworkVariableWritePermission.Owner);
         public NetworkVariable<int> netMaxHealth = new(0, writePerm: NetworkVariableWritePermission.Owner);
 
+        //Inventory
+        public NetworkVariable<int> netCurrentRightItemSlotIndex = new(0, writePerm: NetworkVariableWritePermission.Owner);
+        public NetworkVariable<int> netCurrentLeftItemSlotIndex = new(0, writePerm: NetworkVariableWritePermission.Owner);
+
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
@@ -44,6 +49,7 @@ namespace AlessioBorriello
             weaponManager = playerManager.GetWeaponManager();
             shieldManager = playerManager.GetShieldManager();
             collisionManager = playerManager.GetCollisionManager();
+            inventoryManager = playerManager.GetInventoryManager();
 
             physicalHips = playerManager.GetPhysicalHips();
             animatedPlayer = playerManager.GetAnimatedPlayer();
@@ -53,6 +59,9 @@ namespace AlessioBorriello
         {
             netCurrentHealth.OnValueChanged += (int oldCurrentHealth, int newCurrentHealth) => statsManager.SetCurrentHealth(newCurrentHealth);
             netMaxHealth.OnValueChanged += (int oldMaxHealth, int newMaxHealth) => statsManager.SetMaxHealth(newMaxHealth);
+
+            netCurrentLeftItemSlotIndex.OnValueChanged += (int oldIndex, int newIndex) => inventoryManager.SetCurrentItemIndex(true, newIndex);
+            netCurrentRightItemSlotIndex.OnValueChanged += (int oldIndex, int newIndex) => inventoryManager.SetCurrentItemIndex(false, newIndex);
         }
 
         public override void OnNetworkDespawn()
@@ -366,6 +375,23 @@ namespace AlessioBorriello
             ragdollManager.WakeUp(time);
         }
 
+        #endregion
+
+        #region Inventory
+        //Change weapon
+        [ServerRpc(RequireOwnership = false)]
+        public void ChangeHandItemSlotServerRpc(bool leftHand, int id)
+        {
+            ChangeHandItemSlotClientRpc(leftHand, id);
+        }
+
+        [ClientRpc]
+        private void ChangeHandItemSlotClientRpc(bool leftHand, int id)
+        {
+            if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} changed weapon");
+            inventoryManager.ChangeHandItemSlot(leftHand, id);
+        }
         #endregion
 
         #endregion

@@ -153,7 +153,7 @@ namespace AlessioBorriello
                 //VigorLevel = 25;
                 VigorLevel = 1;
                 StrengthLevel = 1;
-                EnduranceLevel = 10;
+                EnduranceLevel = 1;
 
                 MaxPoise = 50;
                 CurrentPoise = MaxPoise;
