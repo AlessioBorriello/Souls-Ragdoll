@@ -99,6 +99,9 @@ namespace AlessioBorriello
             //Set item type
             SetCurrentItemType(item, loadOnLeft);
 
+            //Update UI
+            uiManager.UpdateQuickSlotsUI(this);
+
         }
 
         private void LoadIdleAnimation(HandEquippableItem item, bool loadOnLeft)
@@ -172,35 +175,30 @@ namespace AlessioBorriello
 
             //Items
 
-
-            //Update icons
-            if (inputManager.dPadInput.magnitude > 0) uiManager.UpdateQuickSlotsUI(this);
         }
 
         public void ChangeHandItemSlot(bool leftHand, int itemId)
         {
-            if (leftHand) LoadItemInHand(true, itemId);
-            else LoadItemInHand(false, itemId);
 
             Action onChangeItemEnter = () =>
             {
                 //Debug.Log("Change item enter");
                 playerManager.isBlocking = false;
                 playerManager.disableActions = true;
-                playerManager.isInOverrideAnimation = true;
             };
 
             Action onChangeItemExit = () =>
             {
                 //Debug.Log("Change item exit");
                 playerManager.disableActions = false;
-                playerManager.isInOverrideAnimation = false;
-                animationManager.FadeOutOverrideAnimation(.1f, (leftHand)? 3 : 4);
+                animationManager.FadeOutOverrideAnimation(.1f, (leftHand)? 1 : 2);
+
+                LoadItemInHand((leftHand)? true : false, itemId);
             };
 
             //Play animation
             string animationName = "ChangeItem" + ((leftHand) ? "Left" : "Right");
-            int layer = (leftHand) ? 3 : 4;
+            int layer = (leftHand) ? 1 : 2;
             animationManager.PlayOverrideAnimation(animationName, onChangeItemEnter, onChangeItemExit, layer);
 
         }
