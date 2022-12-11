@@ -118,6 +118,7 @@ namespace AlessioBorriello
                 playerManager.isStuckInAnimation = false;
                 playerManager.isInOverrideAnimation = false;
                 playerManager.canRotate = true;
+                playerManager.isParrying = false;
                 animationManager.FadeOutOverrideAnimation(.1f);
             };
 

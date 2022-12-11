@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 535a02da224185e4cba919cb828fc6d7, type: 3}
   m_Name: playerData
   m_EditorClassIdentifier: 
-  inputQueueTime: 0.5
+  inputQueueTime: 0.52
   hipsJointDriveForce: 1250
   jointDriveForce: 850
   maxLockOnDistance: 20
@@ -28,8 +28,8 @@ MonoBehaviour:
   runSpeedMultiplier: 1.75
   sprintSpeedMultiplier: 2.05
   sprintThreshold: 0.4
-  sprintBaseStaminaCost: 0.42
-  sprintStaminaNecessaryAfterStaminaDepleted: 12
+  sprintBaseStaminaCost: 0.45
+  sprintStaminaNecessaryAfterStaminaDepleted: 35
   rotationSpeed: 9.8
   inAirRotationSpeed: 3.5
   maxSlopeAngle: 35

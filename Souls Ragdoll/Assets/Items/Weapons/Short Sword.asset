@@ -28,7 +28,7 @@ MonoBehaviour:
   runningAttackStaminaUse: 34
   backstabAttackStaminaUse: 30
   riposteAttackStaminaUse: 36
-  movementSpeedMultiplier: 3.5
+  movementSpeedMultiplier: 2
   oneHandedLightAttackComboNames:
   - OHUpRightToLeftDownSwipe
   - OHLeftToRightSwing

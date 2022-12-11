@@ -68,7 +68,7 @@ namespace AlessioBorriello
             LoadItemInHand(true, itemsIdInLeftSlots[currentLeftItemSlotIndex]);
             LoadItemInHand(false, itemsIdInRightSlots[currentRightItemSlotIndex]);
 
-            uiManager.UpdateQuickSlotsUI(this);
+            if(playerManager.IsOwner) uiManager.UpdateQuickSlotsUI(this);
         }
 
         private void LoadItemInHand(bool loadOnLeft, int itemId)
@@ -100,7 +100,7 @@ namespace AlessioBorriello
             SetCurrentItemType(item, loadOnLeft);
 
             //Update UI
-            uiManager.UpdateQuickSlotsUI(this);
+            if (playerManager.IsOwner) uiManager.UpdateQuickSlotsUI(this);
 
         }
 

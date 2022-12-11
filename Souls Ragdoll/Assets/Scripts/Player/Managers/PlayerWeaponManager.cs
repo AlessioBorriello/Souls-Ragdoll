@@ -152,8 +152,9 @@ namespace AlessioBorriello
                 StartCoroutine(ResetCombo());
                 animationManager.FadeOutOverrideAnimation(.15f);
 
-                //Close weapon collider if the animation was interrupted mid attack
+                //Close weapon collider and parriable if the animation was interrupted mid attack
                 inventoryManager.GetCurrentItemDamageColliderControl(false).ToggleCollider(false);
+                inventoryManager.GetCurrentItemDamageColliderControl(false).ToggleParriable(false);
             };
 
             //Play animation
@@ -178,7 +179,7 @@ namespace AlessioBorriello
                 //If somehow the ray hit yourself
                 if (playerManager == victimManager) return false;
 
-                if (victimManager == null || !victimManager.canBeBackstabbed) return false;
+                if (victimManager == null || !victimManager.canBeBackstabbed || victimManager.areIFramesActive) return false;
 
                 Rigidbody victimHips = victimManager.GetPhysicalHips();
 
@@ -236,7 +237,7 @@ namespace AlessioBorriello
                 //If somehow the ray hit yourself
                 if (playerManager == victimManager) return false;
 
-                if (victimManager == null || !victimManager.canBeRiposted) return false;
+                if (victimManager == null || !victimManager.canBeRiposted || victimManager.areIFramesActive) return false;
 
                 Rigidbody victimHips = victimManager.GetPhysicalHips();
 
@@ -291,6 +292,7 @@ namespace AlessioBorriello
                 playerManager.shouldSlide = false;
                 playerManager.canRotate = false;
                 playerManager.isAttacking = true;
+                playerManager.areIFramesActive = true;
             };
 
             Action onRiposteExitAction = () =>
@@ -300,6 +302,7 @@ namespace AlessioBorriello
                 playerManager.isInOverrideAnimation = false;
                 playerManager.canRotate = true;
                 playerManager.isAttacking = false;
+                playerManager.areIFramesActive = false;
                 animationManager.FadeOutOverrideAnimation(.15f);
             };
 
@@ -353,6 +356,7 @@ namespace AlessioBorriello
                 playerManager.isInOverrideAnimation = true;
                 playerManager.shouldSlide = false;
                 playerManager.canRotate = false;
+                playerManager.areIFramesActive = true;
             };
 
             Action onRipostedExitAction = () =>
@@ -361,6 +365,7 @@ namespace AlessioBorriello
                 playerManager.isStuckInAnimation = false;
                 playerManager.isInOverrideAnimation = false;
                 playerManager.canRotate = true;
+                playerManager.areIFramesActive = false;
                 animationManager.FadeOutOverrideAnimation(.15f);
             };
 

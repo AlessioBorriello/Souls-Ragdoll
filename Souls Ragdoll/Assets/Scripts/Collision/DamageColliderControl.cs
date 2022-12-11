@@ -18,6 +18,7 @@ namespace AlessioBorriello
         [SerializeField] private bool startEnabled = false; //If the collider is already open
         [SerializeField] private LayerMask parryLayer;
 
+        private bool canBeParried = false; //Only turn on if the attack can be parried
         private int damage = 10;
         private int poiseDamage = 10;
         private int staminaDamage = 10;
@@ -86,7 +87,7 @@ namespace AlessioBorriello
         private void PlayerTriggerEnter(Collider other)
         {
             PlayerManager hitPlayerManager = other.GetComponentInParent<PlayerManager>();
-            if(hitPlayerManager.isParrying)
+            if(hitPlayerManager.isParrying && canBeParried) //Maybe if isParrying and !canBeParried, then partial parry?
             {
                 //Check angle
                 Vector3 hitDirection = (hitPlayerManager.GetPhysicalHips().transform.position - playerManager.GetPhysicalHips().transform.position).normalized;
@@ -121,6 +122,11 @@ namespace AlessioBorriello
 
             //Empty hit list on close
             if (!enabled) EmptyHitList();
+        }
+
+        public void ToggleParriable(bool enabled)
+        {
+            canBeParried = enabled;
         }
 
         public void EmptyHitList()

@@ -28,6 +28,7 @@ namespace AlessioBorriello
         public float sprintThreshold = .2f; //The roll button has to be pressed for this amount of time to sprint
         public float sprintBaseStaminaCost = .8f; //The stamina cost to spring
         public float sprintStaminaNecessaryAfterStaminaDepleted = 12f; //The stamina the player must reach to sprint again after depleting all the stamina
+        public float maxAngleBeforeTurning = 40f; //Angle needed to play the turning in place animation when standing and locked on
         public float rotationSpeed = 10f; //Rotation speed
         public float inAirRotationSpeed = 4f; //Rotation speed while in air
         public float maxSlopeAngle = 30f; //Max angle of a slope before it is considered unclimbable

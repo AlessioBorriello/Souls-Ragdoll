@@ -44,9 +44,9 @@ MonoBehaviour:
   enduranceMaxLevel: 99
   baseStamina: 150
   baseStaminaAdded: 7
-  staminaRecoveryRate: 0.88
+  staminaRecoveryRate: 1.2
   staminaRecoveryRateMultiplierWhenBlocking: 0.3
-  staminaDefaultRecoveryTime: 1.1
+  staminaDefaultRecoveryTime: 0.95
   staminaRecoveryTimerMultiplierOnStaminaDepleted: 1.45
   enduranceDiminishingReturnCurve:
     serializedVersion: 2

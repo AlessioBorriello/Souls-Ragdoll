@@ -191,6 +191,21 @@ namespace AlessioBorriello
             locomotionManager.Land();
         }
 
+        //Land
+        [ServerRpc(RequireOwnership = false)]
+        public void TurnInPlaceServerRpc(float angle)
+        {
+            TurnInPlaceClientRpc(angle);
+        }
+
+        [ClientRpc]
+        private void TurnInPlaceClientRpc(float angle)
+        {
+            if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} turned");
+            locomotionManager.TurnInPlace(angle);
+        }
+
         #endregion
 
         #region Combat

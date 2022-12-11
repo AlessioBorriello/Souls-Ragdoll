@@ -174,21 +174,66 @@ namespace AlessioBorriello
 
             currentRotationSpeed = GetRotationSpeed();
 
-            if(!playerManager.isLockingOn || playerManager.isSprinting || playerManager.IsRolling) movementDirection = GetMovementDirection();
-            else movementDirection = GetLockedOnMovementDirection();
+            if (!playerManager.isLockingOn || playerManager.isSprinting || playerManager.IsRolling) movementDirection = GetMovementDirection();
+            else
+            {
+                if(inputManager.movementInput.magnitude > 0) movementDirection = GetLockedOnMovementDirection();
+                else
+                {
+                    Vector3 forward = Vector3.ProjectOnPlane(physicalHips.transform.forward, Vector3.up);
+                    Vector3 targetDirection = Vector3.ProjectOnPlane(playerManager.lockedTarget.position - physicalHips.position, Vector3.up);
+                    float angle = Vector3.SignedAngle(forward, targetDirection, Vector3.up);
+                    if (Mathf.Abs(angle) > playerManager.playerData.maxAngleBeforeTurning && !playerManager.isInOverrideAnimation)
+                    {
+                        TurnInPlace(angle);
+                        networkManager.TurnInPlaceServerRpc(angle);
+                    }
+
+                    if (Mathf.Abs(angle) > playerManager.playerData.maxAngleBeforeTurning || playerManager.isInOverrideAnimation)
+                    {
+                        //Update movement direction
+                        movementDirection = GetLockedOnMovementDirection();
+                    }
+                }
+            }
 
             Quaternion newRotation = Quaternion.LookRotation(movementDirection);
             float rotationSpeed = currentRotationSpeed * Time.deltaTime;
 
-            animatedPlayer.transform.rotation = Quaternion.Slerp(animatedPlayer.transform.rotation, newRotation, rotationSpeed);
             //animatedPlayer.transform.rotation = Quaternion.RotateTowards(animatedPlayer.transform.rotation, newRotation, rotationSpeed);
+            animatedPlayer.transform.rotation = Quaternion.Slerp(animatedPlayer.transform.rotation, newRotation, rotationSpeed);
 
             if(playerManager.playerData.tiltOnDirectionChange) HandleTilt();
         }
 
+        public void TurnInPlace(float angle)
+        {
+            //Get turn direction
+            string animation = "Turn" + ((Mathf.Sign(angle) < 0) ? "Left" : "Right");
+
+            //Create enter and exit events
+            Action onTurnEnterAction = () =>
+            {
+                //Debug.Log("Turn enter");
+                playerManager.isInOverrideAnimation = true;
+            };
+
+            Action onTurnExitAction = () =>
+            {
+                //Debug.Log("Turn exit");
+                playerManager.isInOverrideAnimation = false;
+                animationManager.FadeOutOverrideAnimation(.1f);
+            };
+
+            animationManager.PlayOverrideAnimation(animation, onTurnEnterAction, onTurnExitAction);
+
+        }
+
+        #region Tilt variables
         private float currentDirectionAngle = 0;
         private Vector3 currentPos = Vector3.zero;
         private float tiltAmount = 0;
+        #endregion
         /// <summary>
         /// Tilts the player in the direction it's moving when moving fast enough
         /// </summary>
@@ -340,21 +385,12 @@ namespace AlessioBorriello
                 playerManager.isStuckInAnimation = true;
                 playerManager.isInOverrideAnimation = true;
                 playerManager.canRotate = true;
+
+                //Push player in moving direction
+                ragdollManager.AddForceToPlayer(3.2f * animator.velocity.normalized, ForceMode.Impulse);
             };
 
-            Action onFallExitAction = () =>
-            {
-                //Debug.Log("Fall exit");
-                if (playerManager.isOnGround)
-                {
-                    playerManager.isStuckInAnimation = false;
-                    playerManager.isInOverrideAnimation = false;
-
-                    animationManager.FadeOutOverrideAnimation(.1f);
-                }
-            };
-
-            animationManager.PlayOverrideAnimation("Fall", onFallEnterAction, onFallExitAction);
+            animationManager.PlayOverrideAnimation("Fall", onFallEnterAction, null);
         }
 
         /// <summary>
@@ -363,8 +399,10 @@ namespace AlessioBorriello
         public void Land()
         {
             playerManager.isFalling = false;
-            animationManager.EarlyExitOverrideAnimation();
-            //animationManager.FadeOutOverrideAnimation(.1f);
+            playerManager.isStuckInAnimation = false;
+            playerManager.isInOverrideAnimation = false;
+
+            animationManager.FadeOutOverrideAnimation(.1f);
         }
 
         /// <summary>
@@ -437,7 +475,8 @@ namespace AlessioBorriello
             {
                 playerManager.isSprinting = false;
                 //Reenable sprint when stamina reaches a certain value
-                if (playerManager.disableSprint && statsManager.CurrentStamina > playerManager.playerData.sprintStaminaNecessaryAfterStaminaDepleted) playerManager.disableSprint = false;
+                bool enoughStamina = statsManager.CurrentStamina > playerManager.playerData.sprintStaminaNecessaryAfterStaminaDepleted;
+                if (playerManager.disableSprint && enoughStamina) playerManager.disableSprint = false;
                 return;
             }
 
