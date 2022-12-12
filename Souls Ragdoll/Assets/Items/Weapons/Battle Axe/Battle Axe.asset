@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75ded9796cd96854e8715302b4aa6811, type: 3}
+  m_Name: Battle Axe
+  m_EditorClassIdentifier: 
+  nameString: Battle Axe
+  iconSprite: {fileID: 21300000, guid: 5c958d23290fc794aaa01d5cce4232a5, type: 3}
+  descriptionText: A wooden handle battle axe
+  modelPrefab: {fileID: 1847906651662086122, guid: afd3f98f489c59f4f972b4fcb27d0562, type: 3}
+  oneHandedIdle: OHSmallWeaponIdle
+  physicalDamageAbsorption: 61
+  blockStability: 0
+  baseDamage: 25
+  staminaBaseDamage: 45
+  poiseBaseDamage: 40
+  baseKnockbackStrength: 3.2
+  baseFlinchStrength: 25
+  baseStaminaCost: 40
+  moveset: {fileID: 11400000, guid: 16e244aa644263344813b15a2873c108, type: 2}

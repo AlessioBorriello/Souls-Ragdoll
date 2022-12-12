@@ -19,7 +19,7 @@ MonoBehaviour:
   maxLockOnAngle: 165
   targetMask:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 512
   obstructionMask:
     serializedVersion: 2
     m_Bits: 64
@@ -30,6 +30,7 @@ MonoBehaviour:
   sprintThreshold: 0.4
   sprintBaseStaminaCost: 0.45
   sprintStaminaNecessaryAfterStaminaDepleted: 35
+  maxAngleBeforeTurning: 38
   rotationSpeed: 9.8
   inAirRotationSpeed: 3.5
   maxSlopeAngle: 35

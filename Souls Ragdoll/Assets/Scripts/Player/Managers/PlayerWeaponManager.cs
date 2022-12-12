@@ -1,5 +1,6 @@
 using Animancer;
 using Newtonsoft.Json.Bson;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,7 +19,6 @@ namespace AlessioBorriello
         private PlayerLocomotionManager locomotionManager;
         private AnimationManager animationManager;
         private PlayerInventoryManager inventoryManager;
-        private ActiveRagdollManager ragdollManager;
         private PlayerNetworkManager networkManager;
 
         [SerializeField] private LayerMask backstabLayer;
@@ -27,7 +27,7 @@ namespace AlessioBorriello
         private Rigidbody physicalHips;
 
         private AttackType attackType;
-        private int nextComboAttackIndex = 0;
+        private int nextComboMoveIndex = 0;
 
         #region Rolling and Backdashing attack timers handling
         private float rollingAttackTimer = 0; //The window to perform a rolling attack
@@ -42,11 +42,9 @@ namespace AlessioBorriello
             locomotionManager = playerManager.GetLocomotionManager();
             animationManager = playerManager.GetAnimationManager();
             inventoryManager = playerManager.GetInventoryManager();
-            ragdollManager = playerManager.GetRagdollManager();
             networkManager = playerManager.GetNetworkManager();
 
             physicalHips = playerManager.GetPhysicalHips();
-            //animatedPlayer = playerManager.GetAnimatedPlayer();
         }
 
         public void HandleAttacks()
@@ -72,9 +70,6 @@ namespace AlessioBorriello
 
                 AttackType newAttackType = GetAttackType(isHeavy);
 
-                //Reset combo counter if the attack type is not the same as the old one
-                if (attackType != newAttackType) nextComboAttackIndex = 0;
-
                 //Try to attack
                 TryAttack(newAttackType);
             }
@@ -88,47 +83,59 @@ namespace AlessioBorriello
             //Get right or left item
             WeaponItem weapon = (WeaponItem)inventoryManager.GetCurrentItem(false);
 
+            //Check for backstab, if a backstab goes through, then return
+            if (TryBackstab(newAttackType, weapon)) return;
+
+            //Check for riposte, if a riposte goes through, then return
+            if (TryRiposte(newAttackType, weapon)) return;
+
+            AttackMove attackMove = GetAttackMove(weapon, newAttackType);
+            if (attackMove == null) return;
+
             //Update proprieties
             attackType = newAttackType;
 
-            //Check for backstab, if a backstab goes through, then return
-            if(TryBackstab(attackType, weapon)) return;
-
-            //Check for riposte, if a riposte goes through, then return
-            if (TryRiposte(attackType, weapon)) return;
-
             //Get weapon values
-            float damageMultiplier = GetWeaponDamageMultiplier(weapon);
-            float poiseDamageMultiplier = GetWeaponPoiseDamageMultiplier(weapon);
+            float damageMultiplier = attackMove.damageMultiplier;
+            float poiseDamageMultiplier = attackMove.poiseDamageMultiplier;
+            float staminaDamageMultiplier = attackMove.staminaDamageMultiplier;
+            float knockbackStrengthMultiplier = attackMove.knockbackStrengthMultiplier;
+            //float flinchStrengthMultiplier = attackMove.flinchStrengthMultiplier;
 
             int damage = (int)(weapon.baseDamage * damageMultiplier);
             int poiseDamage = (int)(weapon.poiseBaseDamage * poiseDamageMultiplier);
-            int staminaDamage = (int)(weapon.staminaBaseDamage * damageMultiplier);
+            int staminaDamage = (int)(weapon.staminaBaseDamage * staminaDamageMultiplier);
 
-            float knockbackStrength = weapon.knockbackStrength;
+            float knockbackStrength = weapon.baseKnockbackStrength * knockbackStrengthMultiplier;
 
             //Get animation to play and movement speed multiplier
-            string attackAnimationName = GetAttackAnimationName(weapon, attackType);
+            string attackAnimationName = attackMove.animationName;
+
+            //Stagger animation in case of poise break
+            string staggerAnimation = attackMove.victimStaggerAnimation;
+
+            //Animation speed
+            float animationSpeed = attackMove.speed;
 
             //Attack
-            Attack(attackAnimationName, damage, poiseDamage, staminaDamage, knockbackStrength);
-            networkManager.AttackServerRpc(attackAnimationName, damage, poiseDamage, staminaDamage, knockbackStrength);
+            Attack(attackAnimationName, animationSpeed, damage, poiseDamage, staminaDamage, knockbackStrength, staggerAnimation);
+            networkManager.AttackServerRpc(attackAnimationName, animationSpeed, damage, poiseDamage, staminaDamage, knockbackStrength, staggerAnimation);
 
             //If the attack animation exists
             if(attackAnimationName != "")
             {
                 //Set attack speed multiplier
-                float attackMovementSpeedMultiplier = GetAttackMovementSpeedMultiplier(weapon);
+                float attackMovementSpeedMultiplier = attackMove.movementSpeedMultiplier;
                 locomotionManager.SetMovementSpeedMultiplier(attackMovementSpeedMultiplier);
 
                 //Consume stamina
-                float staminaCost = GetAttackStaminaCost(attackType, weapon);
+                float staminaCost = weapon.baseStaminaCost * attackMove.staminaCostMultiplier;
                 statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
             }
 
         }
 
-        public void Attack(string attackAnimationName, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
+        public void Attack(string attackAnimationName, float animationSpeed, int damage, int poiseDamage, int staminaDamage, float knockbackStrength, string staggerAnimation)
         {
             if (attackAnimationName == "") return;
 
@@ -158,15 +165,15 @@ namespace AlessioBorriello
             };
 
             //Play animation
-            animationManager.PlayOverrideAnimation(attackAnimationName, onAttackEnterAction, onAttackExitAction);
+            animationManager.PlayOverrideAnimation(attackAnimationName, animationSpeed, onAttackEnterAction, onAttackExitAction);
 
             //Set collider values
-            inventoryManager.SetDamageColliderValues(damage, poiseDamage, staminaDamage, knockbackStrength);
+            inventoryManager.SetDamageColliderValues(damage, poiseDamage, staminaDamage, knockbackStrength, staggerAnimation);
         }
 
         private bool TryBackstab(AttackType attackType, WeaponItem weapon)
         {
-            if (attackType != AttackType.light || nextComboAttackIndex != 0) return false;
+            if (attackType != AttackType.light || nextComboMoveIndex != 0) return false;
 
             RaycastHit hit;
             float backstabDistance = 1.4f;
@@ -191,16 +198,19 @@ namespace AlessioBorriello
                     //Set proprieties
                     this.attackType = AttackType.backstab;
 
-                    //Damage
-                    float damage = weapon.baseDamage;
-                    damage *= GetWeaponDamageMultiplier(weapon);
+                    AttackMove attackMove = GetAttackMove(weapon, this.attackType);
+                    if (attackMove == null) return false;
+
+                    //Damage and stamina
+                    float damage = weapon.baseDamage * attackMove.damageMultiplier;
+                    float staminaCost = weapon.baseStaminaCost * attackMove.staminaCostMultiplier;
 
                     //Animations
-                    string backstabAnimation = weapon.backstabAttackName;
-                    string backstabbedAnimation = weapon.backstabVictimAnimation;
+                    string backstabAnimation = attackMove.animationName;
+                    string backstabbedAnimation = attackMove.victimStaggerAnimation;
 
                     //Consume stamina
-                    statsManager.ConsumeStamina(weapon.backstabAttackStaminaUse, statsManager.playerStats.staminaDefaultRecoveryTime);
+                    statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
 
                     //Play backstab
                     Riposte(backstabAnimation);
@@ -213,6 +223,7 @@ namespace AlessioBorriello
                     //Position victim and play animation
                     victimManager.GetWeaponManager().Riposted(backstabbedPosition, backstabbedRotation, backstabbedAnimation, damage);
                     victimManager.GetNetworkManager().RipostedServerRpc(backstabbedPosition, backstabbedRotation, backstabbedAnimation, damage, victimManager.OwnerClientId);
+
                 }
                 else return false;
 
@@ -224,7 +235,7 @@ namespace AlessioBorriello
 
         private bool TryRiposte(AttackType attackType, WeaponItem weapon)
         {
-            if (attackType != AttackType.light || nextComboAttackIndex != 0) return false;
+            if (attackType != AttackType.light || nextComboMoveIndex != 0) return false;
 
             RaycastHit hit;
             float riposteDistance = 1.4f;
@@ -249,16 +260,19 @@ namespace AlessioBorriello
                     //Set proprieties
                     this.attackType = AttackType.riposte;
 
-                    //Damage
-                    float damage = weapon.baseDamage;
-                    damage *= GetWeaponDamageMultiplier(weapon);
+                    AttackMove attackMove = GetAttackMove(weapon, this.attackType);
+                    if (attackMove == null) return false;
+
+                    //Damage and stamina
+                    float damage = weapon.baseDamage * attackMove.damageMultiplier;
+                    float staminaCost = weapon.baseStaminaCost * attackMove.staminaCostMultiplier;
 
                     //Animations
-                    string riposteAnimation = weapon.riposteAttackName;
-                    string ripostedAnimation = weapon.riposteVictimAnimation;
+                    string riposteAnimation = attackMove.animationName;
+                    string ripostedAnimation = attackMove.victimStaggerAnimation;
 
                     //Consume stamina
-                    statsManager.ConsumeStamina(weapon.riposteAttackStaminaUse, statsManager.playerStats.staminaDefaultRecoveryTime);
+                    statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
 
                     //Play riposte
                     Riposte(riposteAnimation);
@@ -271,6 +285,7 @@ namespace AlessioBorriello
                     //Position victim and play animation
                     victimManager.GetWeaponManager().Riposted(ripostedPosition, ripostedRotation, ripostedAnimation, damage);
                     victimManager.GetNetworkManager().RipostedServerRpc(ripostedPosition, ripostedRotation, ripostedAnimation, damage, victimManager.OwnerClientId);
+
                 }
                 else return false;
 
@@ -389,36 +404,46 @@ namespace AlessioBorriello
             playerManager.canBeRiposted = false;
         }
 
-        public float GetWeaponDamageMultiplier(WeaponItem weapon)
+        private AttackMove GetAttackMove(WeaponItem weapon, AttackType newAttackType)
         {
-            switch (this.attackType)
+            if (!DoesCombo(newAttackType)) nextComboMoveIndex = 0;
+
+            AttackMove[] comboArray;
+            switch (newAttackType)
             {
-                case AttackType.light: return weapon.oneHandedLightAttacksDamageMultiplier;
-                case AttackType.heavy: return weapon.oneHandedHeavyAttacksDamageMultiplier;
-                case AttackType.running: return weapon.oneHandedRunningAttackDamageMultiplier;
-                case AttackType.rolling: return weapon.oneHandedRollingAttackDamageMultiplier;
-                case AttackType.backstab: return weapon.backstabtAttackDamageMultiplier;
-                case AttackType.riposte: return weapon.ripostetAttackDamageMultiplier;
-                default: return 1f;
+                case AttackType.light: comboArray = weapon.moveset.oneHandedLightCombo; break;
+                case AttackType.heavy: comboArray = weapon.moveset.oneHandedHeavyCombo; break;
+                case AttackType.running: return weapon.moveset.oneHandedRunningAttack;
+                case AttackType.rolling: return weapon.moveset.oneHandedRollingAttack;
+                case AttackType.backstab: return weapon.moveset.oneHandedBackstabAttack;
+                case AttackType.riposte: return weapon.moveset.oneHandedRiposteAttack;
+                default: comboArray = weapon.moveset.oneHandedLightCombo; break;
             }
+
+            if (IsComboArrayEmpty(comboArray)) return null;
+
+            AttackMove attackMove = comboArray[nextComboMoveIndex++];
+            nextComboMoveIndex %= comboArray.Length;
+
+            if(attackMove == null || attackMove.animationName == "") GetAttackMove(weapon, attackType);
+
+            return attackMove;
+
         }
 
-        public float GetWeaponPoiseDamageMultiplier(WeaponItem weapon)
+        private bool DoesCombo(AttackType newAttackType)
         {
-            switch (this.attackType)
-            {
-                case AttackType.light: return weapon.oneHandedLightAttacksPoiseDamageMultiplier;
-                case AttackType.heavy: return weapon.oneHandedHeavyAttacksPoiseDamageMultiplier;
-                case AttackType.running: return weapon.oneHandedRunningAttackPoiseDamageMultiplier;
-                case AttackType.rolling: return weapon.oneHandedRollingAttackPoiseDamageMultiplier;
-                default: return 1f;
-            }
+            return (newAttackType == attackType);
         }
 
-        private float GetAttackMovementSpeedMultiplier(WeaponItem weapon)
+        private bool IsComboArrayEmpty(AttackMove[] combo)
         {
-            float multiplier = weapon.movementSpeedMultiplier;
-            return multiplier;
+            foreach(AttackMove move in combo)
+            {
+                if (move != null) return false;
+            }
+
+            return true;
         }
 
         private AttackType GetAttackType(bool isHeavy)
@@ -428,19 +453,6 @@ namespace AlessioBorriello
             if((playerManager.isBackdashing || backdashingAttackTimer > 0) && !isHeavy) return AttackType.running;
 
             return (isHeavy) ? AttackType.heavy : AttackType.light;
-        }
-
-        private float GetAttackStaminaCost(AttackType attackType, WeaponItem weapon)
-        {
-            switch(attackType)
-            {
-                case AttackType.light: return weapon.lightAttackStaminaUse;
-                case AttackType.heavy: return weapon.heavyAttackStaminaUse;
-                case AttackType.running: return weapon.runningAttackStaminaUse;
-                case AttackType.rolling: return weapon.rollingAttackStaminaUse;
-
-                default: return weapon.lightAttackStaminaUse;
-            }
         }
 
         private void HandleRollAndBackdashAttackTimers()
@@ -455,52 +467,13 @@ namespace AlessioBorriello
             if (backdashingAttackTimer > 0) backdashingAttackTimer -= Time.deltaTime;
         }
 
-        private string GetAttackAnimationName(WeaponItem weapon, AttackType attackType)
-        {
-            string animationName;
-
-            string[] comboArray;
-
-            switch(this.attackType)
-            {
-                case AttackType.light: comboArray = weapon.oneHandedLightAttackComboNames; break;
-                case AttackType.heavy: comboArray = weapon.OneHandedHeavyAttackComboNames; break;
-                case AttackType.running: return weapon.oneHandedRunningAttackName;
-                case AttackType.rolling: return weapon.oneHandedRollingAttackName;
-                case AttackType.backstab: return weapon.backstabAttackName;
-                case AttackType.riposte: return weapon.riposteAttackName;
-                default: comboArray = weapon.oneHandedLightAttackComboNames; break;
-            }
-
-            if (IsArrayEmpty(comboArray)) return "";
-
-            animationName = comboArray[nextComboAttackIndex++];
-            nextComboAttackIndex %= comboArray.Length;
-
-            if (animationName == "") animationName = GetAttackAnimationName(weapon, attackType);
-
-            return animationName;
-        }
-
-        private bool IsArrayEmpty(string[] array)
-        {
-            if(array == null || array.Length == 0) return true;
-
-            foreach(string a in array)
-            {
-                if (a != "") return false;
-            }
-
-            return true;
-        }
-
         public IEnumerator ResetCombo()
         {
             //Wait for next frame to see if the player is attacking again (is comboing)
             yield return new WaitForFixedUpdate();
 
             //If it's not, reset
-            if (!playerManager.isAttacking) nextComboAttackIndex = 0;
+            if (!playerManager.isAttacking) nextComboMoveIndex = 0;
         }
 
         public enum AttackType

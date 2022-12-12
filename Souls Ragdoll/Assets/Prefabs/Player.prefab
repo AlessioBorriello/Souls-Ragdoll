@@ -2757,8 +2757,8 @@ MonoBehaviour:
   - _FadeDuration: 0.2
     _Events:
       _NormalizedTimes:
-      - 0.24171779
-      - 0.3910891
+      - 0.2822757
+      - 0.42669585
       - 0.9
       _Callbacks:
       - m_PersistentCalls:
@@ -3620,6 +3620,52 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &4538517949717768239
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5972268851827331825}
+  - component: {fileID: 441057859129183029}
+  m_Layer: 9
+  m_Name: HurtboxCollider
+  m_TagString: Player
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5972268851827331825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4538517949717768239}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 647396336323702627}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &441057859129183029
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4538517949717768239}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.54
+  m_Height: 1.94
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.32, z: 2.0723169e-16}
 --- !u!1 &4841896455486392241
 GameObject:
   m_ObjectHideFlags: 0
@@ -4647,6 +4693,7 @@ Transform:
   - {fileID: 8562877175536723906}
   - {fileID: 3797747379615558916}
   - {fileID: 3941338795745738445}
+  - {fileID: 5972268851827331825}
   m_Father: {fileID: 8342856374139926934}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

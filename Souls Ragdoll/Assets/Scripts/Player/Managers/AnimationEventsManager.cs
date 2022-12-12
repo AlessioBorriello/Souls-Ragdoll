@@ -16,7 +16,7 @@ namespace AlessioBorriello
         private PlayerCombatManager combatManager;
         private PlayerWeaponManager weaponManager;
 
-        private void Start()
+        private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
             networkManager = playerManager.GetNetworkManager();

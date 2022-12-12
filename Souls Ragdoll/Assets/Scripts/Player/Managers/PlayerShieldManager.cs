@@ -127,7 +127,7 @@ namespace AlessioBorriello
 
         public void StopBlocking()
         {
-            animationManager.FadeOutOverrideAnimation(.1f, 1);
+            animationManager.FadeOutOverrideAnimation(.1f, 3);
             playerManager.isBlocking = false;
         }
 

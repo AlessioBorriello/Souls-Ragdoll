@@ -214,17 +214,17 @@ namespace AlessioBorriello
 
         //Attack
         [ServerRpc(RequireOwnership = false)]
-        public void AttackServerRpc(string attackAnimationName, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
+        public void AttackServerRpc(string attackAnimationName, float speed, int damage, int poiseDamage, int staminaDamage, float knockbackStrength, string staggerAnimation)
         {
-            AttackClientRpc(attackAnimationName, damage, poiseDamage, staminaDamage, knockbackStrength);
+            AttackClientRpc(attackAnimationName, speed, damage, poiseDamage, staminaDamage, knockbackStrength, staggerAnimation);
         }
 
         [ClientRpc]
-        private void AttackClientRpc(string attackAnimationName, int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
+        private void AttackClientRpc(string attackAnimationName, float speed, int damage, int poiseDamage, int staminaDamage, float knockbackStrength, string staggerAnimation)
         {
             if (IsOwner) return;
             if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} attacked for {damage} damage");
-            weaponManager.Attack(attackAnimationName, damage, poiseDamage, staminaDamage, knockbackStrength);
+            weaponManager.Attack(attackAnimationName, speed, damage, poiseDamage, staminaDamage, knockbackStrength, staggerAnimation);
         }
 
         //Backstab

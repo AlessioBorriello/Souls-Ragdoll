@@ -121,11 +121,11 @@ namespace AlessioBorriello {
             locomotionMixerTween.Start(parameter, duration);
         }
 
-        public void PlayOverrideAnimation(string animationName, Action newOnOverrideEnter = null, Action newOnOverrideExit = null, int layerNumber = 5)
+        public AnimancerState PlayOverrideAnimation(string animationName, Action newOnOverrideEnter = null, Action newOnOverrideExit = null, int layerNumber = 5)
         {
-            if (animationName == "") return;
+            if (animationName == "") return null;
             ClipTransition animation = animationsDatabase.GetClipTransition(animationName);
-            if (animation == null) return;
+            if (animation == null) return null;
 
             //Play old override exit if the player was still in an override animation (override was interrupted)
             if(onOverrideExit != null && playerManager.isInOverrideAnimation) EarlyExitOverrideAnimation();
@@ -144,6 +144,19 @@ namespace AlessioBorriello {
 
             //Set target weight
             animancer.Layers[layerNumber].TargetWeight = GetDefaultLayerWeight(layerNumber);
+
+            return state;
+        }
+
+        public AnimancerState PlayOverrideAnimation(string animationName, float speed, Action newOnOverrideEnter = null, Action newOnOverrideExit = null, int layerNumber = 5)
+        {
+            if (animationName == "") return null;
+            AnimancerState state = PlayOverrideAnimation(animationName, newOnOverrideEnter, newOnOverrideExit, layerNumber);
+            if (state == null) return null;
+
+            state.Speed = speed;
+
+            return state;
         }
 
         public void EarlyExitOverrideAnimation()

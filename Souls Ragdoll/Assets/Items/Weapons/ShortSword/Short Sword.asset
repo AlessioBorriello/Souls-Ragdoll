@@ -19,6 +19,7 @@ MonoBehaviour:
   oneHandedIdle: OHSmallWeaponIdle
   physicalDamageAbsorption: 50
   blockStability: 0
+  moveset: {fileID: 11400000, guid: 44928fb60aa57024b9d384c44577ff0b, type: 2}
   baseDamage: 20
   staminaBaseDamage: 40
   poiseBaseDamage: 25

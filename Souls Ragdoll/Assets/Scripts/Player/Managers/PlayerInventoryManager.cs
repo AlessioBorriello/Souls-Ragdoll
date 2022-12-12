@@ -58,7 +58,6 @@ namespace AlessioBorriello
 
         private void Start()
         {
-
             if(!playerManager.IsOwner)
             {
                 currentLeftItemSlotIndex = networkManager.netCurrentLeftItemSlotIndex.Value;
@@ -223,9 +222,9 @@ namespace AlessioBorriello
             return (leftHand) ? currentLeftItemDamageColliderControl : currentRightItemDamageColliderControl;
         }
 
-        public void SetDamageColliderValues(int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
+        public void SetDamageColliderValues(int damage, int poiseDamage, int staminaDamage, float knockbackStrength, string staggerAnimation)
         {
-            currentRightItemDamageColliderControl.SetColliderValues(damage, poiseDamage, staminaDamage, knockbackStrength);
+            currentRightItemDamageColliderControl.SetColliderValues(damage, poiseDamage, staminaDamage, knockbackStrength, staggerAnimation);
         }
 
         public void SetCurrentItemType(HandEquippableItem item, bool leftHand)

@@ -150,10 +150,9 @@ namespace AlessioBorriello
         {
             if (playerManager.IsOwner)
             {
-                //VigorLevel = 25;
-                VigorLevel = 1;
+                VigorLevel = 25;
                 StrengthLevel = 1;
-                EnduranceLevel = 1;
+                EnduranceLevel = 20;
 
                 MaxPoise = 50;
                 CurrentPoise = MaxPoise;
@@ -195,7 +194,6 @@ namespace AlessioBorriello
         {
             if (CurrentPoise <= 0)
             {
-                Debug.Log("Broken poise");
                 CurrentPoise = MaxPoise;
                 return true;
             }else

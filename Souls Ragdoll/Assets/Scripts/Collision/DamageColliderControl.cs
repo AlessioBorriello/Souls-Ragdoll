@@ -26,6 +26,8 @@ namespace AlessioBorriello
         private float flinchStrenght = 25f; //Force added to the bodypart that connects first
         private float knockbackStrength = 5f; //Force added to the hyps
 
+        private string staggerAnimation;
+
         private void Awake()
         {
             hitbox = GetComponent<Collider>();
@@ -112,7 +114,7 @@ namespace AlessioBorriello
             PlayerCollisionManager hitPlayerCollisionManager = hitPlayerManager.GetCollisionManager();
             if (hitPlayerCollisionManager != null)
             {
-                hitPlayerCollisionManager.CollisionWithDamageCollider(hitbox, other, damage, poiseDamage, staminaDamage, knockbackStrength, flinchStrenght);
+                hitPlayerCollisionManager.CollisionWithDamageCollider(hitbox, other, damage, poiseDamage, staminaDamage, knockbackStrength, flinchStrenght, staggerAnimation);
             }
         }
 
@@ -146,7 +148,7 @@ namespace AlessioBorriello
             if (alreadyHit.Contains(id)) alreadyHit.Remove(id);
         }
 
-        public void SetColliderValues(int damage, int poiseDamage, int staminaDamage, float knockbackStrength)
+        public void SetColliderValues(int damage, int poiseDamage, int staminaDamage, float knockbackStrength, string staggerAnimation)
         {
             if (playerManager == null) return;
 
@@ -154,6 +156,8 @@ namespace AlessioBorriello
             this.poiseDamage = poiseDamage;
             this.staminaDamage = staminaDamage;
             this.knockbackStrength = knockbackStrength;
+
+            this.staggerAnimation = staggerAnimation;
 
         }
 

@@ -37,8 +37,9 @@ namespace AlessioBorriello
             physicalHips = playerManager.GetPhysicalHips();
         }
 
-        public void CollisionWithDamageCollider(Collider damageCollider, Collider damagedPlayerCollider, int damage, int poiseDamage, int staminaDamage, float knockbackStrength, float flinchStrenght)
+        public void CollisionWithDamageCollider(Collider damageCollider, Collider damagedPlayerCollider, int damage, int poiseDamage, int staminaDamage, float knockbackStrength, float flinchStrenght, string staggerAnimation)
         {
+            Debug.Log("Hit");
             if (!playerManager.IsOwner) return;
 
             if (playerManager.areIFramesActive)
@@ -81,8 +82,8 @@ namespace AlessioBorriello
 
                 if (shouldStagger && !attackBlocked)
                 {
-                    PlayerHurt("Hurt");
-                    networkManager.PlayerHurtServerRpc("Hurt");
+                    PlayerHurt(staggerAnimation);
+                    networkManager.PlayerHurtServerRpc(staggerAnimation);
                 }
                 if (attackBlocked) StartCoroutine(locomotionManager.StopMovementForTime(.22f));
 

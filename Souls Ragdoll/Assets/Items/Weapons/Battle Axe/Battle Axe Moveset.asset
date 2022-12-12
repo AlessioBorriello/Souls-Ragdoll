@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fdf7896a471ce94a9a54bca8427baa7, type: 3}
+  m_Name: Battle Axe Moveset
+  m_EditorClassIdentifier: 
+  oneHandedFirstLightAttack: {fileID: 11400000, guid: a5f685a9ec02f4445ac7b9974da8a2da, type: 2}
+  oneHandedFirstHeavyAttack: {fileID: 11400000, guid: 4c35b9a7585a9fe4abc644a12541e2bc, type: 2}
+  oneHandedRunningAttack: {fileID: 11400000, guid: 399e70c9ad69ae64f80f24336cec0959, type: 2}
+  oneHandedRollingAttack: {fileID: 11400000, guid: 168c1215d3f01f04e984575803c3f4a6, type: 2}
+  oneHandedBackstabAttack: {fileID: 11400000, guid: 8c207003b6e4efd44b57f027c8a54445, type: 2}
+  oneHandedRiposteAttack: {fileID: 11400000, guid: 5689c24ada1c3bc4f8413a617fe834cc, type: 2}

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7035f718f4a775478d3fd4d0498c831, type: 3}
+  m_Name: Short Sword Running Attack
+  m_EditorClassIdentifier: 
+  id: 1006
+  animationName: OHFastForwardPirouetteSwipe
+  staminaCostMultiplier: 1
+  damageMultiplier: 0.95
+  poiseDamageMultiplier: 1.2
+  staminaDamageMultiplier: 1
+  speed: 1
+  movementSpeedMultiplier: 3.1
+  knockbackStrengthMultiplier: 1
+  flinchStrengthMultiplier: 1
+  victimStaggerAnimation: Hurt
+  nextComboMove: {fileID: 0}
