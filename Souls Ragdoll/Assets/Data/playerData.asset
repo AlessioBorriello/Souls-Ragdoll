@@ -40,7 +40,7 @@ MonoBehaviour:
   maxTiltAmount: 3.05
   tiltSpeed: 1.15
   speedNeededToTilt: 0.096
-  attackingRotationSpeed: 2.2
+  attackingRotationSpeed: 12
   rollingAttackWindow: 0.35
   backdashingAttackWindow: 0.35
   minDistanceToFall: 0.8

@@ -10,17 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c7035f718f4a775478d3fd4d0498c831, type: 3}
-  m_Name: Short Sword Backstab Attack
+  m_Name: Short Sword Light Combo Attack 3
   m_EditorClassIdentifier: 
-  id: 1007
-  animationName: BackstabThrust
+  id: 1006
+  animationName: OHFastForwardPirouetteSwipe
+  timeToRotateAfterAttackStart: 0.2
   staminaCostMultiplier: 1
-  damageMultiplier: 2.4
-  poiseDamageMultiplier: 0
-  staminaDamageMultiplier: 0
+  damageMultiplier: 0.95
+  poiseDamageMultiplier: 1.2
+  staminaDamageMultiplier: 1
   speed: 1
-  movementSpeedMultiplier: 0
-  knockbackStrengthMultiplier: 0
-  flinchStrengthMultiplier: 0
-  victimStaggerAnimation: BackstabThrustVictim
+  movementSpeedMultiplier: 1.4
+  knockbackStrengthMultiplier: 1
+  flinchStrengthMultiplier: 1
+  victimStaggerAnimation: Hurt
   levelNeededToDeflect: 2

@@ -8,9 +8,9 @@ namespace AlessioBorriello
     [CreateAssetMenu(fileName = "newMoveSet", menuName = "Item/Hand Item/Weapon/Attack Move")]
     public class AttackMove : ScriptableObject
     {
-        public ClipTransition animation;
         public int id;
         public string animationName;
+        public float timeToRotateAfterAttackStart = .2f; //How much time the player is still allowed to rotate for after the attack start
 
         public float staminaCostMultiplier;
         public float damageMultiplier;
@@ -24,5 +24,7 @@ namespace AlessioBorriello
         public float flinchStrengthMultiplier;
 
         public string victimStaggerAnimation;
+
+        [Range(1, 4)] public int levelNeededToDeflect = 1;
     }
 }

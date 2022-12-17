@@ -12,48 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7035f718f4a775478d3fd4d0498c831, type: 3}
   m_Name: Short Sword Rolling attack
   m_EditorClassIdentifier: 
-  animation:
-    _FadeDuration: 0.18166669
-    _Events:
-      _NormalizedTimes:
-      - 0.1833242
-      - 0.25615162
-      - NaN
-      _Callbacks:
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288, guid: 85505ef8473b3244eaba38913ac50fe4, type: 3}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288, guid: 85505ef8473b3244eaba38913ac50fe4, type: 3}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      _Names:
-      - Open damage collider
-      - Close damage collider
-    _Clip: {fileID: 7400000, guid: ae64edd34bfd6a14dbe949f44785c70b, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
   id: 1005
   animationName: OHUpwardsSwipe
   staminaCostMultiplier: 0.95
@@ -65,3 +23,4 @@ MonoBehaviour:
   knockbackStrengthMultiplier: 1.1
   flinchStrengthMultiplier: 1.15
   victimStaggerAnimation: Hurt
+  levelNeededToDeflect: 2

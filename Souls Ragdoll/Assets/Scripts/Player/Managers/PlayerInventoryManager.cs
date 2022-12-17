@@ -222,9 +222,9 @@ namespace AlessioBorriello
             return (leftHand) ? currentLeftItemDamageColliderControl : currentRightItemDamageColliderControl;
         }
 
-        public void SetDamageColliderValues(int damage, int poiseDamage, int staminaDamage, float knockbackStrength, string staggerAnimation)
+        public void SetDamageColliderValues(DamageColliderInfo colliderInfo)
         {
-            currentRightItemDamageColliderControl.SetColliderValues(damage, poiseDamage, staminaDamage, knockbackStrength, staggerAnimation);
+            currentRightItemDamageColliderControl.SetColliderValues(colliderInfo);
         }
 
         public void SetCurrentItemType(HandEquippableItem item, bool leftHand)

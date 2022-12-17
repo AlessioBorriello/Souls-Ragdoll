@@ -18,5 +18,6 @@ MonoBehaviour:
   modelPrefab: {fileID: 7623076702814213189, guid: f827f104dd58aa049b6b8b27224c138b, type: 3}
   oneHandedIdle: OHSmallWeaponIdle
   physicalDamageAbsorption: 75
-  blockStability: 0
+  blockStability: 25
+  deflectionLevel: 1
   parryStaminaCost: 35

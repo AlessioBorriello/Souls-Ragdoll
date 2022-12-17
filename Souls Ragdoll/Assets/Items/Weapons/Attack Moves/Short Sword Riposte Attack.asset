@@ -23,4 +23,4 @@ MonoBehaviour:
   knockbackStrengthMultiplier: 0
   flinchStrengthMultiplier: 0
   victimStaggerAnimation: RiposteThrustVictim
-  nextComboMove: {fileID: 0}
+  levelNeededToDeflect: 2

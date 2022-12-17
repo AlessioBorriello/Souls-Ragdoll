@@ -6,12 +6,23 @@ using UnityEngine;
 
 namespace AlessioBorriello
 {
+    public struct DamageColliderInfo
+    {
+        public int damage;
+        public int poiseDamage;
+        public int staminaDamage;
+        public float knockbackStrength;
+        public float flinchStrenght;
+        public string staggerAnimation;
+        [Range(1, 4)] public int attackDeflectionLevel;
+    }
+
     public class DamageColliderControl : MonoBehaviour
     {
+
         private PlayerManager playerManager;
         private Collider hitbox;
         private List<int> alreadyHit = new List<int>();
-
 
         [SerializeField] private bool canHitMultipleTimes = false; //If it can hit multiple times
         [SerializeField] private float hitFrequencyDelay = .6f; //How often the collider can hit the same thing (if canHitMultipleTimes)
@@ -19,12 +30,8 @@ namespace AlessioBorriello
         [SerializeField] private LayerMask parryLayer;
 
         private bool canBeParried = false; //Only turn on if the attack can be parried
-        private int damage = 10;
-        private int poiseDamage = 10;
-        private int staminaDamage = 10;
 
-        private float flinchStrenght = 25f; //Force added to the bodypart that connects first
-        private float knockbackStrength = 5f; //Force added to the hyps
+        private DamageColliderInfo colliderInfo;
 
         private string staggerAnimation;
 
@@ -89,21 +96,6 @@ namespace AlessioBorriello
         private void PlayerTriggerEnter(Collider other)
         {
             PlayerManager hitPlayerManager = other.GetComponentInParent<PlayerManager>();
-            if(hitPlayerManager.isParrying && canBeParried) //Maybe if isParrying and !canBeParried, then partial parry?
-            {
-                //Check angle
-                Vector3 hitDirection = (hitPlayerManager.GetPhysicalHips().transform.position - playerManager.GetPhysicalHips().transform.position).normalized;
-                float hitAngle = Vector3.Angle(Vector3.ProjectOnPlane(hitPlayerManager.GetPhysicalHips().transform.forward, Vector3.up), Vector3.ProjectOnPlane(hitDirection, Vector3.up));
-
-                if (hitAngle > 95f)
-                {
-                    //Got parried
-                    playerManager.GetWeaponManager().Parried();
-                    playerManager.GetNetworkManager().ParriedServerRpc();
-
-                    return;
-                }
-            }
 
             int otherId = other.transform.root.GetInstanceID();
             if (!CanHit(otherId) || this.transform.root.GetInstanceID() == otherId) return;
@@ -114,7 +106,7 @@ namespace AlessioBorriello
             PlayerCollisionManager hitPlayerCollisionManager = hitPlayerManager.GetCollisionManager();
             if (hitPlayerCollisionManager != null)
             {
-                hitPlayerCollisionManager.CollisionWithDamageCollider(hitbox, other, damage, poiseDamage, staminaDamage, knockbackStrength, flinchStrenght, staggerAnimation);
+                hitPlayerCollisionManager.CollisionWithDamageCollider(hitbox, other, colliderInfo);
             }
         }
 
@@ -148,17 +140,17 @@ namespace AlessioBorriello
             if (alreadyHit.Contains(id)) alreadyHit.Remove(id);
         }
 
-        public void SetColliderValues(int damage, int poiseDamage, int staminaDamage, float knockbackStrength, string staggerAnimation)
+        public void SetColliderValues(DamageColliderInfo newColliderInfo)
         {
             if (playerManager == null) return;
 
-            this.damage = damage;
-            this.poiseDamage = poiseDamage;
-            this.staminaDamage = staminaDamage;
-            this.knockbackStrength = knockbackStrength;
+            colliderInfo = newColliderInfo;
 
-            this.staggerAnimation = staggerAnimation;
+        }
 
+        public bool IsParriable()
+        {
+            return canBeParried;
         }
 
     }

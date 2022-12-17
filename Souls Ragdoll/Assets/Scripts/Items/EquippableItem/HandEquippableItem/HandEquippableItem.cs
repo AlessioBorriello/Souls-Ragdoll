@@ -13,9 +13,10 @@ namespace AlessioBorriello
         public string oneHandedIdle;
 
         [Header("Damage absorptions %")]
-        public float physicalDamageAbsorption;
+        [Range(0, 100)] public float physicalDamageAbsorption;
 
         [Header("Other")]
-        public float blockStability;
+        [Range(0, 100)] public float blockStability;
+        [Range(1, 4)] public int deflectionLevel = 1;
     }
 }

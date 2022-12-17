@@ -15,7 +15,7 @@ MonoBehaviour:
   oneHandedLightCombo:
   - {fileID: 11400000, guid: a5f685a9ec02f4445ac7b9974da8a2da, type: 2}
   - {fileID: 11400000, guid: 301f637382a07024886752d9fe5dcf55, type: 2}
-  - {fileID: 11400000, guid: 399e70c9ad69ae64f80f24336cec0959, type: 2}
+  - {fileID: 11400000, guid: dfc9ee218299be3498ee7cd3f22f3468, type: 2}
   oneHandedHeavyCombo:
   - {fileID: 11400000, guid: 4c35b9a7585a9fe4abc644a12541e2bc, type: 2}
   - {fileID: 11400000, guid: 168c1215d3f01f04e984575803c3f4a6, type: 2}

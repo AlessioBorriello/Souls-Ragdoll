@@ -89,54 +89,26 @@ namespace AlessioBorriello
             //Check for riposte, if a riposte goes through, then return
             if (TryRiposte(newAttackType, weapon)) return;
 
+            //Attack
+            Attack(newAttackType);
+            networkManager.AttackServerRpc(newAttackType);
+
+        }
+
+        public void Attack(AttackType newAttackType)
+        {
+            //Get right or left item
+            WeaponItem weapon = (WeaponItem)inventoryManager.GetCurrentItem(false);
+            if (weapon == null) return;
+
             AttackMove attackMove = GetAttackMove(weapon, newAttackType);
             if (attackMove == null) return;
 
             //Update proprieties
             attackType = newAttackType;
 
-            //Get weapon values
-            float damageMultiplier = attackMove.damageMultiplier;
-            float poiseDamageMultiplier = attackMove.poiseDamageMultiplier;
-            float staminaDamageMultiplier = attackMove.staminaDamageMultiplier;
-            float knockbackStrengthMultiplier = attackMove.knockbackStrengthMultiplier;
-            //float flinchStrengthMultiplier = attackMove.flinchStrengthMultiplier;
-
-            int damage = (int)(weapon.baseDamage * damageMultiplier);
-            int poiseDamage = (int)(weapon.poiseBaseDamage * poiseDamageMultiplier);
-            int staminaDamage = (int)(weapon.staminaBaseDamage * staminaDamageMultiplier);
-
-            float knockbackStrength = weapon.baseKnockbackStrength * knockbackStrengthMultiplier;
-
             //Get animation to play and movement speed multiplier
             string attackAnimationName = attackMove.animationName;
-
-            //Stagger animation in case of poise break
-            string staggerAnimation = attackMove.victimStaggerAnimation;
-
-            //Animation speed
-            float animationSpeed = attackMove.speed;
-
-            //Attack
-            Attack(attackAnimationName, animationSpeed, damage, poiseDamage, staminaDamage, knockbackStrength, staggerAnimation);
-            networkManager.AttackServerRpc(attackAnimationName, animationSpeed, damage, poiseDamage, staminaDamage, knockbackStrength, staggerAnimation);
-
-            //If the attack animation exists
-            if(attackAnimationName != "")
-            {
-                //Set attack speed multiplier
-                float attackMovementSpeedMultiplier = attackMove.movementSpeedMultiplier;
-                locomotionManager.SetMovementSpeedMultiplier(attackMovementSpeedMultiplier);
-
-                //Consume stamina
-                float staminaCost = weapon.baseStaminaCost * attackMove.staminaCostMultiplier;
-                statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
-            }
-
-        }
-
-        public void Attack(string attackAnimationName, float animationSpeed, int damage, int poiseDamage, int staminaDamage, float knockbackStrength, string staggerAnimation)
-        {
             if (attackAnimationName == "") return;
 
             //Create enter and exit events
@@ -147,6 +119,19 @@ namespace AlessioBorriello
                 playerManager.isInOverrideAnimation = true;
                 playerManager.shouldSlide = true;
                 playerManager.isAttacking = true;
+
+                //Set movement speed multiplier
+                locomotionManager.SetMovementSpeedMultiplier(attackMove.movementSpeedMultiplier);
+
+                //Consume stamina
+                float staminaCost = weapon.baseStaminaCost * attackMove.staminaCostMultiplier;
+                statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+
+                //Set up collider
+                AttackColliderSetup(weapon, attackMove);
+
+                //Disable rotation
+                StartCoroutine(DisablePlayerRotationAfterAttackStart(attackMove.timeToRotateAfterAttackStart));
             };
 
             Action onAttackExitAction = () =>
@@ -165,10 +150,54 @@ namespace AlessioBorriello
             };
 
             //Play animation
-            animationManager.PlayOverrideAnimation(attackAnimationName, animationSpeed, onAttackEnterAction, onAttackExitAction);
+            animationManager.PlayOverrideAnimation(attackAnimationName, attackMove.speed, onAttackEnterAction, onAttackExitAction);
+        }
+
+        private IEnumerator DisablePlayerRotationAfterAttackStart(float time)
+        {
+            yield return new WaitForSeconds(time);
+
+            //If the player is still attacking (was not interrupted)
+            if (playerManager.isAttacking) playerManager.canRotate = false;
+        }
+
+        private void AttackColliderSetup(WeaponItem weapon, AttackMove attackMove)
+        {
+            //Get weapon values
+            float damageMultiplier = attackMove.damageMultiplier;
+            float poiseDamageMultiplier = attackMove.poiseDamageMultiplier;
+            float staminaDamageMultiplier = attackMove.staminaDamageMultiplier;
+            float knockbackStrengthMultiplier = attackMove.knockbackStrengthMultiplier;
+            float flinchStrengthMultiplier = attackMove.flinchStrengthMultiplier;
+
+            int damage = (int)(weapon.baseDamage * damageMultiplier);
+            int poiseDamage = (int)(weapon.poiseBaseDamage * poiseDamageMultiplier);
+            int staminaDamage = (int)(weapon.staminaBaseDamage * staminaDamageMultiplier);
+
+            float knockbackStrength = weapon.baseKnockbackStrength * knockbackStrengthMultiplier;
+            float flinchStrength = weapon.baseFlinchStrength * flinchStrengthMultiplier;
+
+            int attackDeflectionLevel = attackMove.levelNeededToDeflect;
+
+            //Stagger animation in case of poise break
+            string staggerAnimation = attackMove.victimStaggerAnimation;
+
+
+            DamageColliderInfo colliderInfo = new DamageColliderInfo
+            {
+                //Create collider info
+                damage = damage,
+                poiseDamage = poiseDamage,
+                staminaDamage = staminaDamage,
+                knockbackStrength = knockbackStrength,
+                flinchStrenght = flinchStrength,
+
+                staggerAnimation = staggerAnimation,
+                attackDeflectionLevel = attackDeflectionLevel
+            };
 
             //Set collider values
-            inventoryManager.SetDamageColliderValues(damage, poiseDamage, staminaDamage, knockbackStrength, staggerAnimation);
+            inventoryManager.SetDamageColliderValues(colliderInfo);
         }
 
         private bool TryBackstab(AttackType attackType, WeaponItem weapon)
@@ -329,6 +358,33 @@ namespace AlessioBorriello
 
         }
 
+        public void AttackDeflected()
+        {
+            //Create enter and exit events
+            Action onAttackDeflectedEnterAction = () =>
+            {
+                //Debug.Log("Attack deflected enter");
+                playerManager.isStuckInAnimation = true;
+                playerManager.isInOverrideAnimation = true;
+                playerManager.shouldSlide = false;
+                playerManager.canRotate = false;
+
+                //Disable attack collider
+                inventoryManager.GetCurrentItemDamageColliderControl(false).ToggleCollider(false);
+            };
+
+            Action onAttackDeflectedExitAction = () =>
+            {
+                //Debug.Log("Attack deflected exit");
+                playerManager.isStuckInAnimation = false;
+                playerManager.isInOverrideAnimation = false;
+                playerManager.canRotate = true;
+                animationManager.FadeOutOverrideAnimation(.15f);
+            };
+
+            animationManager.PlayOverrideAnimation("AttackBounceRight", onAttackDeflectedEnterAction, onAttackDeflectedExitAction);
+        }
+
         public void Parried()
         {
             //Create enter and exit events
@@ -406,6 +462,7 @@ namespace AlessioBorriello
 
         private AttackMove GetAttackMove(WeaponItem weapon, AttackType newAttackType)
         {
+
             if (!DoesCombo(newAttackType)) nextComboMoveIndex = 0;
 
             AttackMove[] comboArray;

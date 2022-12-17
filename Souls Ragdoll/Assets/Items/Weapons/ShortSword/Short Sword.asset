@@ -19,38 +19,11 @@ MonoBehaviour:
   oneHandedIdle: OHSmallWeaponIdle
   physicalDamageAbsorption: 50
   blockStability: 0
-  moveset: {fileID: 11400000, guid: 44928fb60aa57024b9d384c44577ff0b, type: 2}
+  deflectionLevel: 1
   baseDamage: 20
-  staminaBaseDamage: 40
+  staminaBaseDamage: 60
   poiseBaseDamage: 25
-  lightAttackStaminaUse: 40
-  heavyAttackStaminaUse: 65
-  rollingAttackStaminaUse: 30
-  runningAttackStaminaUse: 34
-  backstabAttackStaminaUse: 30
-  riposteAttackStaminaUse: 36
-  movementSpeedMultiplier: 2
-  oneHandedLightAttackComboNames:
-  - OHUpRightToLeftDownSwipe
-  - OHLeftToRightSwing
-  oneHandedLightAttacksDamageMultiplier: 1
-  oneHandedLightAttacksPoiseDamageMultiplier: 1
-  OneHandedHeavyAttackComboNames:
-  - OHThrust
-  - OHForwardPirouetteSwipe
-  oneHandedHeavyAttacksDamageMultiplier: 1.7
-  oneHandedHeavyAttacksPoiseDamageMultiplier: 2
-  oneHandedRunningAttackName: OHFastForwardPirouetteSwipe
-  oneHandedRunningAttackDamageMultiplier: 1.2
-  oneHandedRunningAttackPoiseDamageMultiplier: 1.4
-  oneHandedRollingAttackName: OHUpwardsSwipe
-  oneHandedRollingAttackDamageMultiplier: 0.9
-  oneHandedRollingAttackPoiseDamageMultiplier: 1.2
-  backstabAttackName: BackstabThrust
-  backstabVictimAnimation: BackstabThrustVictim
-  backstabtAttackDamageMultiplier: 2.4
-  riposteAttackName: RiposteThrust
-  riposteVictimAnimation: RiposteThrustVictim
-  ripostetAttackDamageMultiplier: 3
-  knockbackStrength: 3.2
-  flinchStrength: 25
+  baseKnockbackStrength: 3.2
+  baseFlinchStrength: 40
+  baseStaminaCost: 40
+  moveset: {fileID: 11400000, guid: 44928fb60aa57024b9d384c44577ff0b, type: 2}

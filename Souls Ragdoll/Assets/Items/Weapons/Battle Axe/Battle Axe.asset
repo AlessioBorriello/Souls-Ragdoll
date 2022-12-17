@@ -19,10 +19,11 @@ MonoBehaviour:
   oneHandedIdle: OHSmallWeaponIdle
   physicalDamageAbsorption: 61
   blockStability: 0
+  deflectionLevel: 1
   baseDamage: 25
-  staminaBaseDamage: 45
+  staminaBaseDamage: 65
   poiseBaseDamage: 40
   baseKnockbackStrength: 3.2
-  baseFlinchStrength: 25
+  baseFlinchStrength: 45
   baseStaminaCost: 40
   moveset: {fileID: 11400000, guid: 16e244aa644263344813b15a2873c108, type: 2}

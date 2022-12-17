@@ -214,17 +214,17 @@ namespace AlessioBorriello
 
         //Attack
         [ServerRpc(RequireOwnership = false)]
-        public void AttackServerRpc(string attackAnimationName, float speed, int damage, int poiseDamage, int staminaDamage, float knockbackStrength, string staggerAnimation)
+        public void AttackServerRpc(AttackType newAttackType)
         {
-            AttackClientRpc(attackAnimationName, speed, damage, poiseDamage, staminaDamage, knockbackStrength, staggerAnimation);
+            AttackClientRpc(newAttackType);
         }
 
         [ClientRpc]
-        private void AttackClientRpc(string attackAnimationName, float speed, int damage, int poiseDamage, int staminaDamage, float knockbackStrength, string staggerAnimation)
+        private void AttackClientRpc(AttackType newAttackType)
         {
             if (IsOwner) return;
-            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} attacked for {damage} damage");
-            weaponManager.Attack(attackAnimationName, speed, damage, poiseDamage, staminaDamage, knockbackStrength, staggerAnimation);
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} attacked");
+            weaponManager.Attack(newAttackType);
         }
 
         //Backstab
@@ -273,6 +273,22 @@ namespace AlessioBorriello
             if (IsOwner) return;
             if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} got parried");
             weaponManager.Parried();
+        }
+
+        //Attack deflected
+        [ServerRpc(RequireOwnership = false)]
+        public void AttackDeflectedServerRpc(ulong id)
+        {
+            AttackDeflectedClientRpc(id);
+        }
+
+        [ClientRpc]
+        private void AttackDeflectedClientRpc(ulong id)
+        {
+            //Sent to another player, is it should not be the Owner of the object
+            if (!playerManager.IsOwner || playerManager.OwnerClientId != id) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId}'s attack has been deflected");
+            weaponManager.AttackDeflected();
         }
 
         #endregion
