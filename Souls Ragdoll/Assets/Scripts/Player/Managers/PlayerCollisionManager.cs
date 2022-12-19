@@ -59,15 +59,6 @@ namespace AlessioBorriello
 
                 if (!playerManager.IsOwner || damageColliderControl == null) return;
 
-                //Check for parry
-                if(WasAttackParried(damageColliderControl.IsParriable(), playerManagerHitting))
-                {
-                    //Got parried
-                    playerManagerHitting.GetWeaponManager().Parried();
-                    playerManagerHitting.GetNetworkManager().ParriedServerRpc();
-                    return;
-                }
-
                 //Check for block
                 bool attackBlocked = false;
                 int damage = colliderInfo.damage;
@@ -133,21 +124,6 @@ namespace AlessioBorriello
                     playerManagerHitting.GetNetworkManager().AttackDeflectedServerRpc(playerManagerHitting.OwnerClientId);
                 }
             }
-        }
-
-        private bool WasAttackParried(bool isWeaponParriable, PlayerManager playerManagerHitting)
-        {
-            //Check for parry
-            if (playerManager.isParrying && isWeaponParriable) //Maybe if isParrying and !isWeaponParriable, then partial parry?
-            {
-                //Check angle
-                Vector3 hitDirection = (physicalHips.transform.position - playerManagerHitting.GetPhysicalHips().transform.position).normalized;
-                float hitAngle = Vector3.Angle(Vector3.ProjectOnPlane(physicalHips.transform.forward, Vector3.up), Vector3.ProjectOnPlane(hitDirection, Vector3.up));
-
-                if (hitAngle > 95f) return true;
-            }
-
-            return false;
         }
 
         public void PlayerHurt(string hurtAnimation)

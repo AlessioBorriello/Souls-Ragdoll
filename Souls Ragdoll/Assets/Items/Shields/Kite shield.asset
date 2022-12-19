@@ -21,3 +21,5 @@ MonoBehaviour:
   blockStability: 48
   deflectionLevel: 2
   parryStaminaCost: 35
+  canParry: 1
+  parryDuration: 0.14

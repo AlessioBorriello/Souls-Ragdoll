@@ -38,12 +38,17 @@ namespace AlessioBorriello
         private DamageColliderControl currentLeftItemDamageColliderControl;
         private ItemType currentRightItemType;
 
+        //Parry collider
+        private ParryColliderControl parryColliderControl;
+
         private void Awake()
         {
             playerManager = GetComponent<PlayerManager>();
             networkManager = playerManager.GetNetworkManager();
             inputManager = playerManager.GetInputManager();
             animationManager = playerManager.GetAnimationManager();
+
+            parryColliderControl = GetComponentInChildren<ParryColliderControl>();
 
             animator = animationManager.GetAnimator();
             uiManager = playerManager.GetUiManager();
@@ -220,6 +225,11 @@ namespace AlessioBorriello
         public DamageColliderControl GetCurrentItemDamageColliderControl(bool leftHand)
         {
             return (leftHand) ? currentLeftItemDamageColliderControl : currentRightItemDamageColliderControl;
+        }
+
+        public ParryColliderControl GetParryColliderControl()
+        {
+            return parryColliderControl;
         }
 
         public void SetDamageColliderValues(DamageColliderInfo colliderInfo)

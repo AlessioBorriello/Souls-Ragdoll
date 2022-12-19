@@ -8,5 +8,8 @@ namespace AlessioBorriello
     public class ShieldItem : HandEquippableItem
     {
         public float parryStaminaCost = 35f;
+
+        public bool canParry = true;
+        public float parryDuration = .13f;
     }
 }

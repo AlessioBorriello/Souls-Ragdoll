@@ -246,7 +246,7 @@ namespace AlessioBorriello
         {
             if (!playerManager.IsOwner || !playerManager.isKnockedOut) return;
 
-            if (IsPlayerVelocityApproxZero(.25f)) //If the player body has stopped
+            if (IsPlayerVelocityApproxZero(.45f)) //If the player body has stopped
             {
                 knockedOutTimer -= Time.deltaTime; //Decreases timer
                 if (knockedOutTimer <= 0) //If timer is up
@@ -281,6 +281,9 @@ namespace AlessioBorriello
 
             knockedOutTimer = 0;
             safenetKnockedOutTimer = 0;
+
+            playerManager.GetLocomotionManager().Land();
+            playerManager.GetNetworkManager().LandServerRpc();
         }
 
         /// <summary>
@@ -290,6 +293,8 @@ namespace AlessioBorriello
         {
             playerManager.isKnockedOut = true;
             playerManager.isStuckInAnimation = true;
+
+            if(playerManager.isInOverrideAnimation) playerManager.GetAnimationManager().EarlyExitOverrideAnimation();
 
             if (time == 0) SetJointsDriveForces(0, 0);
             else SetJointsDriveForcesOverTime(0, 0, time);

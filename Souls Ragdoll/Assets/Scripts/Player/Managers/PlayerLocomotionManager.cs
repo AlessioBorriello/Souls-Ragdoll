@@ -34,6 +34,7 @@ namespace AlessioBorriello
         private float currentRotationSpeed;
 
         private Vector3 groundNormal;
+        private int groundInstanceId;
         private Vector3 movementDirection;
 
         //Timers
@@ -124,7 +125,7 @@ namespace AlessioBorriello
                 else
                 {
                     Vector2 input = GetClampedLockedOnMovementAmount(inputManager.movementInput);
-                    animationManager.UpdateMovementAnimatorValues(input.y, input.x, .11f);
+                    animationManager.UpdateMovementAnimatorValues(input.y, input.x, .05f);
                 }
             }
 
@@ -341,6 +342,8 @@ namespace AlessioBorriello
         /// </summary>
         private void HandleFallingAndLanding()
         {
+            if (playerManager.isKnockedOut || playerManager.isDead) return;
+
             //Fall
             if (!playerManager.isOnGround && inAirTimer > playerManager.playerData.timeBeforeFalling)
             {
@@ -617,6 +620,8 @@ namespace AlessioBorriello
         /// </summary>
         private void CheckIfOnGround()
         {
+            if (playerManager.isKnockedOut || playerManager.isDead) return;
+
             RaycastHit hit;
             Vector3 pos = playerManager.groundCheckTransform.position;
 
@@ -628,6 +633,7 @@ namespace AlessioBorriello
                 else (playerManager.isOnGround) = false;
 
                 groundNormal = hit.normal;
+                groundInstanceId = hit.colliderInstanceID;
                 //groundDistance = hit.distance;
             }
             else
@@ -691,6 +697,11 @@ namespace AlessioBorriello
         public Vector3 GetGroundNormal()
         {
             return groundNormal;
+        }
+
+        public int GetGroundInstanceId()
+        {
+            return groundInstanceId;
         }
 
         public IEnumerator StopMovementForTime(float time)

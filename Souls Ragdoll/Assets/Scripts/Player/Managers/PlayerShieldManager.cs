@@ -88,6 +88,9 @@ namespace AlessioBorriello
                 //If it's not a shield
                 if (inventoryManager.GetCurrentItemType(true) != PlayerInventoryManager.ItemType.shield) return;
 
+                //If the shield cannot parry
+                if (!((ShieldItem)inventoryManager.GetCurrentItem(true)).canParry) return;
+
                 //If no stamina
                 if (statsManager.CurrentStamina < 1) return;
 
@@ -110,6 +113,8 @@ namespace AlessioBorriello
                 playerManager.isStuckInAnimation = true;
                 playerManager.isInOverrideAnimation = true;
                 playerManager.canRotate = false;
+                playerManager.isParrying = true;
+                playerManager.shouldSlide = false;
             };
 
             Action onParryExitAction = () =>
@@ -120,6 +125,8 @@ namespace AlessioBorriello
                 playerManager.canRotate = true;
                 playerManager.isParrying = false;
                 animationManager.FadeOutOverrideAnimation(.1f);
+
+                inventoryManager.GetParryColliderControl().CloseParryCollider();
             };
 
             animationManager.PlayOverrideAnimation("Parry", onParryEnterAction, onParryExitAction);

@@ -50,7 +50,12 @@ namespace AlessioBorriello
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag("Player"))
+
+            if(other.CompareTag("ParryCollider"))
+            {
+                ParryTriggerEnter(other);
+            }
+            else if (other.CompareTag("Player"))
             {
                 PlayerTriggerEnter(other);
             }
@@ -60,9 +65,8 @@ namespace AlessioBorriello
             }
             else if (other.CompareTag("Static"))
             {
-                //Vector3 collisionPoint = other.ClosestPoint(transform.position);
-                //Vector3 collisionNormal = (transform.position - collisionPoint).normalized;
-                //StaticTriggerEnter(collisionNormal);
+                int staticId = other.GetInstanceID();
+                StaticTriggerEnter(staticId);
             }
         }
 
@@ -82,15 +86,46 @@ namespace AlessioBorriello
             }
         }
 
-        private void StaticTriggerEnter(Vector3 normal)
+        private void StaticTriggerEnter(int staticId)
         {
-            PlayerManager playerManager = GetComponentInParent<PlayerManager>();
-            //If the static was the ground
-            if (playerManager != null && normal == playerManager.GetLocomotionManager().GetGroundNormal()) return;
+            //Debug.Log($"Static id: {staticId}, ground id: {playerManager.GetLocomotionManager().GetGroundInstanceId()}");
 
-            AnimationManager animationManager = playerManager.GetAnimationManager();
-            //if (animationManager != null) animationManager.PlayOverrideAnimation("AttackBounce");
+            //If the static was the ground
+            if (!playerManager.IsOwner || staticId == playerManager.GetLocomotionManager().GetGroundInstanceId()) return;
+
+            playerManager.GetWeaponManager().WallBounce();
+            playerManager.GetNetworkManager().WallBounceServerRpc();
+
             ToggleCollider(false);
+        }
+
+        private void ParryTriggerEnter(Collider other)
+        {
+            //Check for parry
+            if (WasAttackParried(IsParriable(), other))
+            {
+                //Got parried
+                playerManager.GetWeaponManager().Parried();
+                playerManager.GetNetworkManager().ParriedServerRpc();
+            }
+        }
+
+        private bool WasAttackParried(bool isWeaponParriable, Collider parryCollider)
+        {
+            PlayerManager playerManagerParrying = parryCollider.GetComponentInParent<PlayerManager>();
+            if (playerManagerParrying == null) return false;
+
+            //Check for parry
+            if (isWeaponParriable) //Maybe if !isWeaponParriable, then partial parry?
+            {
+                //Check angle
+                Vector3 hitDirection = (playerManagerParrying.GetPhysicalHips().transform.position - playerManager.GetPhysicalHips().transform.position).normalized;
+                float hitAngle = Vector3.Angle(Vector3.ProjectOnPlane(playerManagerParrying.GetPhysicalHips().transform.forward, Vector3.up), Vector3.ProjectOnPlane(hitDirection, Vector3.up));
+
+                if (hitAngle > 105f) return true;
+            }
+
+            return false;
         }
 
         private void PlayerTriggerEnter(Collider other)

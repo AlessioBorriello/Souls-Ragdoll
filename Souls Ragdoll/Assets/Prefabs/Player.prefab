@@ -207,6 +207,64 @@ Transform:
   m_Father: {fileID: 2217555875006252242}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &214141583917263691
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2812651446172582575}
+  - component: {fileID: 3638977930322507810}
+  - component: {fileID: 5653374739472377475}
+  m_Layer: 9
+  m_Name: ParryCollider
+  m_TagString: ParryCollider
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2812651446172582575
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214141583917263691}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.464, z: 0.237}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 647396336323702627}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &3638977930322507810
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214141583917263691}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 0.7
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5653374739472377475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214141583917263691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c104ffc3e43b9c41b77e4254ca51fbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &573270257356316907
 GameObject:
   m_ObjectHideFlags: 0
@@ -2350,40 +2408,24 @@ MonoBehaviour:
     _Events:
       _NormalizedTimes:
       - 0.2822757
-      - 0.42669585
       - 0.9
       _Callbacks:
       - m_PersistentCalls:
           m_Calls:
           - m_Target: {fileID: 2893640099527578288}
             m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleParry
-            m_Mode: 6
+            m_MethodName: OpenParry
+            m_Mode: 1
             m_Arguments:
               m_ObjectArgument: {fileID: 0}
               m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
               m_IntArgument: 0
-              m_FloatArgument: 0
+              m_FloatArgument: 0.15
               m_StringArgument: 
               m_BoolArgument: 1
             m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleParry
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
       _Names:
       - Open parry
-      - Close parry
     _Clip: {fileID: 7400000, guid: 2fdfad490a3fd1e44b37e937d2bed60d, type: 2}
     _Speed: 1
     _NormalizedStartTime: 0
@@ -2457,7 +2499,7 @@ MonoBehaviour:
           m_Calls:
           - m_Target: {fileID: 2893640099527578288}
             m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleParriable
+            m_MethodName: ToggleWeaponParriable
             m_Mode: 6
             m_Arguments:
               m_ObjectArgument: {fileID: 0}
@@ -2471,7 +2513,7 @@ MonoBehaviour:
           m_Calls:
           - m_Target: {fileID: 2893640099527578288}
             m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleParriable
+            m_MethodName: ToggleWeaponParriable
             m_Mode: 6
             m_Arguments:
               m_ObjectArgument: {fileID: 0}
@@ -2507,8 +2549,8 @@ MonoBehaviour:
     _Events:
       _NormalizedTimes:
       - 0.41371158
-      - 0.49452952
-      - 0.65650964
+      - 0.47091413
+      - 0.67313015
       - 0.6926714
       - 0.8136882
       - 0.9
@@ -2531,7 +2573,7 @@ MonoBehaviour:
           m_Calls:
           - m_Target: {fileID: 2893640099527578288}
             m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleParriable
+            m_MethodName: ToggleWeaponParriable
             m_Mode: 6
             m_Arguments:
               m_ObjectArgument: {fileID: 0}
@@ -2545,7 +2587,7 @@ MonoBehaviour:
           m_Calls:
           - m_Target: {fileID: 2893640099527578288}
             m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleParriable
+            m_MethodName: ToggleWeaponParriable
             m_Mode: 6
             m_Arguments:
               m_ObjectArgument: {fileID: 0}
@@ -2553,7 +2595,7 @@ MonoBehaviour:
               m_IntArgument: 0
               m_FloatArgument: 0
               m_StringArgument: 
-              m_BoolArgument: 1
+              m_BoolArgument: 0
             m_CallState: 2
       - m_PersistentCalls:
           m_Calls:
@@ -3542,7 +3584,7 @@ GameObject:
   - component: {fileID: 8113757781483977407}
   m_Layer: 13
   m_Name: PlayerDistancerCollider
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4537,7 +4579,7 @@ GameObject:
   - component: {fileID: 5501787223231976788}
   m_Layer: 11
   m_Name: BackstabCollider
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4672,7 +4714,7 @@ GameObject:
   - component: {fileID: 4407868631580563966}
   m_Layer: 12
   m_Name: RiposteCollider
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4738,6 +4780,7 @@ Transform:
   - {fileID: 3797747379615558916}
   - {fileID: 3941338795745738445}
   - {fileID: 5972268851827331825}
+  - {fileID: 2812651446172582575}
   m_Father: {fileID: 8342856374139926934}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

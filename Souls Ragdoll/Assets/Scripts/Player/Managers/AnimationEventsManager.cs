@@ -15,6 +15,7 @@ namespace AlessioBorriello
         private ActiveRagdollManager ragdollManager;
         private PlayerCombatManager combatManager;
         private PlayerWeaponManager weaponManager;
+        private PlayerShieldManager shieldManager;
 
         private void Awake()
         {
@@ -25,6 +26,7 @@ namespace AlessioBorriello
             ragdollManager = playerManager.GetRagdollManager();
             combatManager = playerManager.GetCombatManager();
             weaponManager = combatManager.GetWeaponManager();
+            shieldManager = combatManager.GetShieldManager();
         }
 
         public void AddJumpForceOnRoll(float force)
@@ -64,16 +66,21 @@ namespace AlessioBorriello
             if (colliderControl != null) colliderControl.ToggleCollider(enable);
         }
 
-        public void ToggleParriable(bool enable)
+        public void ToggleWeaponParriable(bool enable)
         {
             DamageColliderControl colliderControl = inventoryManager.GetCurrentItemDamageColliderControl(false);
             if (colliderControl != null) colliderControl.ToggleParriable(enable);
         }
 
-        public void ToggleParry(bool enable)
+        public void OpenParry()
         {
-            playerManager.isParrying = enable;
+            //If it's not a shield
+            if (inventoryManager.GetCurrentItemType(true) != PlayerInventoryManager.ItemType.shield) return;
+
+            ParryColliderControl parryColliderControl = inventoryManager.GetParryColliderControl();
+            parryColliderControl.OpenParryCollider(((ShieldItem)inventoryManager.GetCurrentItem(true)).parryDuration);
         }
         #endregion
+
     }
 }

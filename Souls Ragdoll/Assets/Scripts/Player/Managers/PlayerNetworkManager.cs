@@ -252,7 +252,7 @@ namespace AlessioBorriello
         [ClientRpc]
         private void RipostedClientRpc(Vector3 riposteVictimPosition, Quaternion riposteVictimRotation, string riposteVictimAnimation, float damage, ulong id)
         {
-            //Sent to another player, is it should not be the Owner of the object
+            //Sent to another player, it should not be the Owner of the object
             if (!playerManager.IsOwner || playerManager.OwnerClientId != id) return;
             if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} got backstabbed");
 
@@ -285,10 +285,26 @@ namespace AlessioBorriello
         [ClientRpc]
         private void AttackDeflectedClientRpc(ulong id)
         {
-            //Sent to another player, is it should not be the Owner of the object
+            //Sent to another player, it should not be the Owner of the object
+            Debug.Log(playerManager.OwnerClientId);
             if (!playerManager.IsOwner || playerManager.OwnerClientId != id) return;
             if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId}'s attack has been deflected");
             weaponManager.AttackDeflected();
+        }
+
+        //Wall bounce
+        [ServerRpc(RequireOwnership = false)]
+        public void WallBounceServerRpc()
+        {
+            WallBounceClientRpc();
+        }
+
+        [ClientRpc]
+        private void WallBounceClientRpc()
+        {
+            if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} bounced off a wall");
+            weaponManager.WallBounce();
         }
 
         #endregion

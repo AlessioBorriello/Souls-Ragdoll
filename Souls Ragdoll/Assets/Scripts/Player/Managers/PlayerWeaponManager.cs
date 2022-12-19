@@ -385,6 +385,33 @@ namespace AlessioBorriello
             animationManager.PlayOverrideAnimation("AttackBounceRight", onAttackDeflectedEnterAction, onAttackDeflectedExitAction);
         }
 
+        public void WallBounce()
+        {
+            //Create enter and exit events
+            Action onWallBounceEnterAction = () =>
+            {
+                //Debug.Log("Wall bounce enter");
+                playerManager.isStuckInAnimation = true;
+                playerManager.isInOverrideAnimation = true;
+                playerManager.shouldSlide = false;
+                playerManager.canRotate = false;
+
+                //Disable attack collider
+                inventoryManager.GetCurrentItemDamageColliderControl(false).ToggleCollider(false);
+            };
+
+            Action onWallBounceExitAction = () =>
+            {
+                //Debug.Log("Wall bounce exit");
+                playerManager.isStuckInAnimation = false;
+                playerManager.isInOverrideAnimation = false;
+                playerManager.canRotate = true;
+                animationManager.FadeOutOverrideAnimation(.15f);
+            };
+
+            animationManager.PlayOverrideAnimation("AttackBounceRight", 1.2f, onWallBounceEnterAction, onWallBounceExitAction);
+        }
+
         public void Parried()
         {
             //Create enter and exit events

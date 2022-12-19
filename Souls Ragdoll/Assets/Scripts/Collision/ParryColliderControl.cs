@@ -13,9 +13,21 @@ namespace AlessioBorriello
             parryCollider = GetComponent<Collider>();
         }
 
-        public void ToggleParryCollider(bool enabled)
+        public void OpenParryCollider(float time)
         {
-            parryCollider.enabled = enabled;
+            parryCollider.enabled = true;
+            StartCoroutine(CloseParryColliderAfterTime(time));
+        }
+
+        public void CloseParryCollider()
+        {
+            parryCollider.enabled = false;
+        }
+
+        private IEnumerator CloseParryColliderAfterTime(float time)
+        {
+            yield return new WaitForSeconds(time);
+            CloseParryCollider();
         }
     }
 }
