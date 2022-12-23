@@ -11,5 +11,6 @@ namespace AlessioBorriello
 
         public bool canParry = true;
         public float parryDuration = .13f;
+        public AnimationData parryAnimationData;
     }
 }

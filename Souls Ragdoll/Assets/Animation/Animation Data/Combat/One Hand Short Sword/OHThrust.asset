@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109f61838b009074c99ccf643e35d963, type: 3}
+  m_Name: OHThrust
+  m_EditorClassIdentifier: 
+  animationClip: {fileID: 7400000, guid: ae64edd34bfd6a14dbe949f44785c70b, type: 2}
+  mirroredAnimationClip: {fileID: 7400000, guid: 18048d9a28d0e644aa0828ed8936b23e, type: 2}
+  events:
+  - eventType: 0
+    eventTime: 0.4202248
+  - eventType: 1
+    eventTime: 0.658427
+  - eventType: 5
+    eventTime: 0.7677725
+  fadeDuration: 0.15
+  endTime: 0.88
+  defaultAnimationSpeed: 1

@@ -2166,6 +2166,9 @@ MonoBehaviour:
   southInput: 0
   southInputReleased: 0
   southInputPressed: 0
+  northInput: 0
+  northInputReleased: 0
+  northInputPressed: 0
   rbInput: 0
   rbInputReleased: 0
   rbInputPressed: 0
@@ -2195,9 +2198,11 @@ MonoBehaviour:
   upperBodyRightArmMask: {fileID: 31900000, guid: 0d29728109f147546a28fa5a8c971971, type: 2}
   leftArmMask: {fileID: 31900000, guid: cc5c410b212d578449d0a74e335eb73f, type: 2}
   rightArmMask: {fileID: 31900000, guid: db99d21d39abedb4c9b62fdfcad234b2, type: 2}
+  bothArmsMask: {fileID: 31900000, guid: 048f17933c878494bb6e483483305030, type: 2}
   overrideLayerWeight: 1
   upperBodyArmsLayerWeight: 0.88
   armsLayerWeight: 0.65
+  bothArmsLayerWeight: 0.85
 --- !u!114 &2893640099527578288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2377,14 +2382,6 @@ MonoBehaviour:
     _Clip: {fileID: 7400000, guid: 2f1dd9f45d285554193207867d6a1bdf, type: 2}
     _Speed: 1
     _NormalizedStartTime: 0
-  - _FadeDuration: 0.17083335
-    _Events:
-      _NormalizedTimes: []
-      _Callbacks: []
-      _Names: []
-    _Clip: {fileID: 7400000, guid: b7d9c1281965caf47aa50fac4db2f816, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
   - _FadeDuration: 0.22500002
     _Events:
       _NormalizedTimes:
@@ -2403,472 +2400,14 @@ MonoBehaviour:
     _Clip: {fileID: 7400000, guid: adfa6b1335b76de4c93623f3f8498e69, type: 2}
     _Speed: 1.35
     _NormalizedStartTime: 0
-  playerCombatAnimations:
-  - _FadeDuration: 0.2
+  playerStaggerAnimations:
+  - _FadeDuration: 0.15500002
     _Events:
       _NormalizedTimes:
-      - 0.2822757
-      - 0.9
-      _Callbacks:
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: OpenParry
-            m_Mode: 1
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0.15
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-      _Names:
-      - Open parry
-    _Clip: {fileID: 7400000, guid: 2fdfad490a3fd1e44b37e937d2bed60d, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.26666668
-    _Events:
-      _NormalizedTimes:
-      - 0.9
+      - 1
       _Callbacks: []
       _Names: []
-    _Clip: {fileID: 7400000, guid: 451d38511b070f9468f16d62dfefb667, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.26666668
-    _Events:
-      _NormalizedTimes:
-      - 0.83
-      - 0.9
-      _Callbacks:
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: SetPlayerStuckInAnimation
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      _Names:
-      - Allow player to exit
-    _Clip: {fileID: 7400000, guid: edd8f507d6877c645b1e34e0cff20c71, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.076666676
-    _Events:
-      _NormalizedTimes:
-      - 0.8
-      _Callbacks: []
-      _Names: []
-    _Clip: {fileID: 7400000, guid: 0ee7e67f03e54654c91d988800d5b819, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.19500002
-    _Events:
-      _NormalizedTimes:
-      - 0.32860523
-      - 0.37837836
-      - 0.45495495
-      - 0.6146572
-      - 0.85
-      _Callbacks:
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleWeaponParriable
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleWeaponParriable
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      _Names:
-      - Open damage collider
-      - Enable parry
-      - Disable parry
-      - Close damage collider
-    _Clip: {fileID: 7400000, guid: 9bb58d95dfb88b148a3084856ffdad2e, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.15250002
-    _Events:
-      _NormalizedTimes:
-      - 0.41371158
-      - 0.47091413
-      - 0.67313015
-      - 0.6926714
-      - 0.8136882
-      - 0.9
-      _Callbacks:
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleWeaponParriable
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleWeaponParriable
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: SetPlayerStuckInAnimation
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      _Names:
-      - Open damage collider
-      - Enable parriable
-      - Disable parriable
-      - Close Damage collider
-      - Allow player to continue combo or exit animation
-    _Clip: {fileID: 7400000, guid: df8c569f14e22ab4c9cc35b9a0188b94, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.20250002
-    _Events:
-      _NormalizedTimes:
-      - 0.23877071
-      - 0.5011821
-      - 0.8136882
-      - 0.88
-      _Callbacks:
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: SetPlayerStuckInAnimation
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      _Names:
-      - Open damage collider
-      - Close damage collider
-      - Allow player to continue combo or exit animation
-    _Clip: {fileID: 7400000, guid: 1d884c52adbff8f4c9a99617e099adc4, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.27250004
-    _Events:
-      _NormalizedTimes:
-      - 0.42022476
-      - 0.658427
-      - 0.7677725
-      - 0.88
-      _Callbacks:
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: SetPlayerStuckInAnimation
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      _Names:
-      - Open damage collider
-      - Close damage collider
-      - Allow player to continue combo or exit animation
-    _Clip: {fileID: 7400000, guid: ae64edd34bfd6a14dbe949f44785c70b, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.26000005
-    _Events:
-      _NormalizedTimes:
-      - 0.3995633
-      - 0.6244542
-      - 0.7740916
-      - 0.88
-      _Callbacks:
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: SetPlayerStuckInAnimation
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      _Names:
-      - Open damage collider
-      - Close damage collider
-      - Allow player to continue combo or exit animation
-    _Clip: {fileID: 7400000, guid: 1561590f27364fd4383ef58e324083bb, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.2525
-    _Events:
-      _NormalizedTimes:
-      - 0.5021834
-      - 0.6528384
-      - 0.92
-      - 0.98
-      _Callbacks:
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 1
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: ToggleDamageCollider
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      - m_PersistentCalls:
-          m_Calls:
-          - m_Target: {fileID: 2893640099527578288}
-            m_TargetAssemblyTypeName: AlessioBorriello.AnimationEventsManager, Assembly-CSharp
-            m_MethodName: SetPlayerStuckInAnimation
-            m_Mode: 6
-            m_Arguments:
-              m_ObjectArgument: {fileID: 0}
-              m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-              m_IntArgument: 0
-              m_FloatArgument: 0
-              m_StringArgument: 
-              m_BoolArgument: 0
-            m_CallState: 2
-      _Names:
-      - Open damage collider
-      - Close damage collider
-      - Allow player to continue combo or exit animation
-    _Clip: {fileID: 7400000, guid: 609374f3813cded4395ab8ff451e6e7f, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0.12
-  - _FadeDuration: 0.47500002
-    _Events:
-      _NormalizedTimes:
-      - 0.9
-      _Callbacks: []
-      _Names: []
-    _Clip: {fileID: 7400000, guid: 87c25cd36efa94047919f1f7d9d7478b, type: 2}
+    _Clip: {fileID: 7400000, guid: b7d9c1281965caf47aa50fac4db2f816, type: 2}
     _Speed: 1
     _NormalizedStartTime: 0
   - _FadeDuration: 0.6166667
@@ -2876,7 +2415,7 @@ MonoBehaviour:
       _NormalizedTimes:
       - 0.5067797
       - 0.7777778
-      - 0.87
+      - 0.89
       _Callbacks:
       - m_PersistentCalls:
           m_Calls:
@@ -2907,25 +2446,16 @@ MonoBehaviour:
               m_BoolArgument: 0
             m_CallState: 2
       _Names:
-      - Check for death
-      - Allow early exit
+      - Check for critical damage death
+      - Allow player to exit animation
     _Clip: {fileID: 7400000, guid: 227315fd06de0bf4682f2e1a6e184d59, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.38333336
-    _Events:
-      _NormalizedTimes:
-      - 0.9
-      _Callbacks: []
-      _Names: []
-    _Clip: {fileID: 7400000, guid: 399ce4aaf70c98b43ae030b0d0b1e993, type: 2}
     _Speed: 1
     _NormalizedStartTime: 0
   - _FadeDuration: 0.6833334
     _Events:
       _NormalizedTimes:
-      - 0.56550217
-      - 0.8296943
+      - 0.5655022
+      - 0.8196943
       - 0.9
       _Callbacks:
       - m_PersistentCalls:
@@ -2957,62 +2487,9 @@ MonoBehaviour:
               m_BoolArgument: 0
             m_CallState: 2
       _Names:
-      - Check for death
-      - Allow player to exit
+      - Check for critical damage death
+      - Allow player to exit animation
     _Clip: {fileID: 7400000, guid: c90d4bf85a3720a4191e4ff374924325, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  upperBodyLeftArmAnimations:
-  - _FadeDuration: 0.14000002
-    _Events:
-      _NormalizedTimes: []
-      _Callbacks: []
-      _Names: []
-    _Clip: {fileID: 7400000, guid: 71c6ac4c86fb8c641921852a8b8f8df0, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.060000002
-    _Events:
-      _NormalizedTimes:
-      - 0.85
-      _Callbacks: []
-      _Names: []
-    _Clip: {fileID: 7400000, guid: 255dbd4bc80967740943dd978262267c, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  upperBodyRightArmAnimations:
-  - _FadeDuration: 0.14000002
-    _Events:
-      _NormalizedTimes: []
-      _Callbacks: []
-      _Names: []
-    _Clip: {fileID: 7400000, guid: 79cecdf454d865b49926398f21031314, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.060000002
-    _Events:
-      _NormalizedTimes:
-      - 0.85
-      _Callbacks: []
-      _Names: []
-    _Clip: {fileID: 7400000, guid: 49fd221a58c660b4c955b1b3a430a777, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  weaponIdleAnimations:
-  - _FadeDuration: 0.18333334
-    _Events:
-      _NormalizedTimes: []
-      _Callbacks: []
-      _Names: []
-    _Clip: {fileID: 7400000, guid: f32afd40667182641a2b65d32857e58d, type: 2}
-    _Speed: 1
-    _NormalizedStartTime: 0
-  - _FadeDuration: 0.18333334
-    _Events:
-      _NormalizedTimes: []
-      _Callbacks: []
-      _Names: []
-    _Clip: {fileID: 7400000, guid: 9cedd7f9df2c8204689d002fb7e422ca, type: 2}
     _Speed: 1
     _NormalizedStartTime: 0
 --- !u!114 &6120355895486431565
@@ -3071,8 +2548,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76c417bd3b8fddc4cabd274d720bc63c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  changeItemAnimationData: {fileID: 11400000, guid: f4ac035d09027e447baeb1b2e9847a2f, type: 2}
   itemsIdInRightSlots: 4d040000b104000035080000
-  itemsIdInLeftSlots: 360800003508000000000000
+  itemsIdInLeftSlots: 360800004d04000035080000
 --- !u!114 &8779414462503701537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3100,6 +2578,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   diedFromCriticalDamage: 0
   forwardWhenParried: {x: 0, y: 0, z: 0}
+  twoHanding: 0
+  twoHandingLeft: 0
 --- !u!114 &1466973082371695325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3118,6 +2598,8 @@ MonoBehaviour:
   riposteLayer:
     serializedVersion: 2
     m_Bits: 4096
+  weaponWallBounceAnimationData: {fileID: 11400000, guid: ddf52c59b03a5d84988749c5e3cbd8b3, type: 2}
+  parriedAnimationData: {fileID: 11400000, guid: b1a646b233114264782769b47907c3da, type: 2}
 --- !u!114 &8950351742413104185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3130,6 +2612,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6d9fae74bac8914babdae291ff5cb6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shieldBrokenAnimationData: {fileID: 11400000, guid: 8a9746a323cdb914e8aa1c2d201c86dc, type: 2}
+  oneHandedBlockAnimationData: {fileID: 11400000, guid: 0aff37109201d3c4c90233d27a472f4d, type: 2}
+  twoHandedBlockAnimationData: {fileID: 0}
 --- !u!114 &4480793179936830322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3614,7 +3099,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.51
+  m_Radius: 0.57
   m_Height: 1.94
   m_Direction: 1
   m_Center: {x: 0, y: 0.32, z: 2.0723169e-16}
@@ -3748,7 +3233,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.54
+  m_Radius: 0.57
   m_Height: 1.94
   m_Direction: 1
   m_Center: {x: 0, y: 0.32, z: 2.0723169e-16}

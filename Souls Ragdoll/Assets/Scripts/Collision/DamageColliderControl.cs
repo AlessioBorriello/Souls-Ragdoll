@@ -14,6 +14,7 @@ namespace AlessioBorriello
         public float knockbackStrength;
         public float flinchStrenght;
         public string staggerAnimation;
+        public AnimationData staggerAnimationData;
         [Range(1, 4)] public int attackDeflectionLevel;
     }
 

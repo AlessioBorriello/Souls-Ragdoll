@@ -97,7 +97,7 @@ namespace AlessioBorriello
 
         private void BlockAttack(ref int damage, DamageColliderInfo colliderInfo, PlayerManager playerManagerHitting)
         {
-            HandEquippableItem blockingItem = inventoryManager.GetCurrentItem(true); //If 2 handing get the right item
+            HandEquippableItem blockingItem = inventoryManager.GetCurrentItem(playerManager.GetShieldManager().IsBlockingWithLeft()); //If 2 handing get the right item
 
             //Reduce damage
             damage = AbsorbDamage(blockingItem, damage);

@@ -73,6 +73,15 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""NorthButton"",
+                    ""type"": ""Button"",
+                    ""id"": ""84c35349-b327-48d7-803d-a1834d8abd02"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""LeftLightButton"",
                     ""type"": ""Button"",
                     ""id"": ""9ba54142-917a-4979-ad0d-5337b71251f9"",
@@ -475,6 +484,28 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                     ""action"": ""LockOn"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f0a702da-33c3-40a6-93ce-4876dff85970"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""NorthButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b0b82afa-3866-4c29-ac18-f0d6b3004625"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""NorthButton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -516,6 +547,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         m_PlayerGameplay_LockOn = m_PlayerGameplay.FindAction("LockOn", throwIfNotFound: true);
         m_PlayerGameplay_EastButton = m_PlayerGameplay.FindAction("EastButton", throwIfNotFound: true);
         m_PlayerGameplay_SouthButton = m_PlayerGameplay.FindAction("SouthButton", throwIfNotFound: true);
+        m_PlayerGameplay_NorthButton = m_PlayerGameplay.FindAction("NorthButton", throwIfNotFound: true);
         m_PlayerGameplay_LeftLightButton = m_PlayerGameplay.FindAction("LeftLightButton", throwIfNotFound: true);
         m_PlayerGameplay_LeftHeavyButton = m_PlayerGameplay.FindAction("LeftHeavyButton", throwIfNotFound: true);
         m_PlayerGameplay_RightLightButton = m_PlayerGameplay.FindAction("RightLightButton", throwIfNotFound: true);
@@ -588,6 +620,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
     private readonly InputAction m_PlayerGameplay_LockOn;
     private readonly InputAction m_PlayerGameplay_EastButton;
     private readonly InputAction m_PlayerGameplay_SouthButton;
+    private readonly InputAction m_PlayerGameplay_NorthButton;
     private readonly InputAction m_PlayerGameplay_LeftLightButton;
     private readonly InputAction m_PlayerGameplay_LeftHeavyButton;
     private readonly InputAction m_PlayerGameplay_RightLightButton;
@@ -605,6 +638,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         public InputAction @LockOn => m_Wrapper.m_PlayerGameplay_LockOn;
         public InputAction @EastButton => m_Wrapper.m_PlayerGameplay_EastButton;
         public InputAction @SouthButton => m_Wrapper.m_PlayerGameplay_SouthButton;
+        public InputAction @NorthButton => m_Wrapper.m_PlayerGameplay_NorthButton;
         public InputAction @LeftLightButton => m_Wrapper.m_PlayerGameplay_LeftLightButton;
         public InputAction @LeftHeavyButton => m_Wrapper.m_PlayerGameplay_LeftHeavyButton;
         public InputAction @RightLightButton => m_Wrapper.m_PlayerGameplay_RightLightButton;
@@ -637,6 +671,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @SouthButton.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSouthButton;
                 @SouthButton.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSouthButton;
                 @SouthButton.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnSouthButton;
+                @NorthButton.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnNorthButton;
+                @NorthButton.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnNorthButton;
+                @NorthButton.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnNorthButton;
                 @LeftLightButton.started -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnLeftLightButton;
                 @LeftLightButton.performed -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnLeftLightButton;
                 @LeftLightButton.canceled -= m_Wrapper.m_PlayerGameplayActionsCallbackInterface.OnLeftLightButton;
@@ -680,6 +717,9 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
                 @SouthButton.started += instance.OnSouthButton;
                 @SouthButton.performed += instance.OnSouthButton;
                 @SouthButton.canceled += instance.OnSouthButton;
+                @NorthButton.started += instance.OnNorthButton;
+                @NorthButton.performed += instance.OnNorthButton;
+                @NorthButton.canceled += instance.OnNorthButton;
                 @LeftLightButton.started += instance.OnLeftLightButton;
                 @LeftLightButton.performed += instance.OnLeftLightButton;
                 @LeftLightButton.canceled += instance.OnLeftLightButton;
@@ -733,6 +773,7 @@ public partial class @PlayerControls : IInputActionCollection2, IDisposable
         void OnLockOn(InputAction.CallbackContext context);
         void OnEastButton(InputAction.CallbackContext context);
         void OnSouthButton(InputAction.CallbackContext context);
+        void OnNorthButton(InputAction.CallbackContext context);
         void OnLeftLightButton(InputAction.CallbackContext context);
         void OnLeftHeavyButton(InputAction.CallbackContext context);
         void OnRightLightButton(InputAction.CallbackContext context);

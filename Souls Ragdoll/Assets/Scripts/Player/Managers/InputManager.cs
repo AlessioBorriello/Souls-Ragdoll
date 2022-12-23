@@ -54,6 +54,11 @@ namespace AlessioBorriello
         public bool southInput;
         public bool southInputReleased;
         public bool southInputPressed;
+
+        //North
+        public bool northInput;
+        public bool northInputReleased;
+        public bool northInputPressed;
         #endregion
 
         #region Triggers - Bumpers
@@ -142,6 +147,18 @@ namespace AlessioBorriello
                 {
                     southInput = false;
                     actions.Push(new InputAction("SouthButtonReleased"));
+                };
+
+                //North button
+                controls.PlayerGameplay.NorthButton.started += inputAction =>
+                {
+                    northInput = true;
+                    actions.Push(new InputAction("NorthButtonPressed"));
+                };
+                controls.PlayerGameplay.NorthButton.canceled += inputAction =>
+                {
+                    northInput = false;
+                    actions.Push(new InputAction("NorthButtonReleased"));
                 };
                 #endregion
 
@@ -258,6 +275,10 @@ namespace AlessioBorriello
                 //South button
                 case "SouthButtonPressed": southInputPressed = true; break;
                 case "SouthButtonReleased": southInputReleased = true; break;
+
+                //North button
+                case "NorthButtonPressed": northInputPressed = true; break;
+                case "NorthButtonReleased": northInputReleased = true; break;
                 #endregion
 
                 #region Bumpers and Triggers

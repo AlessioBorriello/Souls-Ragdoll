@@ -21,5 +21,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 168c1215d3f01f04e984575803c3f4a6, type: 2}
   oneHandedRunningAttack: {fileID: 11400000, guid: 399e70c9ad69ae64f80f24336cec0959, type: 2}
   oneHandedRollingAttack: {fileID: 11400000, guid: 7716dc58cf1498540b854acb91a506fb, type: 2}
+  twoHandedLightCombo:
+  - {fileID: 11400000, guid: 99a39590d7f41f14ea1de7f81f5f827d, type: 2}
+  twoHandedHeavyCombo: []
+  twoHandedRunningAttack: {fileID: 0}
+  twoHandedRollingAttack: {fileID: 0}
   oneHandedBackstabAttack: {fileID: 11400000, guid: 8c207003b6e4efd44b57f027c8a54445, type: 2}
   oneHandedRiposteAttack: {fileID: 11400000, guid: 5689c24ada1c3bc4f8413a617fe834cc, type: 2}

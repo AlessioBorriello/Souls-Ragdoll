@@ -9,8 +9,9 @@ namespace AlessioBorriello
     {
         public GameObject modelPrefab;
 
-        [Header("One handed Idle")]
-        public string oneHandedIdle;
+        [Header("Idle animations")]
+        public AnimationData oneHandedIdleAnimationData;
+        public AnimationData twoHandedIdleAnimationData;
 
         [Header("Damage absorptions %")]
         [Range(0, 100)] public float physicalDamageAbsorption;

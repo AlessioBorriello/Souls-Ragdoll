@@ -16,10 +16,12 @@ MonoBehaviour:
   iconSprite: {fileID: 21300000, guid: c64841f8fa97da14f8ae7e5bd4bd3d12, type: 3}
   descriptionText: 
   modelPrefab: {fileID: 7517636226788466831, guid: 6626961bd2389784ca2fe03847cb2b63, type: 3}
-  oneHandedIdle: OHSmallWeaponIdle
+  oneHandedIdleAnimationData: {fileID: 11400000, guid: 6a337f3842233dd43b3e28487438b828, type: 2}
+  twoHandedIdleAnimationData: {fileID: 11400000, guid: 07c5d44011dcbd543b6ef4e161005f4f, type: 2}
   physicalDamageAbsorption: 95
-  blockStability: 48
+  blockStability: 58
   deflectionLevel: 2
   parryStaminaCost: 35
   canParry: 1
   parryDuration: 0.14
+  parryAnimationData: {fileID: 11400000, guid: 53276e616372c9244acbfc30f71e31a7, type: 2}

@@ -20,7 +20,7 @@ namespace AlessioBorriello
         public float baseStaminaCost = 40f;
 
         [Header("Moveset")]
-        public MoveSet moveset;
+        public WeaponMoveset moveset;
 
         //Stats scaling
 

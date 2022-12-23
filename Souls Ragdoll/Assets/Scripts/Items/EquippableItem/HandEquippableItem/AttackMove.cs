@@ -11,13 +11,14 @@ namespace AlessioBorriello
         public int id;
         public string animationName;
         public float timeToRotateAfterAttackStart = .2f; //How much time the player is still allowed to rotate for after the attack start
+        public AnimationData animationData;
 
         public float staminaCostMultiplier;
         public float damageMultiplier;
         public float poiseDamageMultiplier;
         public float staminaDamageMultiplier;
 
-        public float speed;
+        public float animationSpeed;
         public float movementSpeedMultiplier;
 
         public float knockbackStrengthMultiplier;

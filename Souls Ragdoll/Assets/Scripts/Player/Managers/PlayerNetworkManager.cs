@@ -21,6 +21,7 @@ namespace AlessioBorriello
         private PlayerShieldManager shieldManager;
         private PlayerCollisionManager collisionManager;
         private PlayerInventoryManager inventoryManager;
+        private PlayerCombatManager combatManager;
 
         private Rigidbody physicalHips;
         private GameObject animatedPlayer;
@@ -50,6 +51,7 @@ namespace AlessioBorriello
             shieldManager = playerManager.GetShieldManager();
             collisionManager = playerManager.GetCollisionManager();
             inventoryManager = playerManager.GetInventoryManager();
+            combatManager = playerManager.GetCombatManager();
 
             physicalHips = playerManager.GetPhysicalHips();
             animatedPlayer = playerManager.GetAnimatedPlayer();
@@ -210,36 +212,66 @@ namespace AlessioBorriello
 
         #region Combat
 
+        //Two hand
+        [ServerRpc(RequireOwnership = false)]
+        public void TwoHandServerRpc(bool isLeft)
+        {
+            TwoHandClientRpc(isLeft);
+        }
+
+        [ClientRpc]
+        private void TwoHandClientRpc(bool isLeft)
+        {
+            if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} two handed");
+            combatManager.TwoHand(isLeft);
+        }
+
+        //Stop Two handing
+        [ServerRpc(RequireOwnership = false)]
+        public void StopTwoHandingServerRpc()
+        {
+            StopTwoHandingClientRpc();
+        }
+
+        [ClientRpc]
+        private void StopTwoHandingClientRpc()
+        {
+            if (IsOwner) return;
+            if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} stopped two handing");
+            combatManager.StopTwoHanding();
+        }
+
         #region Weapon
 
         //Attack
         [ServerRpc(RequireOwnership = false)]
-        public void AttackServerRpc(AttackType newAttackType)
+        public void AttackServerRpc(AttackType newAttackType, bool isLeft)
         {
-            AttackClientRpc(newAttackType);
+            AttackClientRpc(newAttackType, isLeft);
         }
 
         [ClientRpc]
-        private void AttackClientRpc(AttackType newAttackType)
+        private void AttackClientRpc(AttackType newAttackType, bool isLeft)
         {
             if (IsOwner) return;
             if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} attacked");
-            weaponManager.Attack(newAttackType);
+            weaponManager.Attack(newAttackType, isLeft);
         }
 
         //Backstab
         [ServerRpc(RequireOwnership = false)]
-        public void RiposteServerRpc(string riposteAnimation)
+        public void RiposteServerRpc(AttackType newAttackType, bool attackingWithLeft)
         {
-            RiposteClientRpc(riposteAnimation);
+            RiposteClientRpc(newAttackType, attackingWithLeft);
         }
 
         [ClientRpc]
-        private void RiposteClientRpc(string riposteAnimation)
+        private void RiposteClientRpc(AttackType newAttackType, bool attackingWithLeft)
         {
             if (IsOwner) return;
             if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} backstabbed");
-            weaponManager.Riposte(riposteAnimation);
+            weaponManager.Riposte(newAttackType, attackingWithLeft);
         }
 
         //Backstabbed
@@ -312,17 +344,17 @@ namespace AlessioBorriello
         #region Shield
         //Block
         [ServerRpc(RequireOwnership = false)]
-        public void BlockServerRpc()
+        public void BlockServerRpc(bool isLeft)
         {
-            BlockClientRpc();
+            BlockClientRpc(isLeft);
         }
 
         [ClientRpc]
-        private void BlockClientRpc()
+        private void BlockClientRpc(bool isLeft)
         {
             if (IsOwner) return;
             if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} started blocking");
-            shieldManager.Block();
+            shieldManager.Block(isLeft);
         }
 
         //Stop blocking
@@ -342,17 +374,17 @@ namespace AlessioBorriello
 
         //Parry
         [ServerRpc(RequireOwnership = false)]
-        public void ParryServerRpc()
+        public void ParryServerRpc(bool parryingWithLeft)
         {
-            ParryClientRpc();
+            ParryClientRpc(parryingWithLeft);
         }
 
         [ClientRpc]
-        private void ParryClientRpc()
+        private void ParryClientRpc(bool parryingWithLeft)
         {
             if (IsOwner) return;
             if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} parried");
-            shieldManager.Parry();
+            shieldManager.Parry(parryingWithLeft);
         }
 
         //Shield broken
@@ -427,17 +459,17 @@ namespace AlessioBorriello
         #region Inventory
         //Change weapon
         [ServerRpc(RequireOwnership = false)]
-        public void ChangeHandItemSlotServerRpc(bool leftHand, int id)
+        public void ChangeHandItemSlotServerRpc(bool leftHand)
         {
-            ChangeHandItemSlotClientRpc(leftHand, id);
+            ChangeHandItemSlotClientRpc(leftHand);
         }
 
         [ClientRpc]
-        private void ChangeHandItemSlotClientRpc(bool leftHand, int id)
+        private void ChangeHandItemSlotClientRpc(bool leftHand)
         {
             if (IsOwner) return;
             if (showClientNetworkRpcs) Debug.Log($"Client {playerManager.OwnerClientId} changed weapon");
-            inventoryManager.ChangeHandItemSlot(leftHand, id);
+            inventoryManager.ChangeHandItemSlot(leftHand);
         }
         #endregion
 

@@ -36,6 +36,7 @@ namespace AlessioBorriello
         private PlayerCollisionManager collisionManager;
         private PlayerWeaponManager weaponManager;
         private PlayerShieldManager shieldManager;
+        private PlayerAnimationsDatabase animationsDatabase;
 
         private UIManager uiManager;
 
@@ -84,6 +85,7 @@ namespace AlessioBorriello
             networkManager = GetComponent<PlayerNetworkManager>();
             animationManager = GetComponent<AnimationManager>();
             animationEventsManager = GetComponent<AnimationEventsManager>();
+            animationsDatabase = GetComponent<PlayerAnimationsDatabase>();
             ragdollManager = GetComponent<ActiveRagdollManager>();
             collisionManager = GetComponent<PlayerCollisionManager>();
             locomotionManager = GetComponent<PlayerLocomotionManager>();
@@ -188,10 +190,9 @@ namespace AlessioBorriello
 
             //Fade animations
             animationManager.FadeOutOverrideAnimation(.1f);
-            animationManager.FadeOutOverrideAnimation(.1f, 1);
-            animationManager.FadeOutOverrideAnimation(.1f, 2);
-            animationManager.FadeOutOverrideAnimation(.1f, 3);
-            animationManager.FadeOutOverrideAnimation(.1f, 4);
+            animationManager.FadeOutOverrideAnimation(.1f, OverrideLayers.leftArmLayer);
+            animationManager.FadeOutOverrideAnimation(.1f, OverrideLayers.rightArmLayer);
+            animationManager.FadeOutOverrideAnimation(.1f, OverrideLayers.bothArmsLayer);
 
             //Changes friction of the feet so that they don't slide around (set it to idle friction)
             shouldSlide = false;
@@ -257,6 +258,11 @@ namespace AlessioBorriello
         public AnimationEventsManager GetAnimationEventsManager()
         {
             return animationEventsManager;
+        }
+
+        public PlayerAnimationsDatabase GetAnimationDatabase()
+        {
+            return animationsDatabase;
         }
 
         public PlayerLocomotionManager GetLocomotionManager()

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7035f718f4a775478d3fd4d0498c831, type: 3}
+  m_Name: OH Short Sword Light Combo Attack 1
+  m_EditorClassIdentifier: 
+  id: 1001
+  animationName: OHUpRightToLeftDownSwipe
+  timeToRotateAfterAttackStart: 0.2
+  animationData: {fileID: 11400000, guid: d43dad5628ab89f41b3462a1309d742f, type: 2}
+  staminaCostMultiplier: 1
+  damageMultiplier: 1
+  poiseDamageMultiplier: 1
+  staminaDamageMultiplier: 1
+  animationSpeed: 1
+  movementSpeedMultiplier: 3
+  knockbackStrengthMultiplier: 1
+  flinchStrengthMultiplier: 1
+  victimStaggerAnimation: Hurt
+  victimStaggerAnimationData: {fileID: 11400000, guid: cd469ddc85c771748b3b048247dd3ef8, type: 2}
+  levelNeededToDeflect: 2

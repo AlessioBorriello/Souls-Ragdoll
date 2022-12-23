@@ -15,8 +15,16 @@ namespace AlessioBorriello
         private AnimationManager animationManager;
         private PlayerInventoryManager inventoryManager;
         private PlayerNetworkManager networkManager;
+        private PlayerAnimationsDatabase animationDatabase;
+
+        [SerializeField] private AnimationData shieldBrokenAnimationData;
+        [SerializeField] private AnimationData oneHandedBlockAnimationData;
+        [SerializeField] private AnimationData twoHandedBlockAnimationData;
 
         private Rigidbody physicalHips;
+
+        private bool blockingWithLeft = false;
+        private bool parryingWithLeft = false;
 
         private void Awake()
         {
@@ -27,13 +35,14 @@ namespace AlessioBorriello
             animationManager = playerManager.GetAnimationManager();
             inventoryManager = playerManager.GetInventoryManager();
             networkManager = playerManager.GetNetworkManager();
+            animationDatabase = playerManager.GetAnimationDatabase();
 
             physicalHips = playerManager.GetPhysicalHips();
         }
 
         public void HandleBlocks()
         {
-            if (playerManager.isStuckInAnimation)
+            if (playerManager.isStuckInAnimation || playerManager.disableActions)
             {
                 if (!playerManager.isBlocking) return; //Already not blocking
 
@@ -44,17 +53,21 @@ namespace AlessioBorriello
 
             //Check if pressed
             bool lb = inputManager.lbInput;
+            bool rb = inputManager.rbInput;
 
-            if (lb)
+            bool isLeft = lb;
+
+            if (lb || rb)
             {
                 //If it's not a shield
-                if (inventoryManager.GetCurrentItemType(true) != PlayerInventoryManager.ItemType.shield) return;
+                if (inventoryManager.GetCurrentItemType(isLeft) != PlayerInventoryManager.ItemType.shield) return;
 
-                if (playerManager.isBlocking) return; //Blocking already
+                //Blocking already or pressing north button
+                if (playerManager.isBlocking || inputManager.northInput) return;
 
                 //Start blocking
-                Block();
-                networkManager.BlockServerRpc();
+                Block(isLeft);
+                networkManager.BlockServerRpc(isLeft);
             }
             else
             {
@@ -66,14 +79,16 @@ namespace AlessioBorriello
             }
         }
 
-        public void Block()
+        public void Block(bool isLeft)
         {
+            blockingWithLeft = isLeft;
 
             Action onBlockEnter = () => {
                 playerManager.isBlocking = true;
             };
 
-            animationManager.PlayOverrideAnimation("BlockLoopLeft", onBlockEnter, null, 3);
+            OverrideLayers layer = (isLeft) ? OverrideLayers.upperBodyLeftArmLayer : OverrideLayers.upperBodyRightArmLayer;
+            animationManager.PlayOverrideAnimation(oneHandedBlockAnimationData, onBlockEnter, null, layer, isLeft);
         }
 
         public void HandleParries()
@@ -82,30 +97,35 @@ namespace AlessioBorriello
 
             //Check if pressed
             bool lt = inputManager.ltInput;
+            bool rt = inputManager.rtInput;
 
-            if (lt)
+            bool isLeft = lt;
+
+            if (lt || rt)
             {
                 //If it's not a shield
-                if (inventoryManager.GetCurrentItemType(true) != PlayerInventoryManager.ItemType.shield) return;
+                if (inventoryManager.GetCurrentItemType(isLeft) != PlayerInventoryManager.ItemType.shield) return;
 
                 //If the shield cannot parry
-                if (!((ShieldItem)inventoryManager.GetCurrentItem(true)).canParry) return;
+                if (!((ShieldItem)inventoryManager.GetCurrentItem(isLeft)).canParry) return;
 
                 //If no stamina
                 if (statsManager.CurrentStamina < 1) return;
 
                 //Parry
-                Parry();
-                networkManager.ParryServerRpc();
+                Parry(isLeft);
+                networkManager.ParryServerRpc(isLeft);
 
                 //Consume stamina
-                float staminaCost = ((ShieldItem)inventoryManager.GetCurrentItem(true)).parryStaminaCost;
+                float staminaCost = ((ShieldItem)inventoryManager.GetCurrentItem(isLeft)).parryStaminaCost;
                 statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
             }
         }
 
-        public void Parry()
+        public void Parry(bool parryingWithLeft)
         {
+            this.parryingWithLeft = parryingWithLeft;
+
             //Create enter and exit events
             Action onParryEnterAction = () =>
             {
@@ -129,12 +149,14 @@ namespace AlessioBorriello
                 inventoryManager.GetParryColliderControl().CloseParryCollider();
             };
 
-            animationManager.PlayOverrideAnimation("Parry", onParryEnterAction, onParryExitAction);
+            AnimationData parryAnimationData = ((ShieldItem)inventoryManager.GetCurrentItem(parryingWithLeft)).parryAnimationData;
+            animationManager.PlayOverrideAnimation(parryAnimationData, onParryEnterAction, onParryExitAction, mirrored: parryingWithLeft);
         }
 
         public void StopBlocking()
         {
-            animationManager.FadeOutOverrideAnimation(.1f, 3);
+            OverrideLayers layer = (blockingWithLeft) ? OverrideLayers.upperBodyLeftArmLayer : OverrideLayers.upperBodyRightArmLayer;
+            animationManager.FadeOutOverrideAnimation(.1f, layer);
             playerManager.isBlocking = false;
         }
 
@@ -150,9 +172,6 @@ namespace AlessioBorriello
                 playerManager.canRotate = false;
                 playerManager.canBeRiposted = true;
 
-                //Disable attack collider
-                inventoryManager.GetCurrentItemDamageColliderControl(false).ToggleCollider(false);
-
                 //Set forward when shield broken
                 playerManager.GetCombatManager().forwardWhenParried = physicalHips.transform.forward;
             };
@@ -167,7 +186,17 @@ namespace AlessioBorriello
                 animationManager.FadeOutOverrideAnimation(.15f);
             };
 
-            animationManager.PlayOverrideAnimation("ShieldBrokenLeft", onShieldBrokenEnterAction, onShieldBrokenExitAction);
+            animationManager.PlayOverrideAnimation(shieldBrokenAnimationData, onShieldBrokenEnterAction, onShieldBrokenExitAction, mirrored: blockingWithLeft);
+        }
+
+        public bool IsBlockingWithLeft()
+        {
+            return blockingWithLeft;
+        }
+
+        public bool IsParryingWithLeft()
+        {
+            return parryingWithLeft;
         }
 
     }

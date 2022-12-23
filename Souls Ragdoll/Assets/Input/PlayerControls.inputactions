@@ -51,6 +51,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "NorthButton",
+                    "type": "Button",
+                    "id": "84c35349-b327-48d7-803d-a1834d8abd02",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "LeftLightButton",
                     "type": "Button",
                     "id": "9ba54142-917a-4979-ad0d-5337b71251f9",
@@ -451,6 +460,28 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "LockOn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f0a702da-33c3-40a6-93ce-4876dff85970",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "NorthButton",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b0b82afa-3866-4c29-ac18-f0d6b3004625",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "NorthButton",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -12,10 +12,7 @@ namespace AlessioBorriello
     {
 
         [SerializeField] private List<ClipTransition> playerActionsAnimations = new List<ClipTransition>();
-        [SerializeField] private List<ClipTransition> playerCombatAnimations = new List<ClipTransition>();
-        [SerializeField] private List<ClipTransition> upperBodyLeftArmAnimations = new List<ClipTransition>();
-        [SerializeField] private List<ClipTransition> upperBodyRightArmAnimations = new List<ClipTransition>();
-        [SerializeField] private List<ClipTransition> weaponIdleAnimations = new List<ClipTransition>();
+        [SerializeField] private List<ClipTransition> playerStaggerAnimations = new List<ClipTransition>();
 
         //Dictionary of animations
         private Dictionary<string, ClipTransition> animationsDictionary = new Dictionary<string, ClipTransition>();
@@ -30,28 +27,7 @@ namespace AlessioBorriello
             }
 
             //Add attack animations to dictionary
-            foreach (ClipTransition animation in playerCombatAnimations)
-            {
-                string name = animation.Name;
-                animationsDictionary.Add(name, animation);
-            }
-
-            //Add upper body - left arm animations to dictionary
-            foreach (ClipTransition animation in upperBodyLeftArmAnimations)
-            {
-                string name = animation.Name;
-                animationsDictionary.Add(name, animation);
-            }
-
-            //Add upper body - right arm animations to dictionary
-            foreach (ClipTransition animation in upperBodyRightArmAnimations)
-            {
-                string name = animation.Name;
-                animationsDictionary.Add(name, animation);
-            }
-
-            //Add weapon idle animations to dictionary
-            foreach (ClipTransition animation in weaponIdleAnimations)
+            foreach (ClipTransition animation in playerStaggerAnimations)
             {
                 string name = animation.Name;
                 animationsDictionary.Add(name, animation);
@@ -61,8 +37,13 @@ namespace AlessioBorriello
         public ClipTransition GetClipTransition(string animationName)
         {
             //Debug.Log(animationName);
-            if (!animationsDictionary.TryGetValue(animationName, out ClipTransition animation)) return null;
+            if (!animationsDictionary.TryGetValue(animationName, out ClipTransition animation)) 
+            {
+                Debug.Log($"Animation {animationName} not found!");
+                return null;
+            }
             else return animation;
+        
         }
     }
 }

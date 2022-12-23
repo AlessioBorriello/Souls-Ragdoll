@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityEngine.Windows;
 
 namespace AlessioBorriello {
+
     public class AnimationManager : MonoBehaviour
     {
 
@@ -19,28 +20,34 @@ namespace AlessioBorriello {
         [SerializeField] private AvatarMask upperBodyRightArmMask;
         [SerializeField] private AvatarMask leftArmMask;
         [SerializeField] private AvatarMask rightArmMask;
+        [SerializeField] private AvatarMask bothArmsMask;
 
         [Header("Wheights")]
         [SerializeField, Range(0, 1)] private float overrideLayerWeight = 1f;
         [SerializeField, Range(0, 1)] private float upperBodyArmsLayerWeight = .85f;
         [SerializeField, Range(0, 1)] private float armsLayerWeight = .65f;
+        [SerializeField, Range(0, 1)] private float bothArmsLayerWeight = .85f;
 
         private AnimancerComponent animancer;
         private MixerParameterTweenVector2 locomotionMixerTween;
         private MixerState<Vector2> locomotionMixer;
 
         private AnimancerLayer locomotionLayer;
-        private AnimancerLayer overrideLayer;
-        private AnimancerLayer upperBodyLeftArmOverride;
-        private AnimancerLayer upperBodyRightArmOverride;
 
         private AnimancerLayer leftArmOverride;
         private AnimancerLayer rightArmOverride;
+        private AnimancerLayer bothArmsOverride;
+
+        private AnimancerLayer upperBodyLeftArmOverride;
+        private AnimancerLayer upperBodyRightArmOverride;
+
+        private AnimancerLayer overrideLayer;
 
         private Animator animator;
         private PlayerManager playerManager;
         private PlayerWeaponManager weaponManager;
         private PlayerNetworkManager networkManager;
+        private AnimationEventsManager animationEventsManager;
         private PlayerAnimationsDatabase animationsDatabase;
 
         private Action onOverrideExit = null;
@@ -55,43 +62,49 @@ namespace AlessioBorriello {
         {
             playerManager = GetComponent<PlayerManager>();
             networkManager = playerManager.GetNetworkManager();
+            animationEventsManager = playerManager.GetAnimationEventsManager();
             weaponManager = playerManager.GetWeaponManager();
-            animationsDatabase = GetComponent<PlayerAnimationsDatabase>();
+            animationsDatabase = playerManager.GetAnimationDatabase();
             animancer = GetComponentInChildren<AnimancerComponent>();
             locomotionMixer = (MixerState<Vector2>)LocomotionBlendTree.CreateState();
 
             AnimancerPlayable.LayerList.SetMinDefaultCapacity(7);
 
             //Create layers
-            locomotionLayer = animancer.Layers[0];
+            locomotionLayer = animancer.Layers[(int)OverrideLayers.locomotionLayer];
             locomotionLayer.SetDebugName("Locomotion layer");
             locomotionLayer.SetWeight(1);
             locomotionLayer.ApplyFootIK = true;
 
             //Arms
-            leftArmOverride = animancer.Layers[1];
+            leftArmOverride = animancer.Layers[(int)OverrideLayers.leftArmLayer];
             leftArmOverride.SetDebugName("Left arm layer");
             leftArmOverride.SetWeight(armsLayerWeight);
             leftArmOverride.SetMask(leftArmMask);
 
-            rightArmOverride = animancer.Layers[2];
+            rightArmOverride = animancer.Layers[(int)OverrideLayers.rightArmLayer];
             rightArmOverride.SetDebugName("Right arm layer");
             rightArmOverride.SetWeight(armsLayerWeight);
             rightArmOverride.SetMask(rightArmMask);
 
+            bothArmsOverride = animancer.Layers[(int)OverrideLayers.bothArmsLayer];
+            bothArmsOverride.SetDebugName("Both arms layer");
+            bothArmsOverride.SetWeight(bothArmsLayerWeight);
+            bothArmsOverride.SetMask(bothArmsMask);
+
             //Upper body - arms
-            upperBodyLeftArmOverride = animancer.Layers[3];
+            upperBodyLeftArmOverride = animancer.Layers[(int)OverrideLayers.upperBodyLeftArmLayer];
             upperBodyLeftArmOverride.SetDebugName("Upper Body - Left arm layer");
             upperBodyLeftArmOverride.SetWeight(upperBodyArmsLayerWeight);
             upperBodyLeftArmOverride.SetMask(upperBodyLeftArmMask);
 
-            upperBodyRightArmOverride = animancer.Layers[4];
+            upperBodyRightArmOverride = animancer.Layers[(int)OverrideLayers.upperBodyRightArmLayer];
             upperBodyRightArmOverride.SetDebugName("Upper Body - Right arm layer");
             upperBodyRightArmOverride.SetWeight(upperBodyArmsLayerWeight);
             upperBodyRightArmOverride.SetMask(upperBodyRightArmMask);
 
             //Override
-            overrideLayer = animancer.Layers[5];
+            overrideLayer = animancer.Layers[(int)OverrideLayers.overrideLayer];
             overrideLayer.SetDebugName("Override actions layer");
             overrideLayer.SetWeight(overrideLayerWeight);
 
@@ -122,7 +135,7 @@ namespace AlessioBorriello {
             locomotionMixerTween.Start(parameter, duration);
         }
 
-        public AnimancerState PlayOverrideAnimation(string animationName, Action newOnOverrideEnter = null, Action newOnOverrideExit = null, int layerNumber = 5)
+        public AnimancerState PlayOverrideAnimation(string animationName, Action newOnOverrideEnter = null, Action newOnOverrideExit = null, OverrideLayers layer = OverrideLayers.overrideLayer)
         {
             if (animationName == "") return null;
             ClipTransition animation = animationsDatabase.GetClipTransition(animationName);
@@ -131,7 +144,7 @@ namespace AlessioBorriello {
             //Play old override exit if the player was still in an override animation (override was interrupted)
             if(onOverrideExit != null && playerManager.isInOverrideAnimation) EarlyExitOverrideAnimation();
 
-            AnimancerState state = animancer.Layers[layerNumber].Play(animation);
+            AnimancerState state = animancer.Layers[(int)layer].Play(animation);
 
             //Play new override enter
             if(newOnOverrideEnter != null) newOnOverrideEnter();
@@ -144,15 +157,60 @@ namespace AlessioBorriello {
             }
 
             //Set target weight
-            animancer.Layers[layerNumber].TargetWeight = GetDefaultLayerWeight(layerNumber);
+            animancer.Layers[(int)layer].TargetWeight = GetDefaultLayerWeight(layer);
 
             return state;
         }
 
-        public AnimancerState PlayOverrideAnimation(string animationName, float speed, Action newOnOverrideEnter = null, Action newOnOverrideExit = null, int layerNumber = 5)
+        public AnimancerState PlayOverrideAnimation(string animationName, float speed, Action newOnOverrideEnter = null, Action newOnOverrideExit = null, OverrideLayers layer = OverrideLayers.overrideLayer)
         {
             if (animationName == "") return null;
-            AnimancerState state = PlayOverrideAnimation(animationName, newOnOverrideEnter, newOnOverrideExit, layerNumber);
+            AnimancerState state = PlayOverrideAnimation(animationName, newOnOverrideEnter, newOnOverrideExit, layer);
+            if (state == null) return null;
+
+            state.Speed = speed;
+
+            return state;
+        }
+
+        public AnimancerState PlayOverrideAnimation(AnimationData animationData, Action newOnOverrideEnter = null, Action newOnOverrideExit = null, OverrideLayers layer = OverrideLayers.overrideLayer, bool mirrored = false)
+        {
+            //Choose animation clip
+            AnimationClip animationClip;
+            if (!mirrored) animationClip = animationData.animationClip;
+            else animationClip = (animationData.mirroredAnimationClip != null) ? animationData.mirroredAnimationClip : animationData.animationClip;
+
+            if (animationClip == null) return null;
+
+            //Play old override exit if the player was still in an override animation (override was interrupted)
+            if (onOverrideExit != null && playerManager.isInOverrideAnimation) EarlyExitOverrideAnimation();
+
+            AnimancerState state = animancer.Layers[(int)layer].Play(animationClip, animationData.fadeDuration);
+
+            //Set animation events
+            state.Events = animationEventsManager.GetEventSequence(animationData.events, animationData.endTime);
+
+            //Play new override enter
+            if (newOnOverrideEnter != null) newOnOverrideEnter();
+
+            state.Speed = animationData.defaultAnimationSpeed;
+
+            //Set override exit as end event and update override exit (if it gets interrupted)
+            if (newOnOverrideExit != null)
+            {
+                state.Events.OnEnd = newOnOverrideExit;
+                onOverrideExit = newOnOverrideExit;
+            }
+
+            //Set target weight
+            animancer.Layers[(int)layer].TargetWeight = GetDefaultLayerWeight(layer);
+
+            return state;
+        }
+
+        public AnimancerState PlayOverrideAnimation(AnimationData animationData, float speed, Action newOnOverrideEnter = null, Action newOnOverrideExit = null, OverrideLayers layer = OverrideLayers.overrideLayer, bool mirrored = false)
+        {
+            AnimancerState state = PlayOverrideAnimation(animationData, newOnOverrideEnter, newOnOverrideExit, layer, mirrored);
             if (state == null) return null;
 
             state.Speed = speed;
@@ -165,20 +223,21 @@ namespace AlessioBorriello {
             if(onOverrideExit != null) onOverrideExit();
         }
 
-        public void FadeOutOverrideAnimation(float time, int layerNumber = 5)
+        public void FadeOutOverrideAnimation(float time, OverrideLayers layer = OverrideLayers.overrideLayer)
         {
-            animancer.Layers[layerNumber].StartFade(0, time);
+            animancer.Layers[(int)layer].StartFade(0, time);
         }
 
-        private float GetDefaultLayerWeight(int layerNumber)
+        private float GetDefaultLayerWeight(OverrideLayers layer)
         {
-            switch (layerNumber)
+            switch (layer)
             {
-                case 1: return armsLayerWeight;
-                case 2: return armsLayerWeight;
-                case 3: return upperBodyArmsLayerWeight;
-                case 4: return upperBodyArmsLayerWeight;
-                case 5: return overrideLayerWeight;
+                case OverrideLayers.leftArmLayer: return armsLayerWeight;
+                case OverrideLayers.rightArmLayer: return armsLayerWeight;
+                case OverrideLayers.bothArmsLayer: return bothArmsLayerWeight;
+                case OverrideLayers.upperBodyLeftArmLayer: return upperBodyArmsLayerWeight;
+                case OverrideLayers.upperBodyRightArmLayer: return upperBodyArmsLayerWeight;
+                case OverrideLayers.overrideLayer: return overrideLayerWeight;
                 default: return 1f;
             }
         }
@@ -187,6 +246,17 @@ namespace AlessioBorriello {
         {
             return animancer.Animator;
         }
-    
+
+    }
+
+    public enum OverrideLayers
+    {
+        locomotionLayer,
+        leftArmLayer,
+        rightArmLayer,
+        bothArmsLayer,
+        upperBodyLeftArmLayer,
+        upperBodyRightArmLayer,
+        overrideLayer
     }
 }

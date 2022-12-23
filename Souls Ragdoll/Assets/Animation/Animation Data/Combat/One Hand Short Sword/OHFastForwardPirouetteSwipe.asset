@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 109f61838b009074c99ccf643e35d963, type: 3}
+  m_Name: OHFastForwardPirouetteSwipe
+  m_EditorClassIdentifier: 
+  animationClip: {fileID: 7400000, guid: 9bb58d95dfb88b148a3084856ffdad2e, type: 2}
+  mirroredAnimationClip: {fileID: 7400000, guid: 6f90e716adade2b4ea689bd015e9ec6d, type: 2}
+  events:
+  - eventType: 0
+    eventTime: 0.3286052
+  - eventType: 2
+    eventTime: 0.3783784
+  - eventType: 3
+    eventTime: 0.454955
+  - eventType: 1
+    eventTime: 0.6146572
+  fadeDuration: 0.15
+  endTime: 0.8
+  defaultAnimationSpeed: 1

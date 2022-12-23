@@ -22,6 +22,8 @@ namespace AlessioBorriello
         private HandItemHolder leftHolder;
         private HandItemHolder rightHolder;
 
+        [SerializeField] private AnimationData changeItemAnimationData;
+
         //Item slots
         [SerializeField] private int[] itemsIdInRightSlots = new int[3];
         private int currentRightItemSlotIndex = 0;
@@ -69,14 +71,17 @@ namespace AlessioBorriello
                 currentRightItemSlotIndex = networkManager.netCurrentRightItemSlotIndex.Value;
             }
 
-            LoadItemInHand(true, itemsIdInLeftSlots[currentLeftItemSlotIndex]);
-            LoadItemInHand(false, itemsIdInRightSlots[currentRightItemSlotIndex]);
+            LoadItemInHand(true);
+            LoadItemInHand(false);
 
             if(playerManager.IsOwner) uiManager.UpdateQuickSlotsUI(this);
         }
 
-        private void LoadItemInHand(bool loadOnLeft, int itemId)
+        public void LoadItemInHand(bool loadOnLeft)
         {
+            //Get item id
+            int itemId = (loadOnLeft) ? itemsIdInLeftSlots[currentLeftItemSlotIndex] : itemsIdInRightSlots[currentRightItemSlotIndex];
+
             HandEquippableItem item = PlayerItemsDatabase.Instance.GetHandEquippableItem(itemId);
             if (loadOnLeft)
             {
@@ -86,6 +91,7 @@ namespace AlessioBorriello
                 leftHolder.LoadItemModel(item);
                 currentLeftHandItem = item;
                 currentLeftItemDamageColliderControl = SetItemColliderControl(leftHolder);
+
             }
             else
             {
@@ -98,7 +104,7 @@ namespace AlessioBorriello
             }
 
             //Set idle animation
-            LoadIdleAnimation(item, loadOnLeft);
+            LoadIdleAnimation(loadOnLeft, false);
 
             //Set item type
             SetCurrentItemType(item, loadOnLeft);
@@ -108,10 +114,20 @@ namespace AlessioBorriello
 
         }
 
-        private void LoadIdleAnimation(HandEquippableItem item, bool loadOnLeft)
+        public void UnloadItemInHand(bool onLeft)
         {
-            int layer = (loadOnLeft) ? 1 : 2;
-            if (item != null && item.oneHandedIdle != "") animationManager.PlayOverrideAnimation(item.oneHandedIdle + ((loadOnLeft) ? "Left" : "Right"), null, null, layer);
+            HandItemHolder holder = (onLeft) ? leftHolder : rightHolder;
+            holder.UnloadItemModel();
+        }
+
+        public void LoadIdleAnimation(bool loadOnLeft, bool twoHanded)
+        {
+            HandEquippableItem item = (loadOnLeft)? currentLeftHandItem : currentRightHandItem;
+
+            AnimationData idleAnimation = (twoHanded) ? item.twoHandedIdleAnimationData : item.oneHandedIdleAnimationData;
+            OverrideLayers layer = (twoHanded)? OverrideLayers.bothArmsLayer : ((loadOnLeft) ? OverrideLayers.leftArmLayer : OverrideLayers.rightArmLayer);
+
+            if (item != null && idleAnimation != null) animationManager.PlayOverrideAnimation(idleAnimation, null, null, layer, loadOnLeft);
             else animationManager.FadeOutOverrideAnimation(.1f, layer);
         }
 
@@ -134,44 +150,12 @@ namespace AlessioBorriello
             {
                 bool leftHand = (slotInput.x < 0);
 
-                int id;
-                if(leftHand)
-                {
-                    int newIndex;
-                    if(playerManager.IsOwner)
-                    {
-                        //Calculate new index
-                        newIndex = (currentLeftItemSlotIndex + 1) % itemsIdInLeftSlots.Length;
-                        networkManager.netCurrentLeftItemSlotIndex.Value = newIndex;
-                    }
-                    else
-                    {
-                        newIndex = networkManager.netCurrentLeftItemSlotIndex.Value;
-                    }
+                //Increase the corrisponding index
+                if (!leftHand) IncreaseItemIndex(ref currentRightItemSlotIndex, ref networkManager.netCurrentRightItemSlotIndex, itemsIdInRightSlots.Length);
+                else  IncreaseItemIndex(ref currentLeftItemSlotIndex, ref networkManager.netCurrentLeftItemSlotIndex, itemsIdInLeftSlots.Length);
 
-                    currentLeftItemSlotIndex = newIndex;
-                    id = itemsIdInLeftSlots[currentLeftItemSlotIndex];
-                }
-                else
-                {
-                    int newIndex;
-                    if (playerManager.IsOwner)
-                    {
-                        //Calculate new index
-                        newIndex = (currentRightItemSlotIndex + 1) % itemsIdInRightSlots.Length;
-                        networkManager.netCurrentRightItemSlotIndex.Value = newIndex;
-                    }
-                    else
-                    {
-                        newIndex = networkManager.netCurrentRightItemSlotIndex.Value;
-                    }
-
-                    currentRightItemSlotIndex = newIndex;
-                    id = itemsIdInRightSlots[currentRightItemSlotIndex];
-                }
-
-                ChangeHandItemSlot(leftHand, id);
-                networkManager.ChangeHandItemSlotServerRpc(leftHand, id);
+                ChangeHandItemSlot(leftHand);
+                networkManager.ChangeHandItemSlotServerRpc(leftHand);
             }
 
             //Spells
@@ -181,30 +165,64 @@ namespace AlessioBorriello
 
         }
 
-        public void ChangeHandItemSlot(bool leftHand, int itemId)
+        public void ChangeHandItemSlot(bool leftHand)
         {
+
+            if (playerManager.disableActions) return;
+
+            //Stop two handing
+            if (playerManager.GetCombatManager().twoHanding)
+            {
+                playerManager.GetCombatManager().StopTwoHanding();
+                networkManager.StopTwoHandingServerRpc();
+            }
 
             Action onChangeItemEnter = () =>
             {
                 //Debug.Log("Change item enter");
-                playerManager.isBlocking = false;
+                //Stop blocking
+                if(playerManager.isBlocking)
+                {
+                    playerManager.GetShieldManager().StopBlocking();
+                    networkManager.StopBlockingServerRpc();
+                }
+
                 playerManager.disableActions = true;
             };
 
             Action onChangeItemExit = () =>
             {
                 //Debug.Log("Change item exit");
-                playerManager.disableActions = false;
-                animationManager.FadeOutOverrideAnimation(.1f, (leftHand)? 1 : 2);
+                StartCoroutine(EnableActionsAfterTime(.1f));
+                animationManager.FadeOutOverrideAnimation(.1f, (leftHand) ? OverrideLayers.leftArmLayer : OverrideLayers.rightArmLayer);
 
-                LoadItemInHand((leftHand)? true : false, itemId);
+                LoadItemInHand((leftHand)? true : false);
             };
 
             //Play animation
-            string animationName = "ChangeItem" + ((leftHand) ? "Left" : "Right");
-            int layer = (leftHand) ? 1 : 2;
-            animationManager.PlayOverrideAnimation(animationName, onChangeItemEnter, onChangeItemExit, layer);
+            OverrideLayers layer = (leftHand) ? OverrideLayers.leftArmLayer : OverrideLayers.rightArmLayer;
+            animationManager.PlayOverrideAnimation(changeItemAnimationData, onChangeItemEnter, onChangeItemExit, layer, leftHand);
 
+        }
+
+        private void IncreaseItemIndex(ref int currentItemSlotIndex, ref NetworkVariable<int> netCurrentItemSlotIndex, int itemsAmount)
+        {
+            int newIndex;
+            if (playerManager.IsOwner)
+            {
+                //Calculate new index
+                newIndex = (currentItemSlotIndex + 1) % itemsAmount;
+                netCurrentItemSlotIndex.Value = newIndex;
+            }
+            else newIndex = netCurrentItemSlotIndex.Value;
+
+            currentItemSlotIndex = newIndex;
+        }
+
+        private IEnumerator EnableActionsAfterTime(float time)
+        {
+            yield return new WaitForSeconds(time);
+            playerManager.disableActions = false;
         }
 
         /// <summary>
@@ -232,9 +250,10 @@ namespace AlessioBorriello
             return parryColliderControl;
         }
 
-        public void SetDamageColliderValues(DamageColliderInfo colliderInfo)
+        public void SetDamageColliderValues(DamageColliderInfo colliderInfo, bool isLeft)
         {
-            currentRightItemDamageColliderControl.SetColliderValues(colliderInfo);
+            if(!isLeft) currentRightItemDamageColliderControl.SetColliderValues(colliderInfo);
+            else currentLeftItemDamageColliderControl.SetColliderValues(colliderInfo);
         }
 
         public void SetCurrentItemType(HandEquippableItem item, bool leftHand)
