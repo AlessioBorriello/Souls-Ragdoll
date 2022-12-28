@@ -65,12 +65,11 @@ namespace AlessioBorriello
             bool lb = inputManager.lbInputPressed;
             bool lt = inputManager.ltInputPressed;
 
-            if (!combatManager.twoHanding) HandleOneHandedAttacks(rb, rt, lb, lt);
-            else HandleTwoHandedAttacks(rb, rt, lb, lt);
+            HandleAttacks(rb, rt, lb, lt);
 
         }
 
-        private void HandleOneHandedAttacks(bool rb, bool rt, bool lb, bool lt)
+        private void HandleAttacks(bool rb, bool rt, bool lb, bool lt)
         {
             //Define if attack is heavy
             bool isHeavy = rt || lt;
@@ -78,38 +77,11 @@ namespace AlessioBorriello
             //Define if the attack is being done with the left hand
             bool isLeft = lb || lt;
 
-            //If it's not a weapon
-            if (inventoryManager.GetCurrentItemType(isLeft) != PlayerInventoryManager.ItemType.weapon) return;
-
             //If any of these is pressed
             if (rb || rt || lb || lt)
             {
-                //If no stamina
-                if (statsManager.CurrentStamina < 1) return;
-
-                AttackType newAttackType = GetAttackType(isHeavy);
-
-                //Try to attack
-                TryAttack(newAttackType, isLeft);
-            }
-        }
-
-        private void HandleTwoHandedAttacks(bool rb, bool rt, bool lb, bool lt)
-        {
-            //Define if attack is heavy
-            bool isHeavy = rt || lt;
-
-            //Define if the attack is being done with the left hand
-            bool isLeft = lb || lt;
-
-            //If the item being two handed is not a weapon
-            if (inventoryManager.GetCurrentItemType(combatManager.twoHandingLeft) != PlayerInventoryManager.ItemType.weapon) return;
-
-            //If any of these is pressed
-            if (rb || rt || lb || lt)
-            {
-                //If attacking with the opposite side as the two handing (two handing right weapon and attacking with left)
-                if (combatManager.twoHandingLeft != isLeft) return;
+                //If 2 handing, attack only with the right buttons
+                if (combatManager.twoHanding && isLeft != false) return;
 
                 //If no stamina
                 if (statsManager.CurrentStamina < 1) return;
@@ -117,7 +89,7 @@ namespace AlessioBorriello
                 AttackType newAttackType = GetAttackType(isHeavy);
 
                 //Try to attack
-                TryAttack(newAttackType, isLeft);
+                TryAttack(newAttackType, (!combatManager.twoHanding)? isLeft : combatManager.twoHandingLeft);
             }
         }
 
@@ -125,14 +97,24 @@ namespace AlessioBorriello
         {
             if (playerManager.isStuckInAnimation) return;
 
-            //Get right or left item
-            WeaponItem weapon = (WeaponItem)inventoryManager.GetCurrentItem(isLeft);
+            //Get used item
+            HandEquippableItem itemUsed = inventoryManager.GetCurrentItem(isLeft);
 
-            //Check for backstab, if a backstab goes through, then return
-            if (TryBackstab(newAttackType, weapon, isLeft)) return;
+            //If not 2 handing, allow attacking only with weapons
+            if (!combatManager.twoHanding && itemUsed is not WeaponItem) return;
 
-            //Check for riposte, if a riposte goes through, then return
-            if (TryRiposte(newAttackType, weapon, isLeft)) return;
+            //Check for backstabs and ripostes only if it's a weapon
+            if (itemUsed is WeaponItem)
+            {
+                //Cast to weapon
+                WeaponItem weapon = (WeaponItem)itemUsed;
+
+                //Check for backstab, if a backstab goes through, then return
+                if (TryBackstab(newAttackType, weapon, isLeft)) return;
+
+                //Check for riposte, if a riposte goes through, then return
+                if (TryRiposte(newAttackType, weapon, isLeft)) return;
+            }
 
             //Attack
             Attack(newAttackType, isLeft);
@@ -142,12 +124,21 @@ namespace AlessioBorriello
 
         public void Attack(AttackType newAttackType, bool isLeft)
         {
-            //Get right or left item
-            WeaponItem weapon = (WeaponItem)inventoryManager.GetCurrentItem(isLeft);
-            if (weapon == null) return;
+            //Get used item
+            HandEquippableItem itemUsed = inventoryManager.GetCurrentItem(isLeft);
+            if (itemUsed == null) return;
 
-            AttackMove attackMove = GetAttackMove(weapon, newAttackType, isLeft);
+            DamageColliderControl colliderControl = inventoryManager.GetCurrentItemDamageColliderControl(isLeft);
+
+            //Debug.Log("Attacking with " + itemUsed.name + " from " + ((isLeft)? "left" : "right") + " side");
+
+            //Get attack move from moveset if weapon, otherwise use generic attack
+            AttackMove attackMove;
+            if (itemUsed is WeaponItem weapon) attackMove = GetAttackMove(weapon, newAttackType, isLeft);
+            else attackMove = itemUsed.genericAttackMove;
+
             if (attackMove == null) return;
+            Debug.Log(attackMove.name);
 
             //Update proprieties
             attackType = newAttackType;
@@ -165,12 +156,8 @@ namespace AlessioBorriello
                 //Set movement speed multiplier
                 locomotionManager.SetMovementSpeedMultiplier(attackMove.movementSpeedMultiplier);
 
-                //Consume stamina
-                float staminaCost = weapon.baseStaminaCost * attackMove.staminaCostMultiplier;
-                statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
-
                 //Set up collider
-                AttackColliderSetup(weapon, attackMove, isLeft);
+                AttackColliderSetup(itemUsed, attackMove, isLeft);
 
                 //Disable rotation
                 StartCoroutine(DisablePlayerRotationAfterAttackStart(attackMove.timeToRotateAfterAttackStart));
@@ -187,12 +174,16 @@ namespace AlessioBorriello
                 animationManager.FadeOutOverrideAnimation(.15f);
 
                 //Close weapon collider and parriable if the animation was interrupted mid attack
-                inventoryManager.GetCurrentItemDamageColliderControl(isLeft).ToggleCollider(false);
-                inventoryManager.GetCurrentItemDamageColliderControl(isLeft).ToggleParriable(false);
+                colliderControl?.ToggleCollider(false);
+                colliderControl?.ToggleParriable(false);
             };
 
             //Play animation
             animationManager.PlayOverrideAnimation(attackMove.animationData, attackMove.animationSpeed, onAttackEnterAction, onAttackExitAction, mirrored: isLeft);
+
+            //Consume stamina
+            float staminaCost = itemUsed.baseStaminaCost * attackMove.staminaCostMultiplier;
+            statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
         }
 
         private IEnumerator DisablePlayerRotationAfterAttackStart(float time)
@@ -203,7 +194,7 @@ namespace AlessioBorriello
             if (playerManager.isAttacking) playerManager.canRotate = false;
         }
 
-        private void AttackColliderSetup(WeaponItem weapon, AttackMove attackMove, bool isLeft)
+        private void AttackColliderSetup(HandEquippableItem item, AttackMove attackMove, bool isLeft)
         {
             //Get weapon values
             float damageMultiplier = attackMove.damageMultiplier;
@@ -212,12 +203,12 @@ namespace AlessioBorriello
             float knockbackStrengthMultiplier = attackMove.knockbackStrengthMultiplier;
             float flinchStrengthMultiplier = attackMove.flinchStrengthMultiplier;
 
-            int damage = (int)(weapon.baseDamage * damageMultiplier);
-            int poiseDamage = (int)(weapon.poiseBaseDamage * poiseDamageMultiplier);
-            int staminaDamage = (int)(weapon.staminaBaseDamage * staminaDamageMultiplier);
+            int damage = (int)(item.baseDamage * damageMultiplier);
+            int poiseDamage = (int)(item.poiseBaseDamage * poiseDamageMultiplier);
+            int staminaDamage = (int)(item.staminaBaseDamage * staminaDamageMultiplier);
 
-            float knockbackStrength = weapon.baseKnockbackStrength * knockbackStrengthMultiplier;
-            float flinchStrength = weapon.baseFlinchStrength * flinchStrengthMultiplier;
+            float knockbackStrength = item.baseKnockbackStrength * knockbackStrengthMultiplier;
+            float flinchStrength = item.baseFlinchStrength * flinchStrengthMultiplier;
 
             int attackDeflectionLevel = attackMove.levelNeededToDeflect;
 

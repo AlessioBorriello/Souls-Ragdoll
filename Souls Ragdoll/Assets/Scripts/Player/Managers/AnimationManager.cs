@@ -16,17 +16,19 @@ namespace AlessioBorriello {
         [SerializeField] private MixerTransition2DAsset LocomotionBlendTree;
 
         [Header("Masks")]
-        [SerializeField] private AvatarMask upperBodyLeftArmMask;
-        [SerializeField] private AvatarMask upperBodyRightArmMask;
         [SerializeField] private AvatarMask leftArmMask;
         [SerializeField] private AvatarMask rightArmMask;
         [SerializeField] private AvatarMask bothArmsMask;
+        [SerializeField] private AvatarMask upperBodyLeftArmMask;
+        [SerializeField] private AvatarMask upperBodyRightArmMask;
+        [SerializeField] private AvatarMask upperBodyMask;
 
         [Header("Wheights")]
-        [SerializeField, Range(0, 1)] private float overrideLayerWeight = 1f;
-        [SerializeField, Range(0, 1)] private float upperBodyArmsLayerWeight = .85f;
         [SerializeField, Range(0, 1)] private float armsLayerWeight = .65f;
         [SerializeField, Range(0, 1)] private float bothArmsLayerWeight = .85f;
+        [SerializeField, Range(0, 1)] private float upperBodyArmsLayerWeight = .85f;
+        [SerializeField, Range(0, 1)] private float upperBodyLayerWeight = .85f;
+        [SerializeField, Range(0, 1)] private float overrideLayerWeight = 1f;
 
         private AnimancerComponent animancer;
         private MixerParameterTweenVector2 locomotionMixerTween;
@@ -40,6 +42,7 @@ namespace AlessioBorriello {
 
         private AnimancerLayer upperBodyLeftArmOverride;
         private AnimancerLayer upperBodyRightArmOverride;
+        private AnimancerLayer upperBodyOverride;
 
         private AnimancerLayer overrideLayer;
 
@@ -50,12 +53,19 @@ namespace AlessioBorriello {
         private AnimationEventsManager animationEventsManager;
         private PlayerAnimationsDatabase animationsDatabase;
 
+        //Max movement values
+        public float defaultMaxNormalMovementValue = 2f;
+        public float defaultMaxStrafeMovementValue = 1f;
+        private float maxNormalMovementValue;
+        private float maxStrafeMovementValue;
+
         private Action onOverrideExit = null;
 
         private void Awake()
         {
             animator = GetComponentInChildren<Animator>();
             Initialize();
+            SetMaxMovementValues(defaultMaxNormalMovementValue, defaultMaxStrafeMovementValue);
         }
 
         public void Initialize()
@@ -68,7 +78,7 @@ namespace AlessioBorriello {
             animancer = GetComponentInChildren<AnimancerComponent>();
             locomotionMixer = (MixerState<Vector2>)LocomotionBlendTree.CreateState();
 
-            AnimancerPlayable.LayerList.SetMinDefaultCapacity(7);
+            AnimancerPlayable.LayerList.SetMinDefaultCapacity(8);
 
             //Create layers
             locomotionLayer = animancer.Layers[(int)OverrideLayers.locomotionLayer];
@@ -103,6 +113,12 @@ namespace AlessioBorriello {
             upperBodyRightArmOverride.SetWeight(upperBodyArmsLayerWeight);
             upperBodyRightArmOverride.SetMask(upperBodyRightArmMask);
 
+            //Upper body
+            upperBodyOverride = animancer.Layers[(int)OverrideLayers.upperBodyLayer];
+            upperBodyOverride.SetDebugName("Upper Body");
+            upperBodyOverride.SetWeight(upperBodyLayerWeight);
+            upperBodyOverride.SetMask(upperBodyMask);
+
             //Override
             overrideLayer = animancer.Layers[(int)OverrideLayers.overrideLayer];
             overrideLayer.SetDebugName("Override actions layer");
@@ -124,9 +140,15 @@ namespace AlessioBorriello {
             }
 
             //Smooth values
-            Vector2 movementVector = new Vector2(strafe, normal);
+            Vector2 movementVector = new Vector2(Mathf.Min(strafe, maxStrafeMovementValue), Mathf.Min(normal, maxNormalMovementValue));
             BlendMixerParameter(movementVector, time);
 
+        }
+
+        public void SetMaxMovementValues(float normal, float strafe)
+        {
+            maxNormalMovementValue = normal;
+            maxStrafeMovementValue = strafe;
         }
 
         private void BlendMixerParameter(Vector2 parameter, float duration)
@@ -237,6 +259,7 @@ namespace AlessioBorriello {
                 case OverrideLayers.bothArmsLayer: return bothArmsLayerWeight;
                 case OverrideLayers.upperBodyLeftArmLayer: return upperBodyArmsLayerWeight;
                 case OverrideLayers.upperBodyRightArmLayer: return upperBodyArmsLayerWeight;
+                case OverrideLayers.upperBodyLayer: return upperBodyLayerWeight;
                 case OverrideLayers.overrideLayer: return overrideLayerWeight;
                 default: return 1f;
             }
@@ -257,6 +280,7 @@ namespace AlessioBorriello {
         bothArmsLayer,
         upperBodyLeftArmLayer,
         upperBodyRightArmLayer,
+        upperBodyLayer,
         overrideLayer
     }
 }

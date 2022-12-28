@@ -16,6 +16,7 @@ namespace AlessioBorriello
         private PlayerInventoryManager inventoryManager;
         private PlayerNetworkManager networkManager;
         private PlayerAnimationsDatabase animationDatabase;
+        private PlayerCombatManager combatManager;
 
         [SerializeField] private AnimationData shieldBrokenAnimationData;
         [SerializeField] private AnimationData oneHandedBlockAnimationData;
@@ -36,6 +37,7 @@ namespace AlessioBorriello
             inventoryManager = playerManager.GetInventoryManager();
             networkManager = playerManager.GetNetworkManager();
             animationDatabase = playerManager.GetAnimationDatabase();
+            combatManager = playerManager.GetCombatManager();
 
             physicalHips = playerManager.GetPhysicalHips();
         }
@@ -54,20 +56,28 @@ namespace AlessioBorriello
             //Check if pressed
             bool lb = inputManager.lbInput;
             bool rb = inputManager.rbInput;
+            bool lt = inputManager.ltInput;
+            bool rt = inputManager.rtInput;
 
-            bool isLeft = lb;
+            bool isLeft = lb || lt;
 
-            if (lb || rb)
+            if (lb || rb || lt || rt)
             {
-                //If it's not a shield
-                if (inventoryManager.GetCurrentItemType(isLeft) != PlayerInventoryManager.ItemType.shield) return;
+                //If not 2 handing, allow block only with lb and rb
+                if (!combatManager.twoHanding && (!lb && !rb)) return;
+
+                //If not 2 handing, allow blocking only with shields
+                if (!combatManager.twoHanding && inventoryManager.GetCurrentItem(isLeft) is not ShieldItem) return;
+
+                //If 2 handing block only with the left buttons
+                if (combatManager.twoHanding && isLeft != true) return;
 
                 //Blocking already or pressing north button
                 if (playerManager.isBlocking || inputManager.northInput) return;
 
                 //Start blocking
-                Block(isLeft);
-                networkManager.BlockServerRpc(isLeft);
+                Block((!combatManager.twoHanding) ? isLeft : combatManager.twoHandingLeft);
+                networkManager.BlockServerRpc((!combatManager.twoHanding) ? isLeft : combatManager.twoHandingLeft);
             }
             else
             {
@@ -81,14 +91,23 @@ namespace AlessioBorriello
 
         public void Block(bool isLeft)
         {
+            //Get right or left item (if 2 handing get the 2 handed item)
+            HandEquippableItem blockingItem = inventoryManager.GetCurrentItem(isLeft);
+            if (blockingItem == null) return;
+
+            Debug.Log("Blocking with " + blockingItem.name + " from " + ((isLeft) ? "left" : "right") + " side");
+
+            //Update proprieties
             blockingWithLeft = isLeft;
 
             Action onBlockEnter = () => {
                 playerManager.isBlocking = true;
             };
 
-            OverrideLayers layer = (isLeft) ? OverrideLayers.upperBodyLeftArmLayer : OverrideLayers.upperBodyRightArmLayer;
-            animationManager.PlayOverrideAnimation(oneHandedBlockAnimationData, onBlockEnter, null, layer, isLeft);
+            AnimationData blockingAnimationData = (combatManager.twoHanding)? blockingItem.twoHandedBlockAnimationData : blockingItem.oneHandedBlockAnimationData;
+
+            OverrideLayers layer = (combatManager.twoHanding)? OverrideLayers.upperBodyLayer : ((isLeft) ? OverrideLayers.upperBodyLeftArmLayer : OverrideLayers.upperBodyRightArmLayer);
+            animationManager.PlayOverrideAnimation(blockingAnimationData, onBlockEnter, null, layer, isLeft);
         }
 
         public void HandleParries()
@@ -103,28 +122,29 @@ namespace AlessioBorriello
 
             if (lt || rt)
             {
-                //If it's not a shield
-                if (inventoryManager.GetCurrentItemType(isLeft) != PlayerInventoryManager.ItemType.shield) return;
-
-                //If the shield cannot parry
-                if (!((ShieldItem)inventoryManager.GetCurrentItem(isLeft)).canParry) return;
+                //If 2 handing, allow parrying only with the left buttons
+                if (combatManager.twoHanding && isLeft != true) return;
 
                 //If no stamina
                 if (statsManager.CurrentStamina < 1) return;
 
                 //Parry
-                Parry(isLeft);
-                networkManager.ParryServerRpc(isLeft);
-
-                //Consume stamina
-                float staminaCost = ((ShieldItem)inventoryManager.GetCurrentItem(isLeft)).parryStaminaCost;
-                statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
+                Parry((!combatManager.twoHanding) ? isLeft : combatManager.twoHandingLeft);
+                networkManager.ParryServerRpc((!combatManager.twoHanding) ? isLeft : combatManager.twoHandingLeft);
             }
         }
 
-        public void Parry(bool parryingWithLeft)
+        public void Parry(bool isLeft)
         {
-            this.parryingWithLeft = parryingWithLeft;
+            //If it's not a shield
+            if (inventoryManager.GetCurrentItem(isLeft) is not ShieldItem) return;
+
+            //If the shield cannot parry
+            if (!((ShieldItem)inventoryManager.GetCurrentItem(isLeft)).canParry) return;
+
+            parryingWithLeft = isLeft;
+
+            Debug.Log("Parrying with " + inventoryManager.GetCurrentItem(isLeft).name + " from " + ((isLeft) ? "left" : "right") + " side");
 
             //Create enter and exit events
             Action onParryEnterAction = () =>
@@ -149,13 +169,17 @@ namespace AlessioBorriello
                 inventoryManager.GetParryColliderControl().CloseParryCollider();
             };
 
-            AnimationData parryAnimationData = ((ShieldItem)inventoryManager.GetCurrentItem(parryingWithLeft)).parryAnimationData;
-            animationManager.PlayOverrideAnimation(parryAnimationData, onParryEnterAction, onParryExitAction, mirrored: parryingWithLeft);
+            AnimationData parryAnimationData = ((ShieldItem)inventoryManager.GetCurrentItem(isLeft)).parryAnimationData;
+            animationManager.PlayOverrideAnimation(parryAnimationData, onParryEnterAction, onParryExitAction, mirrored: isLeft);
+
+            //Consume stamina
+            float staminaCost = ((ShieldItem)inventoryManager.GetCurrentItem(isLeft)).parryStaminaCost;
+            statsManager.ConsumeStamina(staminaCost, statsManager.playerStats.staminaDefaultRecoveryTime);
         }
 
         public void StopBlocking()
         {
-            OverrideLayers layer = (blockingWithLeft) ? OverrideLayers.upperBodyLeftArmLayer : OverrideLayers.upperBodyRightArmLayer;
+            OverrideLayers layer = (combatManager.twoHanding) ? OverrideLayers.upperBodyLayer : ((blockingWithLeft) ? OverrideLayers.upperBodyLeftArmLayer : OverrideLayers.upperBodyRightArmLayer);
             animationManager.FadeOutOverrideAnimation(.1f, layer);
             playerManager.isBlocking = false;
         }

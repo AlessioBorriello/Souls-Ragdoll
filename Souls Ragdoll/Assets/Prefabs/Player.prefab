@@ -1736,7 +1736,7 @@ Animator:
   m_Avatar: {fileID: 9000000, guid: 8ed57bc305377e345af3287105e80b69, type: 3}
   m_Controller: {fileID: 0}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 1
   m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
@@ -2194,15 +2194,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LocomotionBlendTree: {fileID: 11400000, guid: f937649f07a08714ab419f822fb38be0, type: 2}
-  upperBodyLeftArmMask: {fileID: 31900000, guid: 2058a6e17501ce84986ba3a26d01093e, type: 2}
-  upperBodyRightArmMask: {fileID: 31900000, guid: 0d29728109f147546a28fa5a8c971971, type: 2}
   leftArmMask: {fileID: 31900000, guid: cc5c410b212d578449d0a74e335eb73f, type: 2}
   rightArmMask: {fileID: 31900000, guid: db99d21d39abedb4c9b62fdfcad234b2, type: 2}
   bothArmsMask: {fileID: 31900000, guid: 048f17933c878494bb6e483483305030, type: 2}
-  overrideLayerWeight: 1
-  upperBodyArmsLayerWeight: 0.88
+  upperBodyLeftArmMask: {fileID: 31900000, guid: 2058a6e17501ce84986ba3a26d01093e, type: 2}
+  upperBodyRightArmMask: {fileID: 31900000, guid: 0d29728109f147546a28fa5a8c971971, type: 2}
+  upperBodyMask: {fileID: 31900000, guid: a4e4292b10525b346acc551aa26494a4, type: 2}
   armsLayerWeight: 0.65
   bothArmsLayerWeight: 0.85
+  upperBodyArmsLayerWeight: 0.88
+  upperBodyLayerWeight: 0.85
+  overrideLayerWeight: 1
+  defaultMaxNormalMovementValue: 2
+  defaultMaxStrafeMovementValue: 1
 --- !u!114 &2893640099527578288
 MonoBehaviour:
   m_ObjectHideFlags: 0

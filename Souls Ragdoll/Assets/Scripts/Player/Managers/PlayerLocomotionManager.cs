@@ -707,13 +707,9 @@ namespace AlessioBorriello
 
         public IEnumerator StopMovementForTime(float time)
         {
-            while (time > 0)
-            {
-                yield return null;
-                time -= Time.deltaTime;
-                animationManager.UpdateMovementAnimatorValues(0, 0, 0);
-                StopMovementForTime(time);
-            }
+            animationManager.SetMaxMovementValues(0, 0);
+            yield return new WaitForSeconds(time);
+            animationManager.SetMaxMovementValues(animationManager.defaultMaxNormalMovementValue, animationManager.defaultMaxStrafeMovementValue);
         }
 
         public IEnumerator StopActionsForTime(float time)

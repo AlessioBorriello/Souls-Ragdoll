@@ -57,6 +57,12 @@ namespace AlessioBorriello
             SetIcon(leftSprite, ref leftItemIcon);
         }
 
+        public void SetIconOpacity(bool leftIcon, float opacity)
+        {
+            Image image = (leftIcon) ? leftItemIcon : rightItemIcon;
+            image.color = new Color(image.color.r, image.color.g, image.color.r, opacity);
+        }
+
         private void SetIcon(Sprite sprite, ref Image slotImage)
         {
             slotImage.enabled = (sprite != null) ? true : false;

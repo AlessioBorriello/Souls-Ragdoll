@@ -19,7 +19,7 @@ MonoBehaviour:
     eventTime: 0.5021834
   - eventType: 1
     eventTime: 0.6528384
-  - eventType: 5
+  - eventType: 6
     eventTime: 0.88
   fadeDuration: 0.15
   endTime: 0.94

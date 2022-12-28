@@ -34,11 +34,9 @@ namespace AlessioBorriello
         //The currently equipped items and the relative colliders
         private HandEquippableItem currentRightHandItem;
         private DamageColliderControl currentRightItemDamageColliderControl;
-        private ItemType currentLeftItemType;
 
         private HandEquippableItem currentLeftHandItem;
         private DamageColliderControl currentLeftItemDamageColliderControl;
-        private ItemType currentRightItemType;
 
         //Parry collider
         private ParryColliderControl parryColliderControl;
@@ -105,9 +103,6 @@ namespace AlessioBorriello
 
             //Set idle animation
             LoadIdleAnimation(loadOnLeft, false);
-
-            //Set item type
-            SetCurrentItemType(item, loadOnLeft);
 
             //Update UI
             if (playerManager.IsOwner) uiManager.UpdateQuickSlotsUI(this);
@@ -252,24 +247,8 @@ namespace AlessioBorriello
 
         public void SetDamageColliderValues(DamageColliderInfo colliderInfo, bool isLeft)
         {
-            if(!isLeft) currentRightItemDamageColliderControl.SetColliderValues(colliderInfo);
-            else currentLeftItemDamageColliderControl.SetColliderValues(colliderInfo);
-        }
-
-        public void SetCurrentItemType(HandEquippableItem item, bool leftHand)
-        {
-            ItemType type = ItemType.unarmed;
-
-            if (item is WeaponItem) type = ItemType.weapon;
-            else if (item is ShieldItem) type = ItemType.shield;
-
-            if (leftHand) currentLeftItemType = type;
-            else currentRightItemType = type;
-        }
-
-        public ItemType GetCurrentItemType(bool leftHand)
-        {
-            return (leftHand) ? currentLeftItemType : currentRightItemType;
+            if(!isLeft) currentRightItemDamageColliderControl?.SetColliderValues(colliderInfo);
+            else currentLeftItemDamageColliderControl?.SetColliderValues(colliderInfo);
         }
 
         public int GetCurrentItemIndex(bool leftHand)

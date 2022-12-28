@@ -15,6 +15,7 @@ namespace AlessioBorriello
         private PlayerWeaponManager weaponManager;
         private PlayerShieldManager shieldManager;
         private PlayerNetworkManager networkManager;
+        private UIManager uiManager;
 
         public bool diedFromCriticalDamage = false;
         public Vector3 forwardWhenParried; //Forward direction when just parried
@@ -31,6 +32,7 @@ namespace AlessioBorriello
             weaponManager = playerManager.GetWeaponManager();
             shieldManager = playerManager.GetShieldManager();
             networkManager = playerManager.GetNetworkManager();
+            uiManager = playerManager.GetUiManager();
 
             forwardWhenParried = playerManager.GetPhysicalHips().transform.forward;
         }
@@ -90,6 +92,10 @@ namespace AlessioBorriello
             inventoryManager.LoadIdleAnimation(false, false); //Right hand
             inventoryManager.LoadIdleAnimation(true, false); //Left hand
 
+            //Make item icons full opacity
+            uiManager.SetIconOpacity(true, 1);
+            uiManager.SetIconOpacity(false, 1);
+
             twoHanding = false;
             twoHandingLeft = false;
         }
@@ -108,6 +114,9 @@ namespace AlessioBorriello
 
             //Load 2 hand idle animation
             inventoryManager.LoadIdleAnimation(isLeft, true);
+
+            //Make other item icon more transparent in the UI
+            uiManager.SetIconOpacity(!isLeft, .3f);
         }
 
     }

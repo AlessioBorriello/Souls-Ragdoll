@@ -10,17 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 109f61838b009074c99ccf643e35d963, type: 3}
-  m_Name: OHLeftToRightSwing
+  m_Name: OHBlockLoop
   m_EditorClassIdentifier: 
-  animationClip: {fileID: 7400000, guid: 1d884c52adbff8f4c9a99617e099adc4, type: 2}
-  mirroredAnimationClip: {fileID: 7400000, guid: 8195ac9693ca74343be8e0f7b48740b5, type: 2}
-  events:
-  - eventType: 0
-    eventTime: 0.2387707
-  - eventType: 1
-    eventTime: 0.5011821
-  - eventType: 6
-    eventTime: 0.8136882
-  fadeDuration: 0.15
-  endTime: 0.88
+  animationClip: {fileID: 7400000, guid: 79cecdf454d865b49926398f21031314, type: 2}
+  mirroredAnimationClip: {fileID: 7400000, guid: 71c6ac4c86fb8c641921852a8b8f8df0, type: 2}
+  events: []
+  fadeDuration: 0.1
+  endTime: 1
   defaultAnimationSpeed: 1

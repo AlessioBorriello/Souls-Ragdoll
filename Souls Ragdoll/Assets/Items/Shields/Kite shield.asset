@@ -18,7 +18,16 @@ MonoBehaviour:
   modelPrefab: {fileID: 7517636226788466831, guid: 6626961bd2389784ca2fe03847cb2b63, type: 3}
   oneHandedIdleAnimationData: {fileID: 11400000, guid: 6a337f3842233dd43b3e28487438b828, type: 2}
   twoHandedIdleAnimationData: {fileID: 11400000, guid: 07c5d44011dcbd543b6ef4e161005f4f, type: 2}
+  oneHandedBlockAnimationData: {fileID: 11400000, guid: 0aff37109201d3c4c90233d27a472f4d, type: 2}
+  twoHandedBlockAnimationData: {fileID: 11400000, guid: 726b304bebca68c43b38e21538e41edf, type: 2}
+  genericAttackMove: {fileID: 11400000, guid: 4c35b9a7585a9fe4abc644a12541e2bc, type: 2}
   physicalDamageAbsorption: 95
+  baseDamage: 5
+  staminaBaseDamage: 15
+  poiseBaseDamage: 12
+  baseKnockbackStrength: 1.2
+  baseFlinchStrength: 15
+  baseStaminaCost: 35
   blockStability: 58
   deflectionLevel: 2
   parryStaminaCost: 35

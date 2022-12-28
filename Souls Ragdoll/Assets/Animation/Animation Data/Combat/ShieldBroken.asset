@@ -15,7 +15,7 @@ MonoBehaviour:
   animationClip: {fileID: 7400000, guid: 5f0693bab0947e24b9706670a89bf433, type: 2}
   mirroredAnimationClip: {fileID: 7400000, guid: edd8f507d6877c645b1e34e0cff20c71, type: 2}
   events:
-  - eventType: 5
+  - eventType: 6
     eventTime: 0.83
   fadeDuration: 0.1
   endTime: 0.85

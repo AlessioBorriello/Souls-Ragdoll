@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 109f61838b009074c99ccf643e35d963, type: 3}
-  m_Name: OneHandedBlockLoop
+  m_Name: THBlockLoop
   m_EditorClassIdentifier: 
-  animationClip: {fileID: 7400000, guid: 79cecdf454d865b49926398f21031314, type: 2}
-  mirroredAnimationClip: {fileID: 7400000, guid: 71c6ac4c86fb8c641921852a8b8f8df0, type: 2}
+  animationClip: {fileID: 7400000, guid: 0ca1e2bede5a4c341b2dc48f48313d8d, type: 2}
+  mirroredAnimationClip: {fileID: 7400000, guid: baf1024d224e7704ea1d248493e38dde, type: 2}
   events: []
   fadeDuration: 0.1
   endTime: 1

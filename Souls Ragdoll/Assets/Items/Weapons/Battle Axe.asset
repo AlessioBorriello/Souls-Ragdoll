@@ -10,21 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 75ded9796cd96854e8715302b4aa6811, type: 3}
-  m_Name: Short Sword
+  m_Name: Battle Axe
   m_EditorClassIdentifier: 
-  nameString: Short Sword
-  iconSprite: {fileID: 21300000, guid: 720b8a7f08d91b04e81c1d9d6902512d, type: 3}
-  descriptionText: A simple metal short sword
-  modelPrefab: {fileID: 4952564604112304397, guid: bdebf87f5321f7a49a5772d92cd098fe, type: 3}
+  nameString: Battle Axe
+  iconSprite: {fileID: 21300000, guid: 5c958d23290fc794aaa01d5cce4232a5, type: 3}
+  descriptionText: A wooden handle battle axe
+  modelPrefab: {fileID: 1847906651662086122, guid: afd3f98f489c59f4f972b4fcb27d0562, type: 3}
   oneHandedIdleAnimationData: {fileID: 11400000, guid: 6a337f3842233dd43b3e28487438b828, type: 2}
   twoHandedIdleAnimationData: {fileID: 11400000, guid: 07c5d44011dcbd543b6ef4e161005f4f, type: 2}
-  physicalDamageAbsorption: 50
+  oneHandedBlockAnimationData: {fileID: 11400000, guid: 0aff37109201d3c4c90233d27a472f4d, type: 2}
+  twoHandedBlockAnimationData: {fileID: 11400000, guid: 726b304bebca68c43b38e21538e41edf, type: 2}
+  physicalDamageAbsorption: 61
   blockStability: 0
   deflectionLevel: 1
-  baseDamage: 20
-  staminaBaseDamage: 60
-  poiseBaseDamage: 25
+  baseDamage: 25
+  staminaBaseDamage: 65
+  poiseBaseDamage: 40
   baseKnockbackStrength: 3.2
-  baseFlinchStrength: 40
+  baseFlinchStrength: 45
   baseStaminaCost: 40
-  moveset: {fileID: 11400000, guid: 44928fb60aa57024b9d384c44577ff0b, type: 2}
+  moveset: {fileID: 11400000, guid: 16e244aa644263344813b15a2873c108, type: 2}

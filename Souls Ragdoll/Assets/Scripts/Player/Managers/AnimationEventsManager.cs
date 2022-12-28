@@ -96,7 +96,7 @@ namespace AlessioBorriello
         public void OpenParry()
         {
             //If it's not a shield
-            if (inventoryManager.GetCurrentItemType(shieldManager.IsParryingWithLeft()) != PlayerInventoryManager.ItemType.shield) return;
+            if (inventoryManager.GetCurrentItem(shieldManager.IsParryingWithLeft()) is not ShieldItem) return;
 
             ParryColliderControl parryColliderControl = inventoryManager.GetParryColliderControl();
             parryColliderControl.OpenParryCollider(((ShieldItem)inventoryManager.GetCurrentItem(shieldManager.IsParryingWithLeft())).parryDuration);
