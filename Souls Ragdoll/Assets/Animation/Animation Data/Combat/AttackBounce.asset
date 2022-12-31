@@ -12,8 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109f61838b009074c99ccf643e35d963, type: 3}
   m_Name: AttackBounce
   m_EditorClassIdentifier: 
-  animationClip: {fileID: 7400000, guid: 0ee7e67f03e54654c91d988800d5b819, type: 2}
-  mirroredAnimationClip: {fileID: 7400000, guid: 016572b3a02a3b74d8778b0d317ecf1d, type: 2}
+  animationClip:
+    _FadeDuration: 0.076666676
+    _Events:
+      _NormalizedTimes:
+      - 0.82
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 0ee7e67f03e54654c91d988800d5b819, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  mirroredAnimationClip:
+    _FadeDuration: 0.076666676
+    _Events:
+      _NormalizedTimes:
+      - 0.82
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 016572b3a02a3b74d8778b0d317ecf1d, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
   events: []
   fadeDuration: 0.1
   endTime: 0.78

@@ -12,8 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109f61838b009074c99ccf643e35d963, type: 3}
   m_Name: OHFastForwardPirouetteSwipe
   m_EditorClassIdentifier: 
-  animationClip: {fileID: 7400000, guid: 9bb58d95dfb88b148a3084856ffdad2e, type: 2}
-  mirroredAnimationClip: {fileID: 7400000, guid: 6f90e716adade2b4ea689bd015e9ec6d, type: 2}
+  animationClip:
+    _FadeDuration: 0.19500002
+    _Events:
+      _NormalizedTimes:
+      - 0.85
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 9bb58d95dfb88b148a3084856ffdad2e, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  mirroredAnimationClip:
+    _FadeDuration: 0.19500002
+    _Events:
+      _NormalizedTimes:
+      - 0.85
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 6f90e716adade2b4ea689bd015e9ec6d, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
   events:
   - eventType: 0
     eventTime: 0.3286052

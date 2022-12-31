@@ -12,8 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109f61838b009074c99ccf643e35d963, type: 3}
   m_Name: RiposteThrust
   m_EditorClassIdentifier: 
-  animationClip: {fileID: 7400000, guid: 4cd815ad1cfce79499a20742d9c50d0a, type: 2}
-  mirroredAnimationClip: {fileID: 7400000, guid: 399ce4aaf70c98b43ae030b0d0b1e993, type: 2}
+  animationClip:
+    _FadeDuration: 0.38333336
+    _Events:
+      _NormalizedTimes:
+      - 0.9
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 4cd815ad1cfce79499a20742d9c50d0a, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  mirroredAnimationClip:
+    _FadeDuration: 0.38333336
+    _Events:
+      _NormalizedTimes:
+      - 0.9
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 399ce4aaf70c98b43ae030b0d0b1e993, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
   events: []
   fadeDuration: 0.1
   endTime: 0.85

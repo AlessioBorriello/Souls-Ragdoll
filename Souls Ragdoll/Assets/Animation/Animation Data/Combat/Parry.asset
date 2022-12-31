@@ -12,11 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109f61838b009074c99ccf643e35d963, type: 3}
   m_Name: Parry
   m_EditorClassIdentifier: 
-  animationClip: {fileID: 7400000, guid: a311bee604ac39f4b99da8980eb2aa13, type: 2}
-  mirroredAnimationClip: {fileID: 7400000, guid: 2fdfad490a3fd1e44b37e937d2bed60d, type: 2}
+  animationClip:
+    _FadeDuration: 0.2
+    _Events:
+      _NormalizedTimes:
+      - 0.8
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: a311bee604ac39f4b99da8980eb2aa13, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  mirroredAnimationClip:
+    _FadeDuration: 0.2
+    _Events:
+      _NormalizedTimes:
+      - 0.8
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 2fdfad490a3fd1e44b37e937d2bed60d, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
   events:
   - eventType: 4
     eventTime: 0.2822757
-  fadeDuration: 0.2
-  endTime: 0.85
-  defaultAnimationSpeed: 1

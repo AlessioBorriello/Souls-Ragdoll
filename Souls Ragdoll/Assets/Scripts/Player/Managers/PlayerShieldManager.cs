@@ -95,7 +95,7 @@ namespace AlessioBorriello
             HandEquippableItem blockingItem = inventoryManager.GetCurrentItem(isLeft);
             if (blockingItem == null) return;
 
-            Debug.Log("Blocking with " + blockingItem.name + " from " + ((isLeft) ? "left" : "right") + " side");
+            //Debug.Log("Blocking with " + blockingItem.name + " from " + ((isLeft) ? "left" : "right") + " side");
 
             //Update proprieties
             blockingWithLeft = isLeft;
@@ -144,7 +144,7 @@ namespace AlessioBorriello
 
             parryingWithLeft = isLeft;
 
-            Debug.Log("Parrying with " + inventoryManager.GetCurrentItem(isLeft).name + " from " + ((isLeft) ? "left" : "right") + " side");
+            //Debug.Log("Parrying with " + inventoryManager.GetCurrentItem(isLeft).name + " from " + ((isLeft) ? "left" : "right") + " side");
 
             //Create enter and exit events
             Action onParryEnterAction = () =>

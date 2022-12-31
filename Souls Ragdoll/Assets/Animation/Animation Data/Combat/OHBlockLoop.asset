@@ -12,8 +12,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109f61838b009074c99ccf643e35d963, type: 3}
   m_Name: OHBlockLoop
   m_EditorClassIdentifier: 
-  animationClip: {fileID: 7400000, guid: 79cecdf454d865b49926398f21031314, type: 2}
-  mirroredAnimationClip: {fileID: 7400000, guid: 71c6ac4c86fb8c641921852a8b8f8df0, type: 2}
+  animationClip:
+    _FadeDuration: 0.14000002
+    _Events:
+      _NormalizedTimes: []
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 79cecdf454d865b49926398f21031314, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  mirroredAnimationClip:
+    _FadeDuration: 0.14000002
+    _Events:
+      _NormalizedTimes: []
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 71c6ac4c86fb8c641921852a8b8f8df0, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
   events: []
   fadeDuration: 0.1
   endTime: 1

@@ -101,6 +101,9 @@ namespace AlessioBorriello
                 currentRightItemDamageColliderControl = SetItemColliderControl(rightHolder);
             }
 
+            //Clear other animation states
+            animationManager.ClearAnimationStates();
+
             //Set idle animation
             LoadIdleAnimation(loadOnLeft, false);
 
@@ -188,7 +191,7 @@ namespace AlessioBorriello
             Action onChangeItemExit = () =>
             {
                 //Debug.Log("Change item exit");
-                StartCoroutine(EnableActionsAfterTime(.1f));
+                playerManager.disableActions = false;
                 animationManager.FadeOutOverrideAnimation(.1f, (leftHand) ? OverrideLayers.leftArmLayer : OverrideLayers.rightArmLayer);
 
                 LoadItemInHand((leftHand)? true : false);

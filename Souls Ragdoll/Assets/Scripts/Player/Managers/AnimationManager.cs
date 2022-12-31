@@ -198,7 +198,7 @@ namespace AlessioBorriello {
         public AnimancerState PlayOverrideAnimation(AnimationData animationData, Action newOnOverrideEnter = null, Action newOnOverrideExit = null, OverrideLayers layer = OverrideLayers.overrideLayer, bool mirrored = false)
         {
             //Choose animation clip
-            AnimationClip animationClip;
+            ClipTransition animationClip;
             if (!mirrored) animationClip = animationData.animationClip;
             else animationClip = (animationData.mirroredAnimationClip != null) ? animationData.mirroredAnimationClip : animationData.animationClip;
 
@@ -207,15 +207,16 @@ namespace AlessioBorriello {
             //Play old override exit if the player was still in an override animation (override was interrupted)
             if (onOverrideExit != null && playerManager.isInOverrideAnimation) EarlyExitOverrideAnimation();
 
-            AnimancerState state = animancer.Layers[(int)layer].Play(animationClip, animationData.fadeDuration);
+            AnimancerState state = animancer.Layers[(int)layer].Play(animationClip);
+
+            //Get end time
+            float endTime = animationClip.Events.NormalizedEndTime;
 
             //Set animation events
-            state.Events = animationEventsManager.GetEventSequence(animationData.events, animationData.endTime);
+            state.Events = animationEventsManager.GetEventSequence(animationData.events, endTime);
 
             //Play new override enter
             if (newOnOverrideEnter != null) newOnOverrideEnter();
-
-            state.Speed = animationData.defaultAnimationSpeed;
 
             //Set override exit as end event and update override exit (if it gets interrupted)
             if (newOnOverrideExit != null)
@@ -238,6 +239,11 @@ namespace AlessioBorriello {
             state.Speed = speed;
 
             return state;
+        }
+
+        public void ClearAnimationStates(OverrideLayers layer = OverrideLayers.overrideLayer)
+        {
+            animancer.Layers[(int)layer].DestroyStates();
         }
 
         public void EarlyExitOverrideAnimation()

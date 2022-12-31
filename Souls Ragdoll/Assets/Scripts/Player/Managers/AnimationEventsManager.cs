@@ -13,7 +13,7 @@ namespace AlessioBorriello
     public struct AnimationEventStruct
     {
         public EventTypes eventType;
-        public float eventTime;
+        [Range(0, 1)] public float eventTime;
     }
 
     public enum EventTypes
@@ -109,10 +109,18 @@ namespace AlessioBorriello
             //Set animation events
             foreach (AnimationEventStruct animationEvent in events)
             {
+                float eventTime = animationEvent.eventTime;
+                if (eventTime > endTime)
+                {
+                    Debug.Log($"Event added after endTime (Event: {animationEvent.eventType}, event time {eventTime}, end time {endTime}), shifting event to the end");
+                    eventTime = endTime;
+                }
+
                 Action _event = GetActionFromType(animationEvent.eventType);
-                sequence.Add(animationEvent.eventTime, _event);
+                sequence.Add(eventTime, _event);
             }
 
+            //Set end time
             sequence.NormalizedEndTime = endTime;
 
             return sequence;

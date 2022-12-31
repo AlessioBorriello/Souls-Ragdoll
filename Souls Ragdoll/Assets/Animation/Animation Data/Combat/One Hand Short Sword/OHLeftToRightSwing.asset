@@ -12,8 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109f61838b009074c99ccf643e35d963, type: 3}
   m_Name: OHLeftToRightSwing
   m_EditorClassIdentifier: 
-  animationClip: {fileID: 7400000, guid: 1d884c52adbff8f4c9a99617e099adc4, type: 2}
-  mirroredAnimationClip: {fileID: 7400000, guid: 8195ac9693ca74343be8e0f7b48740b5, type: 2}
+  animationClip:
+    _FadeDuration: 0.20250002
+    _Events:
+      _NormalizedTimes:
+      - 0.87
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 1d884c52adbff8f4c9a99617e099adc4, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  mirroredAnimationClip:
+    _FadeDuration: 0.20250002
+    _Events:
+      _NormalizedTimes:
+      - 0.87
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 8195ac9693ca74343be8e0f7b48740b5, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
   events:
   - eventType: 0
     eventTime: 0.2387707

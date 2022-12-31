@@ -133,12 +133,9 @@ namespace AlessioBorriello
             //Debug.Log("Attacking with " + itemUsed.name + " from " + ((isLeft)? "left" : "right") + " side");
 
             //Get attack move from moveset if weapon, otherwise use generic attack
-            AttackMove attackMove;
-            if (itemUsed is WeaponItem weapon) attackMove = GetAttackMove(weapon, newAttackType, isLeft);
-            else attackMove = itemUsed.genericAttackMove;
+            AttackMove attackMove = ((itemUsed is WeaponItem weapon))? GetAttackMove(weapon, newAttackType, isLeft) : attackMove = itemUsed.genericAttackMove;
 
             if (attackMove == null) return;
-            Debug.Log(attackMove.name);
 
             //Update proprieties
             attackType = newAttackType;

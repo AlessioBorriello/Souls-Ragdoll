@@ -12,8 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 109f61838b009074c99ccf643e35d963, type: 3}
   m_Name: ChangeItem
   m_EditorClassIdentifier: 
-  animationClip: {fileID: 7400000, guid: 49fd221a58c660b4c955b1b3a430a777, type: 2}
-  mirroredAnimationClip: {fileID: 7400000, guid: 255dbd4bc80967740943dd978262267c, type: 2}
+  animationClip:
+    _FadeDuration: 0.060000002
+    _Events:
+      _NormalizedTimes:
+      - 0.85
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 49fd221a58c660b4c955b1b3a430a777, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
+  mirroredAnimationClip:
+    _FadeDuration: 0.060000002
+    _Events:
+      _NormalizedTimes:
+      - 0.85
+      _Callbacks: []
+      _Names: []
+    _Clip: {fileID: 7400000, guid: 255dbd4bc80967740943dd978262267c, type: 2}
+    _Speed: 1
+    _NormalizedStartTime: 0
   events: []
   fadeDuration: 0.15
   endTime: 0.8
