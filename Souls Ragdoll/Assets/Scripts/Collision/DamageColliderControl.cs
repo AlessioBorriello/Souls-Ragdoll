@@ -131,6 +131,7 @@ namespace AlessioBorriello
 
         private void PlayerTriggerEnter(Collider other)
         {
+            //Debug.Log("hit");
             PlayerManager hitPlayerManager = other.GetComponentInParent<PlayerManager>();
 
             int otherId = other.transform.root.GetInstanceID();

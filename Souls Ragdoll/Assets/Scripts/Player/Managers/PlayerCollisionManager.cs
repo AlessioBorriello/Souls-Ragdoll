@@ -40,7 +40,6 @@ namespace AlessioBorriello
 
         public void CollisionWithDamageCollider(Collider damageCollider, Collider damagedPlayerCollider, DamageColliderInfo colliderInfo)
         {
-
             if (playerManager.IsOwner && playerManager.areIFramesActive)
             {
                 Debug.Log("Attack dodged");

@@ -9,7 +9,20 @@ namespace AlessioBorriello
 
         public bool isLeftHand;
         public GameObject currentItemModel;
+        private Rigidbody currentItemRigidBody;
+
         public Transform leftHandOverride;
+
+        private void FixedUpdate()
+        {
+            if (currentItemRigidBody == null) return;
+
+            Vector3 targetPosition = (leftHandOverride == null) ? transform.position : leftHandOverride.position;
+            Quaternion targetRotation = (leftHandOverride == null) ? transform.rotation : leftHandOverride.rotation;
+
+            currentItemRigidBody.MovePosition(targetPosition);
+            currentItemRigidBody.MoveRotation(targetRotation);
+        }
 
         public void UnloadItemModel()
         {
@@ -44,6 +57,7 @@ namespace AlessioBorriello
             model.transform.localScale = Vector3.one;
 
             currentItemModel = model;
+            currentItemRigidBody = model.GetComponent<Rigidbody>();
 
         }
 

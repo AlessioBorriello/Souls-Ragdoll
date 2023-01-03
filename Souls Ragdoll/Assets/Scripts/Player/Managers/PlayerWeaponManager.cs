@@ -150,6 +150,10 @@ namespace AlessioBorriello
                 playerManager.shouldSlide = true;
                 playerManager.isAttacking = true;
 
+                //Close colliders in case they are open already
+                colliderControl?.ToggleCollider(false);
+                colliderControl?.ToggleParriable(false);
+
                 //Set movement speed multiplier
                 locomotionManager.SetMovementSpeedMultiplier(attackMove.movementSpeedMultiplier);
 

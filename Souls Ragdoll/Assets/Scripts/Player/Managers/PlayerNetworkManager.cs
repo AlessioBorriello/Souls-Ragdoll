@@ -22,12 +22,16 @@ namespace AlessioBorriello
         private PlayerCollisionManager collisionManager;
         private PlayerInventoryManager inventoryManager;
         private PlayerCombatManager combatManager;
+        private Transform cameraTransform;
 
         private Rigidbody physicalHips;
         private GameObject animatedPlayer;
 
         private NetworkVariable<Vector3> netPosition = new(writePerm: NetworkVariableWritePermission.Owner);
         private NetworkVariable<Quaternion> netRotation = new(writePerm: NetworkVariableWritePermission.Owner);
+
+        //Camera
+        public NetworkVariable<Vector3> netCameraForward = new(writePerm: NetworkVariableWritePermission.Owner);
 
         public NetworkVariable<float> netNormalMovementAmount = new(0, writePerm: NetworkVariableWritePermission.Owner);
         public NetworkVariable<float> netStrafeMovementAmount = new(0, writePerm: NetworkVariableWritePermission.Owner);
@@ -52,6 +56,8 @@ namespace AlessioBorriello
             collisionManager = playerManager.GetCollisionManager();
             inventoryManager = playerManager.GetInventoryManager();
             combatManager = playerManager.GetCombatManager();
+
+            cameraTransform = playerManager.GetCameraTransform();
 
             physicalHips = playerManager.GetPhysicalHips();
             animatedPlayer = playerManager.GetAnimatedPlayer();
@@ -82,6 +88,7 @@ namespace AlessioBorriello
             {
                 netPosition.Value = physicalHips.transform.position;
                 netRotation.Value = animatedPlayer.transform.rotation;
+                netCameraForward.Value = cameraTransform.forward;
             }
             else
             {

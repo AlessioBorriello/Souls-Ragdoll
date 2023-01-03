@@ -43,6 +43,3 @@ MonoBehaviour:
     eventTime: 0.6926714
   - eventType: 5
     eventTime: 0.8136882
-  fadeDuration: 0.15
-  endTime: 0.85
-  defaultAnimationSpeed: 1
